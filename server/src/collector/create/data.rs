@@ -8,6 +8,7 @@ use crate::shared::Id;
 use crate::config;
 
 #[derive(Debug, Deserialize, Validate, JsonBody)]
+//#[derive(Debug, Deserialize, Validate)]
 pub struct CollectorCreateRequest {
     #[validate(custom(function="validate_collector_name", arg="&'v_a config::Config"))]
     pub name: String

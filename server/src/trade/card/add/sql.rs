@@ -8,9 +8,10 @@ pub async fn trade_card_count(sql: &Sql, user_id: &Id, trade_id: &Id) -> Result<
 
     let (count, ): (i64, ) = sqlx::query_as(
         "SELECT COUNT(*)
-         FROM tradecards
-         WHERE tid=?
-         AND cuid<>?;")
+         FROM tradecards, cardunlocks
+         WHERE tradecards.cuid=cardunlocks.cuid
+         AND tradecards.tid=?
+         AND cardunlocks.uid=?;")
         .bind(trade_id)
         .bind(user_id)
         .fetch_one(&mut con)

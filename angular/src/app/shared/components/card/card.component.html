@@ -1,5 +1,5 @@
 <ng-container *ngVar="(card$ | async) as c">
-	<div class="card" [style.cursor]="click === 'none' ? 'unset' : 'pointer'" (click)="onClick(c)">
+  <div class="card" [style.cursor]="click === 'none' ? 'unset' : 'pointer'" (click)="onClick(c)" [style.filter]="suggestion === true ? 'grayscale(70%)' : 'none'">
 		<div class="card-container">
 			<div class="card-inner">
 				<ng-container *ngVar="getCardEffectImage(c) as cardEffectImage">

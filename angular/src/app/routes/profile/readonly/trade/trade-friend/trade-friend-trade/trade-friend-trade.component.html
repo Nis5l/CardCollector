@@ -1,0 +1,26 @@
+<div>
+  <div *ngVar="tradeInfo$ | async as tradeInfo">
+    <cc-loading [observable]="tradeInfo$" class="loading"></cc-loading>
+    <ng-container *ngIf="tradeInfo != null">
+      <div class="wrap cards">
+        <cc-card *ngFor="let friendCard of tradeInfo.friendCards" [card]="friendCard" click="event" (clickEvent)="removeCard(friendCard)"></cc-card>
+        <cc-card *ngFor="let selfCardSuggestion of tradeInfo.selfCardSuggestions" [card]="selfCardSuggestion" click="event" (clickEvent)="declineSuggestion(selfCardSuggestion)" [suggestion]="true"></cc-card>
+      </div>
+    </ng-container>
+  </div>
+  <div class="confirm" *ngVar="confirmed$ | async as confirmed">
+    <div class="line">
+      <div></div>
+      <div></div>
+    </div>
+    <button *ngIf="confirmed === true" color="primary" mat-icon-button>
+      <mat-icon>done</mat-icon>
+    </button>
+    <button *ngIf="confirmed === false" color="error" mat-icon-button>
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  <button class="floating-button-br" mat-fab aria-label="Add" (click)="openAddSuggestion()">
+    <mat-icon>add</mat-icon>
+  </button>
+</div>

@@ -27,22 +27,21 @@ pub async fn set_trade_status_one(sql: &Sql, user_id: &Id, user_friend_id: &Id, 
     let mut con = sql.get_con().await?;
     let mut transaction = con.begin().await?;
 
-    let query =
-        "UPDATE trades
-         SET tstatusone=?
-         WHERE uidone=? AND uidtwo=?;";
-
-    sqlx::query(query)
+    sqlx::query("UPDATE trades
+                 SET tstatusone=?
+                 WHERE uidone=? AND uidtwo=?;")
         .bind(status_self as i32)
         .bind(user_id)
         .bind(user_friend_id)
         .execute(&mut transaction)
         .await?;
 
-    sqlx::query(query)
+    sqlx::query("UPDATE trades
+                 SET tstatustwo=?
+                 WHERE uidtwo=? AND uidone=?;")
         .bind(status_self as i32)
-        .bind(user_friend_id)
         .bind(user_id)
+        .bind(user_friend_id)
         .execute(&mut transaction)
         .await?;
 

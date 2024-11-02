@@ -1,4 +1,5 @@
-<div class="notification-item" *ngIf="notification != null">
-	<h3>{{notification.title}}</h3>
-	<p>{{notification.message}}</p>
+<div class="notification-item" *ngIf="notification != null" (click)="onClick.emit(notification)">
+	<p class="date">{{notification.time | date:'medium' }}</p>
+	<h3 class="title">{{notification.title}}</h3>
+	<p class="message">{{notification.message}}</p>
 </div>

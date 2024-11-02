@@ -22,7 +22,7 @@ pub fn escape_for_like(s: String) -> String {
 pub fn build_refresh_token_cookie(value: String, expires_in: i64) -> Cookie<'static>{
     let expires = OffsetDateTime::now_utc() + rocket::time::Duration::seconds(expires_in);
 
-    let cookie = Cookie::build("refresh_token", value)
+    let cookie = Cookie::build(("refresh_token", value))
         .path("/")
         .expires(expires)
         .same_site(SameSite::None)

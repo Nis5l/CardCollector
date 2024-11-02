@@ -7,7 +7,8 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { HttpModule, AuthModule } from '../../../../../../shared/services';
 import { InventoryModule } from '../../../../../../shared/components/inventory';
 import { ConfirmationDialogModule } from '../../../../../../shared/dialogs';
-import { TradeSelfInventoryComponent } from './trade-self-inventory.component';
+import { TradeFriendInventoryComponent } from './trade-friend-inventory.component';
+import { TradeFriendInventoryService } from './trade-friend-inventory.service';
 import { TradeService } from '../../trade.service';
 
 const MATERIAL_MODULES = [
@@ -27,7 +28,7 @@ const MATERIAL_MODULES = [
     InventoryModule,
     ConfirmationDialogModule,
   ],
-  providers: [ TradeService ],
-  declarations: [ TradeSelfInventoryComponent ]
+  providers: [ TradeFriendInventoryService, TradeService ],
+  declarations: [ TradeFriendInventoryComponent ]
 })
-export class TradeSelfInventoryModule {}
+export class TradeFriendInventoryModule {}

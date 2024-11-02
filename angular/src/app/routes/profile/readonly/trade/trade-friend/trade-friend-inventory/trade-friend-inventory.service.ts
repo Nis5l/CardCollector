@@ -5,10 +5,10 @@ import { HttpService } from '../../../../../../shared/services';
 import type { Id } from '../../../../../../shared/types';
 
 @Injectable()
-export class TradeSelfTradeService {
+export class TradeFriendInventoryService {
   constructor(private readonly httpService: HttpService) {}
 
-  public removeCard(friendId: Id, collectorId: Id, cardId: Id): Observable<void> {
-    return this.httpService.post(`/trade/${friendId}/${collectorId}/card/remove/${cardId}`, {});
+  public addSuggestion(userId: Id, collectorId: Id, cardId: Id): Observable<unknown> {
+    return this.httpService.post(`/trade/${userId}/${collectorId}/suggestion/add/${cardId}`, {});
   }
 }

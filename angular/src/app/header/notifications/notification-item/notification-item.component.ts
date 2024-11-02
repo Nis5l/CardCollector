@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 import { Notification } from '../types';
 
@@ -9,4 +9,7 @@ import { Notification } from '../types';
 })
 export class NotificationItemComponent{
 	@Input() public notification: Notification | null = null;
+  @Output() public onClick = new EventEmitter<Notification>();
+
+  constructor() {}
 }

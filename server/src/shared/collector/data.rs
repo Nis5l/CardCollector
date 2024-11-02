@@ -45,12 +45,12 @@ pub enum CollectorSetting {
 impl std::string::ToString for CollectorSetting {
     fn to_string(&self) -> String {
         String::from(match self {
-            PackCooldown => "pack_cooldown",
-            PackAmount => "pack_amount",
-            PackQualityMin => "pack_quality_min",
-            PackQualityMax => "pack_quality_max",
-            TradeCooldown => "trade_cooldown",
-            TradeCardLimit => "trade_card_limit"
+            CollectorSetting::PackCooldown => "pack_cooldown",
+            CollectorSetting::PackAmount => "pack_amount",
+            CollectorSetting::PackQualityMin => "pack_quality_min",
+            CollectorSetting::PackQualityMax => "pack_quality_max",
+            CollectorSetting::TradeCooldown => "trade_cooldown",
+            CollectorSetting::TradeCardLimit => "trade_card_limit"
         })
     }
 }

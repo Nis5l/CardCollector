@@ -13,10 +13,10 @@ pub async fn complete_trade(sql: &Sql, trade_id: &Id) -> Result<u64, sqlx::Error
     let mut transfered_card_count = 0;
 
     transfered_card_count += (sqlx::query(
-            "UPDATE cardunlocks
+            "UPDATE cardunlocks, trades, tradecards
              SET cardunlocks.uid=trades.uidone
-             FROM cardunlocks, trades
-             WHERE cardunlocks.tid = trades.tid
+             WHERE cardunlocks.cuid = tradecards.cuid
+             AND tradecards.tid = trades.tid
              AND trades.tid=?
              AND cardunlocks.uid<>trades.uidone;")
         .bind(trade_id)
@@ -24,10 +24,10 @@ pub async fn complete_trade(sql: &Sql, trade_id: &Id) -> Result<u64, sqlx::Error
         .await? as MySqlQueryResult).rows_affected();
 
     transfered_card_count += (sqlx::query(
-            "UPDATE cardunlocks
-             SET cardunlocks.uid=trades.uidtwo
-             FROM cardunlocks, trades
-             WHERE cardunlocks.tid = trades.tid
+            "UPDATE cardunlocks, trades, tradecards
+             SET cardunlocks.uid=trades.uidone
+             WHERE cardunlocks.cuid = tradecards.cuid
+             AND tradecards.tid = trades.tid
              AND trades.tid=?
              AND cardunlocks.uid<>trades.uidtwo;")
         .bind(trade_id)

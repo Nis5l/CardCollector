@@ -1,7 +1,7 @@
-import type { Id } from '../../../shared/types';
+import type { Id, IdInt } from '../../../shared/types';
 
 export interface Notification {
-	id: Id,
+	id: IdInt,
 	user_id: Id,
 	title: string,
 	message: string,

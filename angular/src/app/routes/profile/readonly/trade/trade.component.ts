@@ -8,7 +8,7 @@ import { TradeFriendComponent } from './trade-friend';
 const ROUTES: Route[] = [
   { path: "", pathMatch: "full", redirectTo: "you" },
   { path: "you", component: TradeSelfComponent, children: TradeSelfComponent.getRoutes() },
-  { path: "friend", component: TradeFriendComponent },
+  { path: "friend", component: TradeFriendComponent, children: TradeFriendComponent.getRoutes() },
 ];
 
 @Component({

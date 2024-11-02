@@ -7,6 +7,9 @@ use sqlx::mysql::MySqlPoolOptions;
 use rocket::{get, routes};
 use rocket::fs::{FileServer, relative};
 
+//#![feature(trace_macros)]
+//trace_macros!(true);
+
 mod user;
 mod sql;
 mod config;

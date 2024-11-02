@@ -6,6 +6,7 @@ import { TradeService } from './trade.service';
 import { TradeComponent } from './trade.component';
 import { HttpModule } from '../../../../shared/services';
 import { TradeSelfModule } from './trade-self';
+import { TradeFriendModule } from './trade-friend';
 import { TabNavigationModule } from '../../../../shared/components';
 import { NgVarModule } from '../../../../shared/directives';
 
@@ -16,6 +17,7 @@ import { NgVarModule } from '../../../../shared/directives';
 
     HttpModule,
     TradeSelfModule,
+    TradeFriendModule,
     TabNavigationModule,
     NgVarModule,
   ],

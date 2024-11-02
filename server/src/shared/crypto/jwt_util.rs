@@ -39,12 +39,12 @@ impl<'r> FromRequest<'r> for JwtToken {
           Some(token_str_full) => {
             if !token_str_full.starts_with("Bearer") {
               req.local_cache(|| JsonBodyError::CustomError(String::from("Token has to be of Bearer type")));
-              return request::Outcome::Failure((Status::BadRequest, ()));
+              return request::Outcome::Error((Status::BadRequest, ()));
             }
 
             if token_str_full.len() < 8 {
               req.local_cache(|| JsonBodyError::CustomError(String::from("No token found")));
-              return request::Outcome::Failure((Status::BadRequest, ()));
+              return request::Outcome::Error((Status::BadRequest, ()));
             }
 
             let token_str = &token_str_full[7..];
@@ -55,17 +55,17 @@ impl<'r> FromRequest<'r> for JwtToken {
                 Ok(token) => return request::Outcome::Success(token),
                 Err(JwtTokenError::Expired) => {
                     req.local_cache(|| JsonBodyError::CustomError(String::from("Authorization token expired")));
-                    return request::Outcome::Failure((Status::Unauthorized, ()));
+                    return request::Outcome::Error((Status::Unauthorized, ()));
                 },
                 Err(JwtTokenError::ParseError(_)) => {
                     req.local_cache(|| JsonBodyError::CustomError(String::from("Invalid authorization token")));
-                    return request::Outcome::Failure((Status::Unauthorized, ()));
+                    return request::Outcome::Error((Status::Unauthorized, ()));
                 }
             }
           },
           None => {
               req.local_cache(|| JsonBodyError::CustomError(String::from("Authorization token missing")));
-              request::Outcome::Failure((Status::Unauthorized, ()))
+              request::Outcome::Error((Status::Unauthorized, ()))
           }
         }
     }

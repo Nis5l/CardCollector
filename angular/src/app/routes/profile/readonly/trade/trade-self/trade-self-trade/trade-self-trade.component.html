@@ -4,10 +4,23 @@
     <ng-container *ngIf="tradeInfo != null">
       <div class="wrap cards">
         <cc-card *ngFor="let selfCard of tradeInfo.selfCards" [card]="selfCard" click="event" (clickEvent)="removeCard(selfCard)"></cc-card>
+        <cc-card *ngFor="let friendCardSuggestion of tradeInfo.friendCardSuggestions" [card]="friendCardSuggestion" click="event" (clickEvent)="acceptSuggestion(friendCardSuggestion)" [suggestion]="true"></cc-card>
       </div>
     </ng-container>
   </div>
-  <button class="floating-button-br" mat-fab aria-label="Add" (click)="openAddCard()">
+  <div class="confirm" *ngVar="confirmed$ | async as confirmed">
+    <div class="line">
+      <div></div>
+      <div></div>
+    </div>
+    <button *ngIf="confirmed === true" color="primary" mat-icon-button>
+      <mat-icon>done</mat-icon>
+    </button>
+    <button *ngIf="confirmed === false" color="error" mat-icon-button matTooltip="Confirm" aria-label="Confirm" (click)="confirm()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  <button [disabled]="disableAdd$ | async" class="floating-button-br" mat-fab aria-label="Add" (click)="openAddCard()">
     <mat-icon>add</mat-icon>
   </button>
 </div>

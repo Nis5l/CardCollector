@@ -1,14 +1,15 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule } from '@angular/material/dialog';
 
-import { HttpModule, AuthModule } from '../../../../../../shared/services';
-import { InventoryModule } from '../../../../../../shared/components/inventory';
+import { LoadingModule, CardModule } from '../../../../../../shared/components';
 import { ConfirmationDialogModule } from '../../../../../../shared/dialogs';
-import { TradeSelfInventoryComponent } from './trade-self-inventory.component';
-import { TradeService } from '../../trade.service';
+import { NgVarModule } from '../../../../../../shared/directives';
+import { HttpModule } from '../../../../../../shared/services';
+import { TradeFriendTradeComponent } from './trade-friend-trade.component';
 
 const MATERIAL_MODULES = [
   MatDialogModule,
@@ -19,15 +20,17 @@ const MATERIAL_MODULES = [
 @NgModule({
   imports: [
     CommonModule,
+    RouterModule,
 
     ...MATERIAL_MODULES,
 
     HttpModule,
-    AuthModule,
-    InventoryModule,
+    LoadingModule,
+    CardModule,
+    NgVarModule,
     ConfirmationDialogModule,
   ],
-  providers: [ TradeService ],
-  declarations: [ TradeSelfInventoryComponent ]
+  providers: [ ],
+  declarations: [ TradeFriendTradeComponent ]
 })
-export class TradeSelfInventoryModule {}
+export class TradeFriendTradeModule {}

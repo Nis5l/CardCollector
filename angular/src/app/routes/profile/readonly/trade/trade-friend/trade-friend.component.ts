@@ -1,4 +1,13 @@
 import { Component } from '@angular/core';
+import { type Route } from '@angular/router';
+
+import { TradeFriendInventoryComponent } from './trade-friend-inventory';
+import { TradeFriendTradeComponent } from './trade-friend-trade';
+
+const ROUTES: Route[] = [
+  { path: "", pathMatch: "full", component: TradeFriendTradeComponent },
+  { path: "inventory", component: TradeFriendInventoryComponent },
+];
 
 @Component({
   selector: "cc-trade-friend",
@@ -6,5 +15,7 @@ import { Component } from '@angular/core';
   styleUrls: [ "./trade-friend.component.scss" ]
 })
 export class TradeFriendComponent {
-
+  public static getRoutes(): Route[] {
+    return ROUTES;
+  }
 }

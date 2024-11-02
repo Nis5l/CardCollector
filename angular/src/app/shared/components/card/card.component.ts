@@ -44,6 +44,9 @@ export class CardComponent {
   @Input()
   public click: "none" | "upgrade" | "event" = "none";
 
+  @Input()
+  public suggestion: boolean = false;
+
 	constructor(
     private readonly cardService: CardService,
     private readonly router: Router,
