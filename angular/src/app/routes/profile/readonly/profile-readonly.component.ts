@@ -11,12 +11,14 @@ import { ConfirmationDialogComponent } from '../../../shared/dialogs';
 import { ProfileService } from '../profile.service';
 import { FriendStatus, Profile } from '../shared';
 import { CollectorFavoritesComponent } from './collector-favorites';
+import { CollectorFriendsComponent } from './collector-friends';
 
 type ProfileWithUserId = (Profile & { userId: Id });
 
 const ROUTES: Route[] = [
   { path: "", pathMatch: "full", redirectTo: "favorites" },
   { path: "favorites", component: CollectorFavoritesComponent },
+  { path: "friends", component: CollectorFriendsComponent },
 ];
 
 @Component({
@@ -33,6 +35,7 @@ export class ProfileReadonlyComponent extends SubscriptionManagerComponent {
 
   public readonly navigationItems: NavigationItem[] = [
     { name: "Favorites", link: "./favorites", icon: "star" },
+    { name: "Friends", link: "./friends", icon: "group" },
   ];
 
   public get friendStatus(): typeof FriendStatus {
@@ -58,8 +61,8 @@ export class ProfileReadonlyComponent extends SubscriptionManagerComponent {
         return userId;
       })
     );
-		this.profile$ = loadingService.waitFor(userId$.pipe(
-        switchMap(userId => this.profileService.getProfile(userId).pipe(
+		this.profile$ = loadingService.waitFor(observableCombineLatest([userId$, profileService.profileRefresh$.pipe(startWith(0))]).pipe(
+        switchMap(([userId]) => this.profileService.getProfile(userId).pipe(
           map(profile => ({ ...profile, userId })),
           catchError(() => observableOf(null)))
         )

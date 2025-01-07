@@ -1,0 +1,5 @@
+<div *ngVar="(friends$ | async) as friends" class="collector-friends">
+  <ng-container *ngIf="friends != null">
+    <cc-friend-card (onFriendDecline)="declineFriend($event)" (onFriendAccept)="acceptFriend($event)" *ngFor="let friend of friends" [friend]="friend"></cc-friend-card>
+  </ng-container>
+</div>

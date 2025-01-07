@@ -28,3 +28,7 @@ For production docker-compose a [LetsEncrypt proxy](https://github.com/evertramo
 ## TODO:
   Folder management for client. \
   Cleanup client code.
+
+
+
+FRIEND SYSTEM, probably have friends and friend requests in /friends route in profile besides favorites 

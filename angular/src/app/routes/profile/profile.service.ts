@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 import { HttpService } from '../../shared/services';
 import type { Id } from '../../shared/types';
@@ -7,7 +7,12 @@ import type { Profile, FriendStatusResponse } from './shared';
 
 @Injectable()
 export class ProfileService {
-	constructor(private readonly httpService: HttpService) {}
+  private readonly profileRefreshSubject: Subject<void> = new Subject<void>();
+  public readonly profileRefresh$: Observable<void>;
+
+	constructor(private readonly httpService: HttpService) {
+    this.profileRefresh$ = this.profileRefreshSubject.asObservable();
+  }
 
 	public getProfile(userId: Id): Observable<Profile> {
 		return this.httpService.get(`/user/${userId}/stats`);
@@ -23,5 +28,9 @@ export class ProfileService {
 
   public removeFriend(userId: Id): Observable<unknown> {
     return this.httpService.post<{}, unknown>(`/friend/${userId}/remove`, {});
+  }
+
+  public triggerProfileRefresh(): void {
+    this.profileRefreshSubject.next();
   }
 }

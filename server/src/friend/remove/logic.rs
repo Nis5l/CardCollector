@@ -27,7 +27,7 @@ pub async fn friend_remove_route(friend_user_id: Id, sql: &State<Sql>, token: Jw
     rjtry!(notification::sql::add_notification(sql, &friend_user_id, None, &notification::data::NotificationCreateData {
         title: String::from("Friend Removed"),
         message: format!("{} removed you as a friend", &username),
-        url: String::from("friends"),
+        url: format!("/user/{}", user_id),
         time: Utc::now()
     }).await);
 

@@ -37,7 +37,7 @@ pub async fn friend_add_route(friend_user_id: Id, sql: &State<Sql>, token: JwtTo
     rjtry!(notification::sql::add_notification(sql, &friend_user_id, None, &notification::data::NotificationCreateData {
         title: String::from("Friend Request"),
         message: format!("{} sent you a friend request, click to view!", username),
-        url: String::from("friends"),
+        url: format!("/user/{}/friends", friend_user_id),
         time: Utc::now()
     }).await);
 

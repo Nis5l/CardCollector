@@ -13,6 +13,7 @@ import { NgVarModule } from '../../../shared/directives';
 import { ProfileReadonlyComponent } from './profile-readonly.component';
 import { ProfileService } from '../profile.service';
 import { CollectorFavoritesModule } from './collector-favorites';
+import { CollectorFriendsModule } from './collector-friends';
 
 const MATERIAL_MODULES = [
 	MatButtonModule,
@@ -35,6 +36,7 @@ const MATERIAL_MODULES = [
 		ProfileImageModule,
     TabNavigationModule,
     CollectorFavoritesModule,
+    CollectorFriendsModule,
 	],
 	declarations: [ ProfileReadonlyComponent ],
 	providers: [ ProfileService ],

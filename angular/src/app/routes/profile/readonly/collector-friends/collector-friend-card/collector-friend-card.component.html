@@ -1,0 +1,26 @@
+<ng-container *ngVar="(isSelf$ | async) as isSelf">
+  <ng-container *ngIf="(friendResponse$ | async) as friendResponse">
+    <mat-card (click)="userClick(friendResponse.userId)" class="user" *ngIf="friendResponse.status === FriendStatus.Friend || isSelf">
+        <div class="user-image">
+          <cc-profile-image [userId]="friendResponse.userId" [editable]="false"></cc-profile-image>
+        </div>
+        <div>
+          <mat-card-title>{{friendResponse.username}}</mat-card-title>
+          <mat-card-subtitle>...description...</mat-card-subtitle>
+          <mat-card-subtitle>...stats...</mat-card-subtitle>
+        </div>
+        <div class="friend-status" *ngIf="friendResponse.status === FriendStatus.Pending && isSelf">
+          <button color="primary" mat-icon-button (click)="acceptFriend($event, friendResponse.userId)">
+            <mat-icon>done</mat-icon>
+          </button>
+          <button color="error" mat-icon-button matTooltip="Confirm" aria-label="Confirm" (click)="declineFriend($event, friendResponse.userId)">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+
+        <div class="friend-status" *ngIf="friendResponse.status === FriendStatus.Sent" (click)="stopPropagation($event)">
+          <mat-icon class="sent">hourglass_empty</mat-icon>
+        </div>
+    </mat-card>
+  </ng-container>
+</ng-container>
