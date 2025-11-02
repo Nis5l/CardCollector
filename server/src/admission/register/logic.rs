@@ -29,7 +29,7 @@ pub async fn register_route(data: RegisterRequest, sql: &State<Sql>, config: &St
 
     rjtry!(user::sql::set_verification_key(sql, &user_id, &verification_key).await);
 
-    email::send_email_async(config.email.clone(), config.email_password.clone(), data.email.clone(), verification_key, config.domain.clone(), config.smtp_server.clone());
+    email::send_email_async(config.email.clone(), config.email_password.clone(), data.email.clone(), verification_key, config.domain.clone(), config.smtp_server.clone(), data.username.clone());
 
     return ApiResponseErr::api_err(Status::Ok, format!("Register succeeded, verification email will be sent to {} soon", &data.email))
 }

@@ -3,11 +3,11 @@ use lettre::{Message, SmtpTransport, Transport};
 use lettre::transport::smtp::response::Response;
 use lettre::transport::smtp::Error;
 
-pub async fn send_email(from: &str, password: &str, to: &str, key: &str, domain: &str, smtp_server: &str) -> Result<Response, Error> {
+pub async fn send_email(from: &str, password: &str, to: &str, key: &str, domain: &str, smtp_server: &str, username: &str) -> Result<Response, Error> {
     let email = Message::builder()
-        .from(format!("WaifuCollector <{}>", from).parse().unwrap())
-        .to(format!("Hei <{}>", to).parse().unwrap())
-        .subject("WaifuCollector verify")
+        .from(format!("CardCollector <{}>", from).parse().unwrap())
+        .to(format!("{} <{}>", username, to).parse().unwrap())
+        .subject("CardCollector verify")
         .body(format!("{}/verify?key={}", domain, key))
         .unwrap();
 
@@ -23,10 +23,10 @@ pub async fn send_email(from: &str, password: &str, to: &str, key: &str, domain:
     mailer.send(&email)
 }
 
-pub fn send_email_async(from: String, password: String, to: String, key: String, domain: String, smtp_server: String) {
+pub fn send_email_async(from: String, password: String, to: String, key: String, domain: String, smtp_server: String, username: String) {
     tokio::spawn(async move {
-        if let Err(err) = send_email(&from, &password, &to, &key, &domain, &smtp_server).await {
-            println!("Error sending mail to {}, {}", to, err);
+        if let Err(err) = send_email(&from, &password, &to, &key, &domain, &smtp_server, &username).await {
+            println!("Error sending mail to {} {}, {}", username, to, err);
         };
     });
 }

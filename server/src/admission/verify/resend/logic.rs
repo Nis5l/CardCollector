@@ -14,7 +14,7 @@ use super::data::VerifyResendResponse;
 pub async fn verify_resend_route(token: JwtToken, sql: &State<Sql>, config: &State<Config>) -> ApiResponseErr<VerifyResendResponse> {
     let user_id = token.id;
 
-    verify_user!(sql, &user_id, false);
+    let username = verify_user!(sql, &user_id, false);
 
     //NOTE: user exists
     let verify_db = rjtry!(user::sql::get_verify_data(sql, &user_id).await).unwrap();
@@ -32,7 +32,7 @@ pub async fn verify_resend_route(token: JwtToken, sql: &State<Sql>, config: &Sta
 
     rjtry!(user::sql::set_verification_key(sql, &user_id, &verification_key).await);
 
-    email::send_email_async(config.email.clone(), config.email_password.clone(), email.clone(), verification_key, config.domain.clone(), config.smtp_server.clone());
+    email::send_email_async(config.email.clone(), config.email_password.clone(), email.clone(), verification_key, config.domain.clone(), config.smtp_server.clone(), username);
 
     ApiResponseErr::ok(Status::Ok, VerifyResendResponse {
         message: format!("Verification will be sent to {} soon", &email)

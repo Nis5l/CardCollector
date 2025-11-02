@@ -31,4 +31,4 @@ For production docker-compose a [LetsEncrypt proxy](https://github.com/evertramo
 
 
 
-FRIEND SYSTEM, probably have friends and friend requests in /friends route in profile besides favorites 
+verify system
