@@ -1,13 +1,17 @@
 <!-- <cc-loading-spinner *ngIf="loading$ | async"></cc-loading-spinner> TODO-->
-<div *ngIf="!(loading$ | async)" class="new-collector-wrapper">
-	<form [formGroup]="formGroup" (submit)="onCreate()">
-		<mat-form-field>
-			<input matInput type="text" formControlName="name" placeholder="Name" />
-			<mat-error>Name has to be {{config.name.minLength}}-{{config.name.maxLength}} characters</mat-error>
-		</mat-form-field>
-		<div *ngVar="(error$ | async) as error" class="error">
-			<mat-error *ngIf="error != null">{{error}}</mat-error>
-		</div>
-		<button mat-raised-button type="submit" [disabled]="!formGroup.valid">Create</button>
-	</form>
-</div>
+@if (!(loading$ | async)) {
+  <div class="new-collector-wrapper">
+    <form [formGroup]="formGroup" (submit)="onCreate()">
+      <mat-form-field>
+        <input matInput type="text" formControlName="name" placeholder="Name" />
+        <mat-error>Name has to be {{config.name.minLength}}-{{config.name.maxLength}} characters</mat-error>
+      </mat-form-field>
+      <div *ngVar="(error$ | async) as error" class="error">
+        @if (error != null) {
+          <mat-error>{{error}}</mat-error>
+        }
+      </div>
+      <button mat-raised-button type="submit" [disabled]="!formGroup.valid">Create</button>
+    </form>
+  </div>
+}

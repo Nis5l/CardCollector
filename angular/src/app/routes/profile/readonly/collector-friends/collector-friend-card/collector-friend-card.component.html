@@ -1,6 +1,7 @@
 <ng-container *ngVar="(isSelf$ | async) as isSelf">
-  <ng-container *ngIf="(friendResponse$ | async) as friendResponse">
-    <mat-card appearance="outlined" (click)="userClick(friendResponse.userId)" class="user" *ngIf="friendResponse.status === FriendStatus.Friend || isSelf">
+  @if ((friendResponse$ | async); as friendResponse) {
+    @if (friendResponse.status === FriendStatus.Friend || isSelf) {
+      <mat-card appearance="outlined" (click)="userClick(friendResponse.userId)" class="user">
         <div class="user-image">
           <cc-profile-image [userId]="friendResponse.userId" [editable]="false"></cc-profile-image>
         </div>
@@ -9,18 +10,22 @@
           <mat-card-subtitle>...description...</mat-card-subtitle>
           <mat-card-subtitle>...stats...</mat-card-subtitle>
         </div>
-        <div class="friend-status" *ngIf="friendResponse.status === FriendStatus.Pending && isSelf">
-          <button color="primary" mat-icon-button (click)="acceptFriend($event, friendResponse.userId)">
-            <mat-icon color="accent" svgIcon="check"></mat-icon>
-          </button>
-          <button color="error" mat-icon-button matTooltip="Confirm" aria-label="Confirm" (click)="declineFriend($event, friendResponse.userId)">
-            <mat-icon color="accent" svgIcon="close"></mat-icon>
-          </button>
-        </div>
-
-        <div class="friend-status" *ngIf="friendResponse.status === FriendStatus.Sent" (click)="stopPropagation($event)">
-          <mat-icon class="sent" color="accent" svgIcon="hourglass_empty"></mat-icon>
-        </div>
-    </mat-card>
-  </ng-container>
+        @if (friendResponse.status === FriendStatus.Pending && isSelf) {
+          <div class="friend-status">
+            <button color="primary" mat-icon-button (click)="acceptFriend($event, friendResponse.userId)">
+              <mat-icon color="accent" svgIcon="check"></mat-icon>
+            </button>
+            <button color="error" mat-icon-button matTooltip="Confirm" aria-label="Confirm" (click)="declineFriend($event, friendResponse.userId)">
+              <mat-icon color="accent" svgIcon="close"></mat-icon>
+            </button>
+          </div>
+        }
+        @if (friendResponse.status === FriendStatus.Sent) {
+          <div class="friend-status" (click)="stopPropagation($event)">
+            <mat-icon class="sent" color="accent" svgIcon="hourglass_empty"></mat-icon>
+          </div>
+        }
+      </mat-card>
+    }
+  }
 </ng-container>

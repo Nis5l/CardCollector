@@ -1,19 +1,21 @@
 <div *ngVar="(collector$ | async) as collector">
-	<div *ngIf="collector != null">
-		<cc-collector-banner [editable]="true" [collector]="collector"></cc-collector-banner>
-		<div class="head">
-			<div class="collector-image">
-				<cc-collector-image [editable]="true" [collector]="collector"></cc-collector-image>
-			</div>
-			<div class="info">
-				<div class="name-wrapper">
-					<h2 class="name">{{collector.name}}</h2>
-				</div>
-				<p class="description">...desc...</p>
-			</div>
-		</div>
-		<button class="floating-button-br" mat-fab aria-label="Profile" (click)="navigateCollector(collector.id)">
-		  <mat-icon color="primary" svgIcon="close"></mat-icon>
-		</button>
-	</div>
+  @if (collector != null) {
+    <div>
+      <cc-collector-banner [editable]="true" [collector]="collector"></cc-collector-banner>
+      <div class="head">
+        <div class="collector-image">
+          <cc-collector-image [editable]="true" [collector]="collector"></cc-collector-image>
+        </div>
+        <div class="info">
+          <div class="name-wrapper">
+            <h2 class="name">{{collector.name}}</h2>
+          </div>
+          <p class="description">...desc...</p>
+        </div>
+      </div>
+      <button class="floating-button-br" mat-fab aria-label="Profile" (click)="navigateCollector(collector.id)">
+        <mat-icon color="primary" svgIcon="close"></mat-icon>
+      </button>
+    </div>
+  }
 </div>

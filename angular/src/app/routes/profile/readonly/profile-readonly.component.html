@@ -1,29 +1,39 @@
 <div class="wrap">
   <div *ngVar="(profile$ | async) as profile" class="profile-wrapper">
     <ng-container *ngVar="(isSelf$ | async) as isSelf" >
-      <div *ngIf="profile != null" class="profile">
-        <cc-profile-image [userId]="profile.userId" [editable]="false"></cc-profile-image>
-        <h1 class="username">{{profile.username}}</h1>
-        <div class="actions" *ngVar="(friendStatus$ | async) as fs">
-          <button *ngIf="isSelf === false && fs === friendStatus.Nothing" (click)="addFriend(profile.userId)" mat-icon-button matTooltip="Friend request" aria-label="Friend request">
-            <mat-icon color="accent" svgIcon="person_add"></mat-icon>
-          </button>
-          <button *ngIf="isSelf === false && fs === friendStatus.Sent" (click)="removeFriend(profile.userId, false)" mat-icon-button matTooltip="Cancel friend request" aria-label="Cancel friend request">
-            <mat-icon color="accent" svgIcon="person_add_disabled"></mat-icon>
-          </button>
-          <button *ngIf="isSelf === false && fs === friendStatus.Friend" (click)="removeFriend(profile.userId, true)" mat-icon-button matTooltip="Remove as friend" aria-label="Remove as friend">
-            <mat-icon color="accent" svgIcon="person_remove"></mat-icon>
-          </button>
+      @if (profile != null) {
+        <div class="profile">
+          <cc-profile-image [userId]="profile.userId" [editable]="false"></cc-profile-image>
+          <h1 class="username">{{profile.username}}</h1>
+          <div class="actions" *ngVar="(friendStatus$ | async) as fs">
+            @if (isSelf === false && fs === friendStatus.Nothing) {
+              <button (click)="addFriend(profile.userId)" mat-icon-button matTooltip="Friend request" aria-label="Friend request">
+                <mat-icon color="accent" svgIcon="person_add"></mat-icon>
+              </button>
+            }
+            @if (isSelf === false && fs === friendStatus.Sent) {
+              <button (click)="removeFriend(profile.userId, false)" mat-icon-button matTooltip="Cancel friend request" aria-label="Cancel friend request">
+                <mat-icon color="accent" svgIcon="person_add_disabled"></mat-icon>
+              </button>
+            }
+            @if (isSelf === false && fs === friendStatus.Friend) {
+              <button (click)="removeFriend(profile.userId, true)" mat-icon-button matTooltip="Remove as friend" aria-label="Remove as friend">
+                <mat-icon color="accent" svgIcon="person_remove"></mat-icon>
+              </button>
+            }
+          </div>
+          <p class="stats">Friends: {{profile.friends}}/{{profile.maxFriends}}</p>
         </div>
-        <p class="stats">Friends: {{profile.friends}}/{{profile.maxFriends}}</p>
-      </div>
+      }
       <div class="navigation wrap">
         <cc-tab-navigation [items]="navigationItems"></cc-tab-navigation>
         <router-outlet></router-outlet>
       </div>
-      <button *ngIf="isSelf === true" class="floating-button-br" mat-fab aria-label="Edit" (click)="edit()">
-        <mat-icon color="primary" svgIcon="edit"></mat-icon>
-      </button>
+      @if (isSelf === true) {
+        <button class="floating-button-br" mat-fab aria-label="Edit" (click)="edit()">
+          <mat-icon color="primary" svgIcon="edit"></mat-icon>
+        </button>
+      }
     </ng-container>
   </div>
 </div>

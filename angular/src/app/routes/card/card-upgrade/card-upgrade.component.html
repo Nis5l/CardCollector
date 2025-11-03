@@ -1,5 +1,5 @@
 <div class="card-upgrade" *ngVar="(unlockedCard$ | async) as unlockedCard">
-  <ng-container *ngIf="unlockedCard != null">
+  @if (unlockedCard != null) {
     <div class="card">
       <cc-card [card]="unlockedCard"></cc-card>
     </div>
@@ -8,12 +8,14 @@
     <mat-divider></mat-divider>
     <div class="cards-wrapper" *ngVar="(unlockedCardsResponse$ | async) as unlockedCardsResponse">
       <cc-loading [observable]="unlockedCardsResponse$"></cc-loading>
-      <ng-container *ngIf="unlockedCardsResponse != null">
+      @if (unlockedCardsResponse != null) {
         <div class="cards">
-          <cc-card *ngFor="let card of unlockedCardsResponse.cards" [card]="card" click="event" (clickEvent)="onClick(unlockedCard, card)"></cc-card>
+          @for (card of unlockedCardsResponse.cards; track card) {
+            <cc-card [card]="card" click="event" (clickEvent)="onClick(unlockedCard, card)"></cc-card>
+          }
         </div>
         <mat-paginator [length]="unlockedCardsResponse.cardCount" [pageSize]="unlockedCardsResponse.pageSize" (page)="changePage($event)"></mat-paginator>
-      </ng-container>
+      }
     </div>
-  </ng-container>
+  }
 </div>

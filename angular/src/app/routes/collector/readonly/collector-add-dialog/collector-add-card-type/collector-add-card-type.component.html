@@ -1,21 +1,29 @@
 <ng-container *ngVar="(config$ | async) as config">
-	<div class="collector-add-card-type" *ngIf="config != null">
-		<form [formGroup]="formGroup" (submit)="createCardTypeRequest()">
-			<mat-form-field *ngVar="formGroup.controls.name as nameFormControl">
-				<input matInput type="text" formControlName="name" placeholder="Name" [minlength]="config.nameLengthMin" [maxlength]="config.nameLengthMax" />
-				<mat-error *ngIf="nameFormControl.hasError('required') || nameFormControl.hasError('minlength')">
-					Name has to be {{config.nameLengthMin}}-{{config.nameLengthMax}} characters
-				</mat-error>
-				<mat-error *ngIf="nameFormControl.hasError('pattern')">
-					Name can only contain letters, numbers, _ and whitespaces in between words
-				</mat-error>
-			</mat-form-field>
-			<div class="create">
-				<div *ngVar="(error$ | async) as error" class="error">
-					<mat-error *ngIf="error != null">{{error}}</mat-error>
-				</div>
-				<button mat-button type="submit" [disabled]="!formGroup.valid">Create</button>
-			</div>
-		</form>
-	</div>
+  @if (config != null) {
+    <div class="collector-add-card-type">
+      <form [formGroup]="formGroup" (submit)="createCardTypeRequest()">
+        <mat-form-field *ngVar="formGroup.controls.name as nameFormControl">
+          <input matInput type="text" formControlName="name" placeholder="Name" [minlength]="config.nameLengthMin" [maxlength]="config.nameLengthMax" />
+          @if (nameFormControl.hasError('required') || nameFormControl.hasError('minlength')) {
+            <mat-error>
+              Name has to be {{config.nameLengthMin}}-{{config.nameLengthMax}} characters
+            </mat-error>
+          }
+          @if (nameFormControl.hasError('pattern')) {
+            <mat-error>
+              Name can only contain letters, numbers, _ and whitespaces in between words
+            </mat-error>
+          }
+        </mat-form-field>
+        <div class="create">
+          <div *ngVar="(error$ | async) as error" class="error">
+            @if (error != null) {
+              <mat-error>{{error}}</mat-error>
+            }
+          </div>
+          <button mat-button type="submit" [disabled]="!formGroup.valid">Create</button>
+        </div>
+      </form>
+    </div>
+  }
 </ng-container>

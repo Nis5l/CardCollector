@@ -1,24 +1,32 @@
 <div>
   <div *ngVar="tradeInfo$ | async as tradeInfo">
     <cc-loading [observable]="tradeInfo$" class="loading"></cc-loading>
-    <ng-container *ngIf="tradeInfo != null">
+    @if (tradeInfo != null) {
       <div class="wrap cards">
-        <cc-card *ngFor="let selfCard of tradeInfo.selfCards" [card]="selfCard" click="event" (clickEvent)="removeCard(selfCard)"></cc-card>
-        <cc-card *ngFor="let friendCardSuggestion of tradeInfo.friendCardSuggestions" [card]="friendCardSuggestion" click="event" (clickEvent)="acceptSuggestion(friendCardSuggestion)" [suggestion]="true"></cc-card>
+        @for (selfCard of tradeInfo.selfCards; track selfCard) {
+          <cc-card [card]="selfCard" click="event" (clickEvent)="removeCard(selfCard)"></cc-card>
+        }
+        @for (friendCardSuggestion of tradeInfo.friendCardSuggestions; track friendCardSuggestion) {
+          <cc-card [card]="friendCardSuggestion" click="event" (clickEvent)="acceptSuggestion(friendCardSuggestion)" [suggestion]="true"></cc-card>
+        }
       </div>
-    </ng-container>
+    }
   </div>
   <div class="confirm" *ngVar="confirmed$ | async as confirmed">
     <div class="line">
       <div></div>
       <div></div>
     </div>
-    <button *ngIf="confirmed === true" color="primary" mat-icon-button>
-      <mat-icon color="accent" svgIcon="check"></mat-icon>
-    </button>
-    <button *ngIf="confirmed === false" color="error" mat-icon-button matTooltip="Confirm" aria-label="Confirm" (click)="confirm()">
-      <mat-icon color="accent" svgIcon="close"></mat-icon>
-    </button>
+    @if (confirmed === true) {
+      <button color="primary" mat-icon-button>
+        <mat-icon color="accent" svgIcon="check"></mat-icon>
+      </button>
+    }
+    @if (confirmed === false) {
+      <button color="error" mat-icon-button matTooltip="Confirm" aria-label="Confirm" (click)="confirm()">
+        <mat-icon color="accent" svgIcon="close"></mat-icon>
+      </button>
+    }
   </div>
   <button [disabled]="disableAdd$ | async" class="floating-button-br" mat-fab aria-label="Add" (click)="openAddCard()">
     <mat-icon color="accent" svgIcon="add"></mat-icon>

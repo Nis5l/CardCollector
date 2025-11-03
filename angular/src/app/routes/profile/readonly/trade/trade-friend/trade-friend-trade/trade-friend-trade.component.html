@@ -1,24 +1,32 @@
 <div>
   <div *ngVar="tradeInfo$ | async as tradeInfo">
     <cc-loading [observable]="tradeInfo$" class="loading"></cc-loading>
-    <ng-container *ngIf="tradeInfo != null">
+    @if (tradeInfo != null) {
       <div class="wrap cards">
-        <cc-card *ngFor="let friendCard of tradeInfo.friendCards" [card]="friendCard" click="event" (clickEvent)="removeCard(friendCard)"></cc-card>
-        <cc-card *ngFor="let selfCardSuggestion of tradeInfo.selfCardSuggestions" [card]="selfCardSuggestion" click="event" (clickEvent)="declineSuggestion(selfCardSuggestion)" [suggestion]="true"></cc-card>
+        @for (friendCard of tradeInfo.friendCards; track friendCard) {
+          <cc-card [card]="friendCard" click="event" (clickEvent)="removeCard(friendCard)"></cc-card>
+        }
+        @for (selfCardSuggestion of tradeInfo.selfCardSuggestions; track selfCardSuggestion) {
+          <cc-card [card]="selfCardSuggestion" click="event" (clickEvent)="declineSuggestion(selfCardSuggestion)" [suggestion]="true"></cc-card>
+        }
       </div>
-    </ng-container>
+    }
   </div>
   <div class="confirm" *ngVar="confirmed$ | async as confirmed">
     <div class="line">
       <div></div>
       <div></div>
     </div>
-    <button *ngIf="confirmed === true" color="primary" mat-icon-button>
-      <mat-icon color="accent" svgIcon="check"></mat-icon>
-    </button>
-    <button *ngIf="confirmed === false" color="error" mat-icon-button>
-      <mat-icon color="accent" svgIcon="close"></mat-icon>
-    </button>
+    @if (confirmed === true) {
+      <button color="primary" mat-icon-button>
+        <mat-icon color="accent" svgIcon="check"></mat-icon>
+      </button>
+    }
+    @if (confirmed === false) {
+      <button color="error" mat-icon-button>
+        <mat-icon color="accent" svgIcon="close"></mat-icon>
+      </button>
+    }
   </div>
   <button class="floating-button-br" mat-fab aria-label="Add" (click)="openAddSuggestion()">
     <mat-icon color="accent" svgIcon="add"></mat-icon>

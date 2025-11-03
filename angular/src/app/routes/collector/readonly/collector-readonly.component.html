@@ -1,25 +1,27 @@
 <ng-container *ngVar="(collector$ | async) as collector">
-	<div *ngIf="collector != null" class="collector">
-		<cc-collector-banner [editable]="false" [collector]="collector"></cc-collector-banner>
-		<div class="wrap head">
-			<div class="collector-image">
-				<cc-collector-image [editable]="false" [collector]="collector"></cc-collector-image>
-			</div>
-			<div class="info">
-				<div class="name-wrapper">
-					<h2 class="name">{{collector.name}}</h2>
-					<cc-collector-favorite [collectorId]="collector.id"></cc-collector-favorite>
-				</div>
-				<p class="description">...desc...</p>
-        <div class="creator">
-          <p class="owner">by </p>
-          <cc-user [userId]="collector.userId"></cc-user>
+  @if (collector != null) {
+    <div class="collector">
+      <cc-collector-banner [editable]="false" [collector]="collector"></cc-collector-banner>
+      <div class="wrap head">
+        <div class="collector-image">
+          <cc-collector-image [editable]="false" [collector]="collector"></cc-collector-image>
         </div>
-			</div>
-		</div>
-    <div class="wrap">
-      <cc-tab-navigation [items]="navigationItems"></cc-tab-navigation>
-      <router-outlet></router-outlet>
+        <div class="info">
+          <div class="name-wrapper">
+            <h2 class="name">{{collector.name}}</h2>
+            <cc-collector-favorite [collectorId]="collector.id"></cc-collector-favorite>
+          </div>
+          <p class="description">...desc...</p>
+          <div class="creator">
+            <p class="owner">by </p>
+            <cc-user [userId]="collector.userId"></cc-user>
+          </div>
+        </div>
+      </div>
+      <div class="wrap">
+        <cc-tab-navigation [items]="navigationItems"></cc-tab-navigation>
+        <router-outlet></router-outlet>
+      </div>
     </div>
-	</div>
+  }
 </ng-container>

@@ -1,19 +1,21 @@
 <mat-form-field [ngClass]="{'mat-form-field-invalid': !control?.valid}" class="card-type-selector" appearance="fill">
-	<mat-label>Card-Type</mat-label>
-	<input type="text"
-		placeholder=""
-		aria-label="Card-Type"
-		matInput
-		[disabled]="disabled"
-		[formControl]="formControl"
-		[matAutocomplete]="auto">
-	<mat-autocomplete
-		#auto="matAutocomplete"
-		(optionSelected)="onSelectionChange($event.option.value)"
-		[displayWith]="displayFn"
-	>
-	<mat-option *ngFor="let cardTypeOption of cardTypeOptions$ | async" [value]="cardTypeOption">
-	{{cardTypeOption.name}}
-	</mat-option>
-	</mat-autocomplete>
+  <mat-label>Card-Type</mat-label>
+  <input type="text"
+    placeholder=""
+    aria-label="Card-Type"
+    matInput
+    [disabled]="disabled"
+    [formControl]="formControl"
+    [matAutocomplete]="auto">
+  <mat-autocomplete
+    #auto="matAutocomplete"
+    (optionSelected)="onSelectionChange($event.option.value)"
+    [displayWith]="displayFn"
+    >
+    @for (cardTypeOption of cardTypeOptions$ | async; track cardTypeOption) {
+      <mat-option [value]="cardTypeOption">
+        {{cardTypeOption.name}}
+      </mat-option>
+    }
+  </mat-autocomplete>
 </mat-form-field>

@@ -1,15 +1,17 @@
 <mat-card appearance="outlined" class="request-card">
-	<mat-card-header>
-		<mat-card-title>
-			<p class="title">{{title}}</p> <p class="seperator">-</p> <cc-user [userId]="userId$ | async"></cc-user>
-		</mat-card-title>
-		<mat-divider></mat-divider>
-	</mat-card-header>
-	<mat-card-content>
-		<ng-content></ng-content>
-	</mat-card-content>
-	<mat-card-actions *ngIf="isAdmin$ | async">
-		<button mat-icon-button color="primary" (click)="accept()"><mat-icon color="accent" svgIcon="check"></mat-icon></button>
-		<button mat-icon-button color="error" (click)="decline()"><mat-icon color="accent" svgIcon="close"></mat-icon></button>
-	</mat-card-actions>
+  <mat-card-header>
+    <mat-card-title>
+      <p class="title">{{title}}</p> <p class="seperator">-</p> <cc-user [userId]="userId$ | async"></cc-user>
+    </mat-card-title>
+    <mat-divider></mat-divider>
+  </mat-card-header>
+  <mat-card-content>
+    <ng-content></ng-content>
+  </mat-card-content>
+  @if (isAdmin$ | async) {
+    <mat-card-actions>
+      <button mat-icon-button color="primary" (click)="accept()"><mat-icon color="accent" svgIcon="check"></mat-icon></button>
+      <button mat-icon-button color="error" (click)="decline()"><mat-icon color="accent" svgIcon="close"></mat-icon></button>
+    </mat-card-actions>
+  }
 </mat-card>

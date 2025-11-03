@@ -1,3 +1,5 @@
 <ng-container *ngVar="(collector$ | async) as collector">
-	<cc-collector-open *ngIf="collector != null" [collectorId]="collector.id"></cc-collector-open>
+  @if (collector != null) {
+    <cc-collector-open [collectorId]="collector.id"></cc-collector-open>
+  }
 </ng-container>

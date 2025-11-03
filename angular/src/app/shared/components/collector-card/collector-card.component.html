@@ -1,13 +1,15 @@
 <mat-card appearance="outlined" class="collector" (click)="collectorClick()">
-	<div class="collector-image">
-		<cc-collector-image [editable]="false" [collector]="collector"></cc-collector-image>
-	</div>
-	<div>
-		<mat-card-title>{{collector.name}}</mat-card-title>
-		<mat-card-subtitle>...description...</mat-card-subtitle>
-		<mat-card-subtitle>...stats...</mat-card-subtitle>
-	</div>
-  <div class="trade" (click)="tradeClick()" *ngIf="tradeId != null">
-    <mat-icon color="accent" svgIcon="compare_arrows"></mat-icon>
+  <div class="collector-image">
+    <cc-collector-image [editable]="false" [collector]="collector"></cc-collector-image>
   </div>
+  <div>
+    <mat-card-title>{{collector.name}}</mat-card-title>
+    <mat-card-subtitle>...description...</mat-card-subtitle>
+    <mat-card-subtitle>...stats...</mat-card-subtitle>
+  </div>
+  @if (tradeId != null) {
+    <div class="trade" (click)="tradeClick()">
+      <mat-icon color="accent" svgIcon="compare_arrows"></mat-icon>
+    </div>
+  }
 </mat-card>

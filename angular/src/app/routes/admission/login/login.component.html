@@ -11,7 +11,9 @@
           <mat-error>Password has to be {{config.password.minLength}}-{{config.password.maxLength}} characters</mat-error>
         </mat-form-field>
         <div *ngVar="(error$ | async) as error" class="error">
-          <mat-error *ngIf="error != null">{{error}}</mat-error>
+          @if (error != null) {
+            <mat-error>{{error}}</mat-error>
+          }
         </div>
         <button mat-raised-button type="submit" [disabled]="!formGroup.valid">Login</button>
       </form>

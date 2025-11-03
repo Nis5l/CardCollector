@@ -1,5 +1,5 @@
 <div *ngVar="(inventoryResponse$ | async) as inventoryResponse" class="inventory">
-  <ng-container *ngIf="inventoryResponse != null">
+  @if (inventoryResponse != null) {
     <form [formGroup]="formGroup" class="options">
       <mat-form-field>
         <input matInput type="text" formControlName="search" placeholder="Search" />
@@ -7,16 +7,20 @@
       <mat-form-field>
         <mat-label>Sort Type</mat-label>
         <mat-select formControlName="sortType">
-          <mat-option *ngFor="let sortType of sortTypes" [value]="sortType.value">
-            {{sortType.text}}
-          </mat-option>
+          @for (sortType of sortTypes; track sortType) {
+            <mat-option [value]="sortType.value">
+              {{sortType.text}}
+            </mat-option>
+          }
         </mat-select>
       </mat-form-field>
     </form>
     <cc-loading [observable]="loading$"></cc-loading>
     <div class="cards">
-      <cc-card *ngFor="let card of inventoryResponse.cards" [card]="card" [click]="click" (clickEvent)="clickEvent.emit(card.id)"></cc-card>
+      @for (card of inventoryResponse.cards; track card) {
+        <cc-card [card]="card" [click]="click" (clickEvent)="clickEvent.emit(card.id)"></cc-card>
+      }
     </div>
     <mat-paginator [length]="inventoryResponse.cardCount" [pageSize]="inventoryResponse.pageSize" (page)="changePage($event)"></mat-paginator>
-  </ng-container>
+  }
 </div>

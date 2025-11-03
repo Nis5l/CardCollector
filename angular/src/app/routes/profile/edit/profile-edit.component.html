@@ -1,9 +1,11 @@
 <div class="wrap">
   <div *ngVar="(profile$ | async) as profile" class="profile-wrapper">
-    <div *ngIf="profile != null" class="profile">
-      <cc-profile-image [userId]="profile.userId" [editable]="true"></cc-profile-image>
-      <h1 class="username">{{profile.username}}</h1>
-    </div>
+    @if (profile != null) {
+      <div class="profile">
+        <cc-profile-image [userId]="profile.userId" [editable]="true"></cc-profile-image>
+        <h1 class="username">{{profile.username}}</h1>
+      </div>
+    }
     <button class="floating-button-br" mat-fab aria-label="Profile" (click)="navigateProfile(profile.userId)">
       <mat-icon color="primary" svgIcon="close"></mat-icon>
     </button>

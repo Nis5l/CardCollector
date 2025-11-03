@@ -1,15 +1,19 @@
 <div class="collectors-wrapper wrap">
-	<form [formGroup]="formGroup">
-		<mat-form-field>
-			<input matInput type="text" formControlName="search" placeholder="Search" />
-		</mat-form-field>
-		<button class="new-collector" mat-raised-button (click)="newCollector()">New</button>
-	</form>
-	<cc-loading [observable]="loading$" [boolObservable]="true"></cc-loading>
-	<ng-container *ngVar="(collectorIndexResponse$ | async) as res">
-    <div class="collectors" *ngIf="res != null">
-      <cc-collector-card *ngFor="let collector of res.collectors" [collector]="collector"></cc-collector-card>
-      <mat-paginator [pageSize]="res.pageSize" [length]="res.collectorCount" (page)="changePage($event)"></mat-paginator>
-    </div>
-	</ng-container>
+  <form [formGroup]="formGroup">
+    <mat-form-field>
+      <input matInput type="text" formControlName="search" placeholder="Search" />
+    </mat-form-field>
+    <button class="new-collector" mat-raised-button (click)="newCollector()">New</button>
+  </form>
+  <cc-loading [observable]="loading$" [boolObservable]="true"></cc-loading>
+  <ng-container *ngVar="(collectorIndexResponse$ | async) as res">
+    @if (res != null) {
+      <div class="collectors">
+        @for (collector of res.collectors; track collector) {
+          <cc-collector-card [collector]="collector"></cc-collector-card>
+        }
+        <mat-paginator [pageSize]="res.pageSize" [length]="res.collectorCount" (page)="changePage($event)"></mat-paginator>
+      </div>
+    }
+  </ng-container>
 </div>

@@ -1,3 +1,4 @@
-<cc-notification-item [notification]="notification" *ngFor="let notification of notifications$ | async" (onClick)="navigate($event)">
-
-</cc-notification-item>
+@for (notification of notifications$ | async; track notification) {
+  <cc-notification-item [notification]="notification" (onClick)="navigate($event)">
+  </cc-notification-item>
+}
