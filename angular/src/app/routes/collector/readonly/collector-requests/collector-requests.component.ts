@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { SubscriptionManagerComponent } from '../../../../shared/abstract';
 import { switchMap, combineLatest as observableCombineLatest, Observable, BehaviorSubject, ReplaySubject, Subject, share } from 'rxjs';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 
 import { CollectorService } from '../../collector.service';
 import { CollectorRequestsService } from './collector-requests.service';
@@ -10,7 +10,7 @@ import { CollectorAddDialogComponent } from '../collector-add-dialog';
 
 import type { Collector, Id } from '../../../../shared/types';
 import type { CardTypeIndexResponse, CardIndexResponse } from '../types';
-import type { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
+import type { PageEvent } from '@angular/material/paginator';
 
 @Component({
 	selector: "cc-collector-requests",

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute, Route } from '@angular/router';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Observable, Subject, of as observableOf, catchError, map, switchMap, combineLatest as observableCombineLatest, startWith, filter } from 'rxjs';
 
 import { LoadingService, AuthService } from '../../../shared/services';

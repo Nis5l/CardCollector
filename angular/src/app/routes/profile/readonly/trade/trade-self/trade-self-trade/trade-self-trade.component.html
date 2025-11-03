@@ -14,13 +14,13 @@
       <div></div>
     </div>
     <button *ngIf="confirmed === true" color="primary" mat-icon-button>
-      <mat-icon>done</mat-icon>
+      <mat-icon color="accent" svgIcon="check"></mat-icon>
     </button>
     <button *ngIf="confirmed === false" color="error" mat-icon-button matTooltip="Confirm" aria-label="Confirm" (click)="confirm()">
-      <mat-icon>close</mat-icon>
+      <mat-icon color="accent" svgIcon="close"></mat-icon>
     </button>
   </div>
   <button [disabled]="disableAdd$ | async" class="floating-button-br" mat-fab aria-label="Add" (click)="openAddCard()">
-    <mat-icon>add</mat-icon>
+    <mat-icon color="accent" svgIcon="add"></mat-icon>
   </button>
 </div>

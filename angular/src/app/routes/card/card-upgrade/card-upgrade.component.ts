@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Observable, BehaviorSubject, map, filter, switchMap, combineLatest as observableCombibeLatest, share } from 'rxjs';
-import type { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import type { PageEvent } from '@angular/material/paginator';
+import { MatDialog } from '@angular/material/dialog';
 
 import { CardUpgradeService } from './card-upgrade.service';
 import type { UnlockedCard, InventoryResponse } from '../../../shared/types';

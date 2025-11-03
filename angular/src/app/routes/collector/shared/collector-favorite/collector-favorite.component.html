@@ -3,5 +3,5 @@
 	(click)="setFavorite(!data.favorite)"
 	matTooltip="Favor"
 	matTooltipShowDelay="500">
-	<mat-icon>{{data.favorite ? "star" : "star_outline"}}</mat-icon>
+	<mat-icon color="accent" [svgIcon]="data.favorite ? 'star' : 'star_outline'"></mat-icon>
 </button>

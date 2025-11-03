@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
+import { MatButtonModule } from '@angular/material/button';
 
 import { YesNoCancelDialogComponent } from './yes-no-cancel-dialog.component';
 

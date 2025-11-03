@@ -19,8 +19,9 @@ mat-drawer-container {
     justify-content: flex-start;
     align-items: flex-start;
     button {
+      display: flex;
+      justify-content: start;
       width: 200px;
-      text-align: left;
       padding: 8px;
       padding-left: 15px;
       .button-content {

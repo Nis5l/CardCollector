@@ -1,6 +1,6 @@
 <div class="wrap">
   <div class="register-wrapper">
-    <mat-card>
+    <mat-card appearance="outlined">
       <form class="register" [formGroup]="formGroup" (submit)="register()">
         <mat-form-field *ngVar="formGroup.controls.username as usernameFormControl">
           <input matInput type="text" formControlName="username" placeholder="Username" [minlength]="config.username.minLength" [maxlength]="config.username.maxLength" />

@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { Observable, debounceTime, distinctUntilChanged, BehaviorSubject, startWith, combineLatest as observableCombibeLatest } from 'rxjs';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
-import type { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
+import { MatDialog } from '@angular/material/dialog';
+import type { PageEvent } from '@angular/material/paginator';
 
 import { CollectorsService } from './collectors.service';
 import { NewCollectorDialogComponent } from './new-collector-dialog';

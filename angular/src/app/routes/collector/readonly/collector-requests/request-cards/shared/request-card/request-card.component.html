@@ -1,4 +1,4 @@
-<mat-card class="request-card">
+<mat-card appearance="outlined" class="request-card">
 	<mat-card-header>
 		<mat-card-title>
 			<p class="title">{{title}}</p> <p class="seperator">-</p> <cc-user [userId]="userId$ | async"></cc-user>
@@ -9,7 +9,7 @@
 		<ng-content></ng-content>
 	</mat-card-content>
 	<mat-card-actions *ngIf="isAdmin$ | async">
-		<button mat-icon-button color="primary" (click)="accept()"><mat-icon>check</mat-icon></button>
-		<button mat-icon-button color="error" (click)="decline()"><mat-icon>close</mat-icon></button>
+		<button mat-icon-button color="primary" (click)="accept()"><mat-icon color="accent" svgIcon="check"></mat-icon></button>
+		<button mat-icon-button color="error" (click)="decline()"><mat-icon color="accent" svgIcon="close"></mat-icon></button>
 	</mat-card-actions>
 </mat-card>

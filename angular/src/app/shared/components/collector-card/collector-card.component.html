@@ -1,4 +1,4 @@
-<mat-card class="collector" (click)="collectorClick()">
+<mat-card appearance="outlined" class="collector" (click)="collectorClick()">
 	<div class="collector-image">
 		<cc-collector-image [editable]="false" [collector]="collector"></cc-collector-image>
 	</div>
@@ -8,6 +8,6 @@
 		<mat-card-subtitle>...stats...</mat-card-subtitle>
 	</div>
   <div class="trade" (click)="tradeClick()" *ngIf="tradeId != null">
-    <mat-icon>compare_arrows</mat-icon>
+    <mat-icon color="accent" svgIcon="compare_arrows"></mat-icon>
   </div>
 </mat-card>

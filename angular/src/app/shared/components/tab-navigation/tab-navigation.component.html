@@ -3,9 +3,7 @@
     <ng-container *ngFor="let item of items; let i = index">
       <li [ngClass]="hiddenId <= i ? 'hidden' : ''">
         <a [routerLink]="getLink(item)" routerLinkActive="active">
-          <mat-icon class="icon" fontSet="material-icons-outlined" *ngIf="item.icon != ''">
-            {{item.icon}}
-          </mat-icon>
+          <mat-icon color="accent" [svgIcon]="item.icon" class="icon" fontSet="material-icons-outlined" *ngIf="item.icon != ''"></mat-icon>
           <span>{{item.name}}</span>
         </a>
       </li>
@@ -14,7 +12,7 @@
 
   <div *ngIf="items.length != hiddenId" class="details">
     <div class="more_btn" (click)="toggleOpen()">
-      <mat-icon>more_vert</mat-icon>
+      <mat-icon color="accent" svgIcon="more_vert"></mat-icon>
       <div [ngClass]="open ? 'open' : ''" class="more_box">
         <ul>
           <ng-container *ngFor="let item of items; let i = index">

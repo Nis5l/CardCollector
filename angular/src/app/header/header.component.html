@@ -1,25 +1,25 @@
 <div class="body-container">
 	<mat-toolbar *ngVar="(loggedIn$ | async) as loggedIn">
 		<button mat-icon-button *ngIf="loggedIn" (click)="toggleSidebar()">
-			<mat-icon>menu</mat-icon>
+			<mat-icon color="accent" svgIcon="menu"></mat-icon>
 		</button>
 		<span>CardCollector</span>
 		<span class="spacer"></span>
 		<button *ngIf="!loggedIn" routerLink="login" mat-icon-button matTooltip="Login">
-			<mat-icon>login</mat-icon>
+			<mat-icon color="accent" svgIcon="login"></mat-icon>
 		</button>
 		<button *ngIf="!loggedIn" routerLink="register" mat-icon-button matTooltip="Register">
-			<mat-icon>person_add</mat-icon>
+			<mat-icon color="accent" svgIcon="person_add"></mat-icon>
 		</button>
 
 		<cc-notifications *ngIf="loggedIn"></cc-notifications>
 		<button mat-button *ngIf="loggedIn" [matMenuTriggerFor]="menu">{{username$ | async}}</button>
 		<mat-menu #menu="matMenu">
 			<button mat-menu-item (click)="navigateProfile()">
-				<mat-icon>person</mat-icon> Profile
+				<mat-icon color="accent" svgIcon="person"></mat-icon> Profile
 			</button>
 			<button mat-menu-item routerLink="logout" matTooltip="Logout">
-				<mat-icon>logout</mat-icon> Logout
+				<mat-icon color="accent" svgIcon="logout"></mat-icon> Logout
 			</button>
 		</mat-menu>
 	</mat-toolbar>

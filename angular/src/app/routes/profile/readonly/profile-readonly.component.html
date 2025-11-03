@@ -6,13 +6,13 @@
         <h1 class="username">{{profile.username}}</h1>
         <div class="actions" *ngVar="(friendStatus$ | async) as fs">
           <button *ngIf="isSelf === false && fs === friendStatus.Nothing" (click)="addFriend(profile.userId)" mat-icon-button matTooltip="Friend request" aria-label="Friend request">
-            <mat-icon>person_add</mat-icon>
+            <mat-icon color="accent" svgIcon="person_add"></mat-icon>
           </button>
           <button *ngIf="isSelf === false && fs === friendStatus.Sent" (click)="removeFriend(profile.userId, false)" mat-icon-button matTooltip="Cancel friend request" aria-label="Cancel friend request">
-            <mat-icon>person_add_disabled</mat-icon>
+            <mat-icon color="accent" svgIcon="person_add_disabled"></mat-icon>
           </button>
           <button *ngIf="isSelf === false && fs === friendStatus.Friend" (click)="removeFriend(profile.userId, true)" mat-icon-button matTooltip="Remove as friend" aria-label="Remove as friend">
-            <mat-icon>person_remove</mat-icon>
+            <mat-icon color="accent" svgIcon="person_remove"></mat-icon>
           </button>
         </div>
         <p class="stats">Friends: {{profile.friends}}/{{profile.maxFriends}}</p>
@@ -22,7 +22,7 @@
         <router-outlet></router-outlet>
       </div>
       <button *ngIf="isSelf === true" class="floating-button-br" mat-fab aria-label="Edit" (click)="edit()">
-        <mat-icon>edit</mat-icon>
+        <mat-icon color="primary" svgIcon="edit"></mat-icon>
       </button>
     </ng-container>
   </div>
