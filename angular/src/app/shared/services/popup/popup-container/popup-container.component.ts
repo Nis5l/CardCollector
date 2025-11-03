@@ -10,15 +10,15 @@ import { SubscriptionManagerComponent } from '../../../abstract';
 @Component({
 	selector: "cc-popup-container",
 	templateUrl: "./popup-container.component.html",
-	styleUrls: [ "/popup-container.component.scss" ]
+	styleUrls: [ "./popup-container.component.scss" ]
 })
 export class PopupContainerComponent extends SubscriptionManagerComponent {
 	private popupItem: PopupItem | null = null;
-	
+
 	@ViewChild(PopupDirective) popupHost!: PopupDirective;
 
 	private popupInstance: Popup | null = null;
-	
+
 	constructor(
 		private popupService: PopupService
 	) {
@@ -38,7 +38,7 @@ export class PopupContainerComponent extends SubscriptionManagerComponent {
 		// Call onClose so that Popup can clean up if needed
 		if(this.popupInstance != null) this.popupInstance.onClose();
 		viewContainerRef.clear();
-		
+
 		this.popupInstance = null;
 		this.popupItem = null;
 	}
@@ -77,7 +77,7 @@ export class PopupContainerComponent extends SubscriptionManagerComponent {
 	@HostListener('document:click', ['$event'])
 	clickout(event: any) {
 		if(this.popupInstance == null) return;
-		
+
 		if(!this.clickInside){
 			this.closePopup();
 		}
