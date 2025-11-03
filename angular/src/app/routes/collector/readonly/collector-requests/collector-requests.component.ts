@@ -13,9 +13,10 @@ import type { CardTypeIndexResponse, CardIndexResponse } from '../types';
 import type { PageEvent } from '@angular/material/paginator';
 
 @Component({
-	selector: "cc-collector-requests",
-	templateUrl: "./collector-requests.component.html",
-	styleUrls: [ "./collector-requests.component.scss" ]
+    selector: "cc-collector-requests",
+    templateUrl: "./collector-requests.component.html",
+    styleUrls: ["./collector-requests.component.scss"],
+    standalone: false
 })
 export class CollectorRequestsComponent extends SubscriptionManagerComponent {
   public readonly collector$: Observable<Collector>;

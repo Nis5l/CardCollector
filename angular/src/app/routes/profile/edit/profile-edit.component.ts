@@ -10,9 +10,10 @@ import type { Profile } from '../shared';
 import { SubscriptionManagerComponent } from '../../../shared/abstract';
 
 @Component({
-	selector: "cc-profile-edit",
-	templateUrl: "./profile-edit.component.html",
-	styleUrls: [ "./profile-edit.component.scss" ]
+    selector: "cc-profile-edit",
+    templateUrl: "./profile-edit.component.html",
+    styleUrls: ["./profile-edit.component.scss"],
+    standalone: false
 })
 export class ProfileEditComponent extends SubscriptionManagerComponent {
 	public profile$: Observable<(Profile & { userId: Id }) | null> = observableOf(null);

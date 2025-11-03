@@ -6,9 +6,10 @@ import { AuthService, HttpService } from '../../../shared/services';
 import { SubscriptionManagerComponent } from '../../../shared/abstract';
 
 @Component({
-	selector: 'cc-logout',
-	template: '',
-	styleUrls: [],
+    selector: 'cc-logout',
+    template: '',
+    styleUrls: [],
+    standalone: false
 })
 export class LogoutComponent extends SubscriptionManagerComponent implements OnInit {
 	constructor(private readonly authService: AuthService, private readonly httpService: HttpService, private readonly router: Router) { super(); }

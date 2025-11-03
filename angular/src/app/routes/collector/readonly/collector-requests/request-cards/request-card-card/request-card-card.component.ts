@@ -6,9 +6,10 @@ import { SubscriptionManagerComponent } from '../../../../../../shared/abstract'
 import { LoadingService } from '../../../../../../shared/services';
 
 @Component({
-	selector: 'cc-request-card-card',
-	templateUrl: './request-card-card.component.html',
-	styleUrls: [ './request-card-card.component.scss' ]
+    selector: 'cc-request-card-card',
+    templateUrl: './request-card-card.component.html',
+    styleUrls: ['./request-card-card.component.scss'],
+    standalone: false
 })
 export class RequestCardCardComponent extends SubscriptionManagerComponent {
 	@Output()

@@ -4,9 +4,10 @@ import { Router } from '@angular/router';
 import type { UserResponse } from '../types';
 
 @Component({
-  selector: "cc-user",
-  templateUrl: "./user.component.html",
-  styleUrls: [ "./user.component.scss" ],
+    selector: "cc-user",
+    templateUrl: "./user.component.html",
+    styleUrls: ["./user.component.scss"],
+    standalone: false
 })
 export class UserComponent {
   private _userResponse: UserResponse | null = null;

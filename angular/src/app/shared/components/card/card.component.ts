@@ -11,9 +11,10 @@ function isCard(card: UnlockedCard | Card): card is Card {
 }
 
 @Component({
-	selector: 'cc-card',
-	templateUrl: './card.component.html',
-	styleUrls: [ './card.component.scss' ],
+    selector: 'cc-card',
+    templateUrl: './card.component.html',
+    styleUrls: ['./card.component.scss'],
+    standalone: false
 })
 export class CardComponent {
 	private _card: CardOrUnlockedCardId | UnlockedCard | Card | null = null;

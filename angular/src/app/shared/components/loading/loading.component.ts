@@ -4,9 +4,10 @@ import { Observable, BehaviorSubject, tap, filter } from 'rxjs';
 import { SubscriptionManagerComponent } from '../../abstract';
 
 @Component({
-	selector: 'cc-loading',
-	templateUrl: './loading.component.html',
-	styleUrls: [ './loading.component.scss' ],
+    selector: 'cc-loading',
+    templateUrl: './loading.component.html',
+    styleUrls: ['./loading.component.scss'],
+    standalone: false
 })
 export class LoadingComponent<T> extends SubscriptionManagerComponent implements OnInit {
 	private readonly observableSubject: BehaviorSubject<Observable<T> | null> = new BehaviorSubject<Observable<T> | null>(null);

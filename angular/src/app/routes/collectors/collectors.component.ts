@@ -11,9 +11,10 @@ import type { CollectorsIndexResponse } from './types';
 import { SubscriptionManagerComponent } from '../../shared/abstract';
 
 @Component({
-	selector: 'cc-collectors',
-	templateUrl: './collectors.component.html',
-	styleUrls: [ './collectors.component.scss' ]
+    selector: 'cc-collectors',
+    templateUrl: './collectors.component.html',
+    styleUrls: ['./collectors.component.scss'],
+    standalone: false
 })
 export class CollectorsComponent extends SubscriptionManagerComponent {
 	private readonly pageSubject: BehaviorSubject<number> = new BehaviorSubject<number>(0);

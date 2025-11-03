@@ -22,9 +22,10 @@ const ROUTES: Route[] = [
 ];
 
 @Component({
-	selector: "cc-profile-readonly",
-	templateUrl: "./profile-readonly.component.html",
-	styleUrls: [ "./profile-readonly.component.scss" ]
+    selector: "cc-profile-readonly",
+    templateUrl: "./profile-readonly.component.html",
+    styleUrls: ["./profile-readonly.component.scss"],
+    standalone: false
 })
 export class ProfileReadonlyComponent extends SubscriptionManagerComponent {
 	public readonly profile$: Observable<ProfileWithUserId | null>;

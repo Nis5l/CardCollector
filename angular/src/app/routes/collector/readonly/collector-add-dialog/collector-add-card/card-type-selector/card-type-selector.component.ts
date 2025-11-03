@@ -7,16 +7,17 @@ import type { Id, CardType } from '../../../../../../shared/types';
 import { ControlValueAccessor, FormControl, NgControl, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
-	selector: 'cc-card-type-selector',
-	templateUrl: './card-type-selector.component.html',
-	styleUrls: [ './card-type-selector.component.scss' ],
-	providers: [
-		{
-			provide: NG_VALUE_ACCESSOR,
-			multi: true,
-			useExisting: forwardRef(() => CardTypeSelectorComponent)
-		}
-	]
+    selector: 'cc-card-type-selector',
+    templateUrl: './card-type-selector.component.html',
+    styleUrls: ['./card-type-selector.component.scss'],
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            multi: true,
+            useExisting: forwardRef(() => CardTypeSelectorComponent)
+        }
+    ],
+    standalone: false
 })
 export class CardTypeSelectorComponent extends SubscriptionManagerComponent implements ControlValueAccessor, AfterViewInit {
 	@Output()

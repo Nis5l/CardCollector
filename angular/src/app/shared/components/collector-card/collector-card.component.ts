@@ -4,9 +4,10 @@ import { Router } from '@angular/router';
 import type { Collector, Id } from '../../types';
 
 @Component({
-	selector: 'cc-collector-card',
-	templateUrl: './collector-card.component.html',
-	styleUrls: [ './collector-card.component.scss' ],
+    selector: 'cc-collector-card',
+    templateUrl: './collector-card.component.html',
+    styleUrls: ['./collector-card.component.scss'],
+    standalone: false
 })
 export class CollectorCardComponent {
 	private _collector: Collector | null = null;

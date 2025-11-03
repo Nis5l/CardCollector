@@ -5,9 +5,10 @@ import { Observable, BehaviorSubject, combineLatest, map, switchMap, filter } fr
 import { AuthService, UserService, LoadingService } from '../shared/services';
 
 @Component({
-  selector: 'cc-header',
-  templateUrl: './header.component.html',
-  styleUrls: ["./header.component.scss"]
+    selector: 'cc-header',
+    templateUrl: './header.component.html',
+    styleUrls: ["./header.component.scss"],
+    standalone: false
 })
 export class HeaderComponent {
 	private readonly toggleSidebarSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);

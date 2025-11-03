@@ -8,9 +8,10 @@ import { CollectorService } from '../../collector.service';
 import type { Collector } from '../../../../shared/types';
 
 @Component({
-	selector: "cc-collector-dashboard",
-	templateUrl: "./collector-dashboard.component.html",
-	styleUrls: [ "./collector-dashboard.component.scss" ]
+    selector: "cc-collector-dashboard",
+    templateUrl: "./collector-dashboard.component.html",
+    styleUrls: ["./collector-dashboard.component.scss"],
+    standalone: false
 })
 export class CollectorDashboardComponent extends SubscriptionManagerComponent {
   public readonly collector$: Observable<Collector>;

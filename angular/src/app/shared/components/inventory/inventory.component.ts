@@ -9,9 +9,10 @@ import { SubscriptionManagerComponent } from '../../abstract';
 import type { InventoryResponse, Id } from '../../types';
 
 @Component({
-  selector: "cc-inventory",
-  templateUrl: "./inventory.component.html",
-  styleUrls: [ "./inventory.component.scss" ],
+    selector: "cc-inventory",
+    templateUrl: "./inventory.component.html",
+    styleUrls: ["./inventory.component.scss"],
+    standalone: false
 })
 export class InventoryComponent extends SubscriptionManagerComponent {
   private _userIdSubject: BehaviorSubject<Id | null> = new BehaviorSubject<Id | null>(null);

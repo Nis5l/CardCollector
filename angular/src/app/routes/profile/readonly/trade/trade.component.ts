@@ -12,9 +12,10 @@ const ROUTES: Route[] = [
 ];
 
 @Component({
-  selector: "cc-profile-trade",
-  templateUrl: "./trade.component.html",
-  styleUrls: [ "./trade.component.scss" ],
+    selector: "cc-profile-trade",
+    templateUrl: "./trade.component.html",
+    styleUrls: ["./trade.component.scss"],
+    standalone: false
 })
 export class TradeComponent {
   public readonly navigationItems: NavigationItem[] = [

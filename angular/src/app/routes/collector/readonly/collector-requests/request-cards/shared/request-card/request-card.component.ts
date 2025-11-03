@@ -8,9 +8,10 @@ import { ConfirmationDialogComponent } from '../../../../../../../shared/dialogs
 import { SubscriptionManagerComponent } from '../../../../../../../shared/abstract';
 
 @Component({
-	selector: 'cc-request-card',
-	templateUrl: './request-card.component.html',
-	styleUrls: [ './request-card.component.scss' ]
+    selector: 'cc-request-card',
+    templateUrl: './request-card.component.html',
+    styleUrls: ['./request-card.component.scss'],
+    standalone: false
 })
 export class RequestCardComponent extends SubscriptionManagerComponent {
 	@Output()

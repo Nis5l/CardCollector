@@ -10,9 +10,10 @@ const ROUTES: Route[] = [
 ];
 
 @Component({
-  selector: "cc-trade-friend",
-  templateUrl: "./trade-friend.component.html",
-  styleUrls: [ "./trade-friend.component.scss" ]
+    selector: "cc-trade-friend",
+    templateUrl: "./trade-friend.component.html",
+    styleUrls: ["./trade-friend.component.scss"],
+    standalone: false
 })
 export class TradeFriendComponent {
   public static getRoutes(): Route[] {

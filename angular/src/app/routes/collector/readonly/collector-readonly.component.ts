@@ -26,9 +26,10 @@ const ROUTES: Route[] = [
 ];
 
 @Component({
-	selector: "cc-collector-readonly",
-	templateUrl: "./collector-readonly.component.html",
-	styleUrls: [ "./collector-readonly.component.scss" ]
+    selector: "cc-collector-readonly",
+    templateUrl: "./collector-readonly.component.html",
+    styleUrls: ["./collector-readonly.component.scss"],
+    standalone: false
 })
 export class CollectorReadonlyComponent extends SubscriptionManagerComponent {
 	private readonly pageSubject: BehaviorSubject<number> = new BehaviorSubject<number>(0);

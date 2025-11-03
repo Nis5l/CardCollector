@@ -8,9 +8,10 @@ import { SubscriptionManagerComponent } from '../../../shared/abstract';
 import type { Collector, Id } from '../../../shared/types';
 
 @Component({
-	selector: "cc-collector-edit",
-	templateUrl: "./collector-edit.component.html",
-	styleUrls: [ "./collector-edit.component.scss" ]
+    selector: "cc-collector-edit",
+    templateUrl: "./collector-edit.component.html",
+    styleUrls: ["./collector-edit.component.scss"],
+    standalone: false
 })
 export class CollectorEditComponent extends SubscriptionManagerComponent {
 	public readonly collector$: Observable<Collector | null>;

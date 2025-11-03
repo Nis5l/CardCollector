@@ -12,9 +12,10 @@ import { eventGetImage } from '../../../../../shared/utils';
 import type { CollectorAddCardConfig, CardRequestRequest } from './types';
 
 @Component({
-	selector: "cc-collector-add-card",
-	templateUrl: "./collector-add-card.component.html",
-	styleUrls: [ "./collector-add-card.component.scss" ],
+    selector: "cc-collector-add-card",
+    templateUrl: "./collector-add-card.component.html",
+    styleUrls: ["./collector-add-card.component.scss"],
+    standalone: false
 })
 export class CollectorAddCardComponent extends SubscriptionManagerComponent {
 	private _collectorId: Id | null = null;

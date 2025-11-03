@@ -5,9 +5,10 @@ import { Observable } from 'rxjs';
 import type { Id } from '../../../../shared/types';
 
 @Component({
-	selector: "cc-collector-add-dialog",
-	templateUrl: "./collector-add-dialog.component.html",
-	styleUrls: [ "./collector-add-dialog.component.scss" ]
+    selector: "cc-collector-add-dialog",
+    templateUrl: "./collector-add-dialog.component.html",
+    styleUrls: ["./collector-add-dialog.component.scss"],
+    standalone: false
 })
 export class CollectorAddDialogComponent {
 	constructor(@Inject(MAT_DIALOG_DATA) public readonly collectorId: Id) {}

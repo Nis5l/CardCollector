@@ -8,9 +8,10 @@ import { AuthService } from '../../../../../shared/services';
 import type { FriendResponse } from '../types';
 
 @Component({
-  selector: "cc-friend-card",
-  templateUrl: "./collector-friend-card.component.html",
-  styleUrls: [ "./collector-friend-card.component.scss" ],
+    selector: "cc-friend-card",
+    templateUrl: "./collector-friend-card.component.html",
+    styleUrls: ["./collector-friend-card.component.scss"],
+    standalone: false
 })
 export class CollectorFriendCardComponent {
   public readonly FriendStatus = FriendStatus;

@@ -12,9 +12,10 @@ import { SubscriptionManagerComponent } from '../../../shared/abstract';
 import { LoadingService } from '../../../shared/services';
 
 @Component({
-	selector: "cc-login",
-	templateUrl: "./login.component.html",
-	styleUrls: ["./login.component.scss"],
+    selector: "cc-login",
+    templateUrl: "./login.component.html",
+    styleUrls: ["./login.component.scss"],
+    standalone: false
 })
 export class LoginComponent extends SubscriptionManagerComponent {
 	public readonly formGroup;

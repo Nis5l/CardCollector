@@ -3,9 +3,10 @@ import { Component } from '@angular/core';
 import type { UnlockedCard, CardInfo, CardFrame, CardType, CardEffect } from '../../shared/types/card';
 
 @Component({
-	selector: 'gc-home',
-	templateUrl: './home.component.html',
-	styleUrls: [ './home.component.scss' ],
+    selector: 'gc-home',
+    templateUrl: './home.component.html',
+    styleUrls: ['./home.component.scss'],
+    standalone: false
 })
 export class HomeComponent {
 	public cardData: UnlockedCard;

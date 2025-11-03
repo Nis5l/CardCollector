@@ -11,9 +11,10 @@ import { SubscriptionManagerComponent } from '../../../shared/abstract';
 import { ConfirmationDialogComponent } from '../../../shared/dialogs';
 
 @Component({
-  selector: "cc-card-upgrade",
-  templateUrl: "./card-upgrade.component.html",
-  styleUrls: [ "./card-upgrade.component.scss" ],
+    selector: "cc-card-upgrade",
+    templateUrl: "./card-upgrade.component.html",
+    styleUrls: ["./card-upgrade.component.scss"],
+    standalone: false
 })
 export class CardUpgradeComponent extends SubscriptionManagerComponent {
 	private readonly pageSubject: BehaviorSubject<number> = new BehaviorSubject<number>(0);

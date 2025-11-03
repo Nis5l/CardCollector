@@ -10,9 +10,10 @@ import { NotificationsService } from '../notifications.service';
 import { SubscriptionManagerComponent } from '../../../shared/abstract';
 
 @Component({
-	selector: 'cc-notifications-list',
-	templateUrl: './notifications-list.component.html',
-	styleUrls: ["./notifications-list.component.scss"]
+    selector: 'cc-notifications-list',
+    templateUrl: './notifications-list.component.html',
+    styleUrls: ["./notifications-list.component.scss"],
+    standalone: false
 })
 export class NotificationsListComponent extends SubscriptionManagerComponent implements Popup {
   @Output() public onClick = new EventEmitter<Notification>();

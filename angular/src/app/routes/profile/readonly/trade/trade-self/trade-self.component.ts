@@ -10,9 +10,10 @@ const ROUTES: Route[] = [
 ];
 
 @Component({
-  selector: "cc-trade-self",
-  templateUrl: "./trade-self.component.html",
-  styleUrls: [ "./trade-self.component.scss" ]
+    selector: "cc-trade-self",
+    templateUrl: "./trade-self.component.html",
+    styleUrls: ["./trade-self.component.scss"],
+    standalone: false
 })
 export class TradeSelfComponent {
   constructor() {}

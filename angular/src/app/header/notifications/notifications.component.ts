@@ -11,9 +11,10 @@ import { SubscriptionManagerComponent } from '../../shared/abstract';
 
 //TODO: fix if notification are too long you can sroll
 @Component({
-  selector: 'cc-notifications',
-  templateUrl: './notifications.component.html',
-  styleUrls: ["./notifications.component.scss"]
+    selector: 'cc-notifications',
+    templateUrl: './notifications.component.html',
+    styleUrls: ["./notifications.component.scss"],
+    standalone: false
 })
 export class NotificationsComponent extends SubscriptionManagerComponent {
 	public readonly notificationsSubject: BehaviorSubject<Notification[]> = new BehaviorSubject<Notification[]>([]);

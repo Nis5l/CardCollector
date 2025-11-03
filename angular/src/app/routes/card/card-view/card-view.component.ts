@@ -5,9 +5,10 @@ import { Observable, map, combineLatest as observableCombineLatest } from 'rxjs'
 import type { CardOrUnlockedCardId } from '../../../shared/types';
 
 @Component({
-	selector: 'cc-card-view',
-	templateUrl: "./card-view.component.html",
-	styleUrls: [ "./card-view.component.scss" ],
+    selector: 'cc-card-view',
+    templateUrl: "./card-view.component.html",
+    styleUrls: ["./card-view.component.scss"],
+    standalone: false
 })
 export class CardViewComponent {
 	public readonly cardOrUnlockedCardId$: Observable<CardOrUnlockedCardId>;

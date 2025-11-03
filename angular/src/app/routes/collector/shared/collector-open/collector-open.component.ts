@@ -10,9 +10,10 @@ import type { Id } from '../../../../shared/types';
 const UPDATE_FREQUENCY_MS = 100;
 
 @Component({
-	selector: "cc-collector-open",
-	templateUrl: "./collector-open.component.html",
-	styleUrls: [ "./collector-open.component.scss" ]
+    selector: "cc-collector-open",
+    templateUrl: "./collector-open.component.html",
+    styleUrls: ["./collector-open.component.scss"],
+    standalone: false
 })
 export class CollectorOpenComponent implements OnInit, OnDestroy {
 

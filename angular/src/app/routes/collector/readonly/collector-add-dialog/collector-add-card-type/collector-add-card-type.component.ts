@@ -9,9 +9,10 @@ import { LoadingService } from '../../../../../shared/services';
 import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
-	selector: 'cc-collector-add-card-type',
-	templateUrl: './collector-add-card-type.component.html',
-	styleUrls: [ './collector-add-card-type.component.scss' ],
+    selector: 'cc-collector-add-card-type',
+    templateUrl: './collector-add-card-type.component.html',
+    styleUrls: ['./collector-add-card-type.component.scss'],
+    standalone: false
 })
 export class CollectorAddCardTypeComponent {
 	private _collectorId: Id | null = null;

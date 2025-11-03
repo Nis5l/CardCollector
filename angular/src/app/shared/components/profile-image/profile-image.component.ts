@@ -8,9 +8,10 @@ import { ProfileImageService } from './profile-image.service';
 import { SubscriptionManagerComponent } from '../../abstract';
 
 @Component({
-	selector: 'cc-profile-image',
-	templateUrl: './profile-image.component.html',
-	styleUrls: [ './profile-image.component.scss' ],
+    selector: 'cc-profile-image',
+    templateUrl: './profile-image.component.html',
+    styleUrls: ['./profile-image.component.scss'],
+    standalone: false
 })
 export class ProfileImageComponent extends SubscriptionManagerComponent {
 	private _userId: Id | null = null;

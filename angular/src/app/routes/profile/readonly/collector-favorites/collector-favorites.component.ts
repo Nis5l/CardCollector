@@ -7,9 +7,10 @@ import { LoadingService, AuthService } from '../../../../shared/services';
 import type { Collector, Id } from '../../../../shared/types';
 
 @Component({
-  selector: "cc-collector-favorites",
-  templateUrl: "./collector-favorites.component.html",
-  styleUrls: [ "./collector-favorites.component.scss" ],
+    selector: "cc-collector-favorites",
+    templateUrl: "./collector-favorites.component.html",
+    styleUrls: ["./collector-favorites.component.scss"],
+    standalone: false
 })
 export class CollectorFavoritesComponent {
 	public readonly favoriteCollectors$: Observable<Collector[]>;

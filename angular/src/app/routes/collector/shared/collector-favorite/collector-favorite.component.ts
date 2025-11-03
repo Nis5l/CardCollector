@@ -8,9 +8,10 @@ import type { CollectorFavoriteResponse } from './types';
 import { SubscriptionManagerComponent } from '../../../../shared/abstract';
 
 @Component({
-	selector: "cc-collector-favorite",
-	templateUrl: "./collector-favorite.component.html",
-	styleUrls: [ "./collector-favorite.component.scss" ]
+    selector: "cc-collector-favorite",
+    templateUrl: "./collector-favorite.component.html",
+    styleUrls: ["./collector-favorite.component.scss"],
+    standalone: false
 })
 export class CollectorFavoriteComponent extends SubscriptionManagerComponent {
 	private _collectorId: Id | null = null;

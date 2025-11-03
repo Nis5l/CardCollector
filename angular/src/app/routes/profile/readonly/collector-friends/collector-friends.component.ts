@@ -10,9 +10,10 @@ import type { FriendResponse } from './types';
 import { ProfileService } from '../../profile.service';
 
 @Component({
-  selector: "cc-collector-friends",
-  templateUrl: "./collector-friends.component.html",
-  styleUrls: [ "./collector-friends.component.scss" ],
+    selector: "cc-collector-friends",
+    templateUrl: "./collector-friends.component.html",
+    styleUrls: ["./collector-friends.component.scss"],
+    standalone: false
 })
 export class CollectorFriendsComponent extends SubscriptionManagerComponent {
 	public readonly friends$: Observable<FriendResponse[]>;

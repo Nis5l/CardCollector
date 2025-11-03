@@ -11,9 +11,10 @@ import { LoadingService } from '../../../../../../shared/services';
 import { TradeStatus } from '../../types/trade-status.enum';
 
 @Component({
-  selector: "cc-trade-self-trade",
-  templateUrl: "./trade-self-trade.component.html",
-  styleUrls: [  "././trade-self-trade.component.scss" ]
+    selector: "cc-trade-self-trade",
+    templateUrl: "./trade-self-trade.component.html",
+    styleUrls: ["././trade-self-trade.component.scss"],
+    standalone: false
 })
 export class TradeSelfTradeComponent {
   //TODO: split for self and friend

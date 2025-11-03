@@ -5,9 +5,10 @@ import { Observable, map } from 'rxjs';
 import { Id } from '../../../../shared/types';
 
 @Component({
-  selector: "cc-collector-inventory",
-  templateUrl: "./collector-inventory.component.html",
-  styleUrls: [ "./collector-inventory.component.scss" ],
+    selector: "cc-collector-inventory",
+    templateUrl: "./collector-inventory.component.html",
+    styleUrls: ["./collector-inventory.component.scss"],
+    standalone: false
 })
 export class CollectorInventoryComponent {
   public readonly userId$: Observable<Id>;

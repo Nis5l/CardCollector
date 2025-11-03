@@ -2,9 +2,10 @@ import { Component, Input, AfterViewInit, ElementRef, OnDestroy } from '@angular
 import type { NavigationItem } from './types';
 
 @Component({
-  selector: 'cc-tab-navigation',
-  templateUrl: './tab-navigation.component.html',
-  styleUrls: ['./tab-navigation.component.scss']
+    selector: 'cc-tab-navigation',
+    templateUrl: './tab-navigation.component.html',
+    styleUrls: ['./tab-navigation.component.scss'],
+    standalone: false
 })
 export class TabNavigationComponent implements AfterViewInit, OnDestroy {
   @Input()

@@ -3,9 +3,10 @@ import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dial
 import { Observable } from 'rxjs';
 
 @Component({
-	selector: 'cc-yes-no-cancel-dialog',
-	templateUrl: './yes-no-cancel-dialog.component.html',
-	styleUrls: ['./yes-no-cancel-dialog.component.scss']
+    selector: 'cc-yes-no-cancel-dialog',
+    templateUrl: './yes-no-cancel-dialog.component.html',
+    styleUrls: ['./yes-no-cancel-dialog.component.scss'],
+    standalone: false
 })
 export class YesNoCancelDialogComponent {
 	public readonly message: string;

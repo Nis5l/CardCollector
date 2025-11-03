@@ -9,9 +9,10 @@ import { SubscriptionManagerComponent } from '../../../../../../shared/abstract'
 //TODO: CHAT
 
 @Component({
-	selector: 'cc-request-card-card-type',
-	templateUrl: './request-card-card-type.component.html',
-	styleUrls: [ './request-card-card-type.component.scss' ]
+    selector: 'cc-request-card-card-type',
+    templateUrl: './request-card-card-type.component.html',
+    styleUrls: ['./request-card-card-type.component.scss'],
+    standalone: false
 })
 export class RequestCardCardTypeComponent extends SubscriptionManagerComponent {
 	@Output()

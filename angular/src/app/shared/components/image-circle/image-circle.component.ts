@@ -5,9 +5,10 @@ import { Observable, ReplaySubject } from 'rxjs';
 import { eventGetImage } from '../../../shared/utils';
 
 @Component({
-	selector: "cc-image-circle",
-	templateUrl: "./image-circle.component.html",
-	styleUrls: [ "./image-circle.component.scss" ],
+    selector: "cc-image-circle",
+    templateUrl: "./image-circle.component.html",
+    styleUrls: ["./image-circle.component.scss"],
+    standalone: false
 })
 export class ImageCircleComponent {
 	private readonly imageSubject: ReplaySubject<string | SafeResourceUrl> = new ReplaySubject<string | SafeResourceUrl>(1);

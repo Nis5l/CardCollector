@@ -7,9 +7,10 @@ import { AuthService, LoadingService } from '../../../../shared/services';
 import { SubscriptionManagerComponent } from '../../../../shared/abstract';
 
 @Component({
-	selector: "cc-collector-image",
-	templateUrl: "./collector-image.component.html",
-	styleUrls: [ "./collector-image.component.scss" ]
+    selector: "cc-collector-image",
+    templateUrl: "./collector-image.component.html",
+    styleUrls: ["./collector-image.component.scss"],
+    standalone: false
 })
 export class CollectorImageComponent extends SubscriptionManagerComponent {
 	private readonly collectorImageSubject: BehaviorSubject<CollectorImage | null> = new BehaviorSubject<CollectorImage | null>(null);

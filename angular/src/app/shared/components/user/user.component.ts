@@ -5,9 +5,10 @@ import type { Id } from '../../types';
 import { UserService } from '../../services';
 
 @Component({
-	selector: 'cc-user',
-	templateUrl: './user.component.html',
-	styleUrls: [ './user.component.scss' ],
+    selector: 'cc-user',
+    templateUrl: './user.component.html',
+    styleUrls: ['./user.component.scss'],
+    standalone: false
 })
 export class UserComponent {
 	private readonly userIdSubject: BehaviorSubject<Id | null> = new BehaviorSubject<Id | null>(null);

@@ -8,9 +8,10 @@ import { PopupService } from '../popup.service';
 import { SubscriptionManagerComponent } from '../../../abstract';
 
 @Component({
-	selector: "cc-popup-container",
-	templateUrl: "./popup-container.component.html",
-	styleUrls: [ "./popup-container.component.scss" ]
+    selector: "cc-popup-container",
+    templateUrl: "./popup-container.component.html",
+    styleUrls: ["./popup-container.component.scss"],
+    standalone: false
 })
 export class PopupContainerComponent extends SubscriptionManagerComponent {
 	private popupItem: PopupItem | null = null;

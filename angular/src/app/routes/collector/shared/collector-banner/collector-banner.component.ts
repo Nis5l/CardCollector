@@ -8,9 +8,10 @@ import { SubscriptionManagerComponent } from '../../../../shared/abstract';
 import { eventGetImage } from '../../../../shared/utils';
 
 @Component({
-	selector: 'cc-collector-banner',
-	templateUrl: './collector-banner.component.html',
-	styleUrls: [ './collector-banner.component.scss' ]
+    selector: 'cc-collector-banner',
+    templateUrl: './collector-banner.component.html',
+    styleUrls: ['./collector-banner.component.scss'],
+    standalone: false
 })
 export class CollectorBannerComponent extends SubscriptionManagerComponent {
 	private collectorBannerSubject: BehaviorSubject<CollectorBanner | null> = new BehaviorSubject<CollectorBanner | null>(null);

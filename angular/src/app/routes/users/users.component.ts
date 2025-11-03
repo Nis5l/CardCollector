@@ -8,9 +8,10 @@ import type { UsersResponse } from './types';
 import { SubscriptionManagerComponent } from '../../shared/abstract';
 
 @Component({
-  selector: "cc-users",
-  templateUrl: "./users.component.html",
-  styleUrls: [ "./users.component.scss" ],
+    selector: "cc-users",
+    templateUrl: "./users.component.html",
+    styleUrls: ["./users.component.scss"],
+    standalone: false
 })
 export class UsersComponent extends SubscriptionManagerComponent {
   private readonly pageSubject: BehaviorSubject<number> = new BehaviorSubject<number>(0);

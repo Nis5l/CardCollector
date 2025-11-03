@@ -11,9 +11,10 @@ import type { NewCollectorConfig } from './types';
 import { SubscriptionManagerComponent } from '../../../shared/abstract';
 
 @Component({
-	selector: "cc-new-collector-dialog",
-	templateUrl: "./new-collector-dialog.component.html",
-	styleUrls: [ "./new-collector-dialog.component.scss" ]
+    selector: "cc-new-collector-dialog",
+    templateUrl: "./new-collector-dialog.component.html",
+    styleUrls: ["./new-collector-dialog.component.scss"],
+    standalone: false
 })
 export class NewCollectorDialogComponent extends SubscriptionManagerComponent {
 	public formGroup;

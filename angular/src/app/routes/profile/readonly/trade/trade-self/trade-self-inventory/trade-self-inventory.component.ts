@@ -11,9 +11,10 @@ import { TradeService } from '../../trade.service';
 import type { TradeInfoResponse } from '../../types';
 
 @Component({
-  selector: "cc-trade-self-inventory",
-  templateUrl: "./trade-self-inventory.component.html",
-  styleUrls: [  "././trade-self-inventory.component.scss" ]
+    selector: "cc-trade-self-inventory",
+    templateUrl: "./trade-self-inventory.component.html",
+    styleUrls: ["././trade-self-inventory.component.scss"],
+    standalone: false
 })
 export class TradeSelfInventoryComponent extends SubscriptionManagerComponent {
   public readonly selfUserId$: Observable<Id>;

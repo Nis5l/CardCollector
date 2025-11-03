@@ -3,9 +3,10 @@ import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dial
 import { Observable } from 'rxjs';
 
 @Component({
-	selector: 'cc-confirmation-dialog',
-	templateUrl: './confirmation-dialog.component.html',
-	styleUrls: ['./confirmation-dialog.component.scss']
+    selector: 'cc-confirmation-dialog',
+    templateUrl: './confirmation-dialog.component.html',
+    styleUrls: ['./confirmation-dialog.component.scss'],
+    standalone: false
 })
 export class ConfirmationDialogComponent {
 	public readonly message: string;

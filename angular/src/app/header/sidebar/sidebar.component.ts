@@ -2,9 +2,10 @@ import { Component, Input } from '@angular/core';
 import { fromEvent, Observable, map, startWith } from 'rxjs';
 
 @Component({
-  selector: 'cc-sidebar',
-  templateUrl: './sidebar.component.html',
-  styleUrls: ["./sidebar.component.scss"]
+    selector: 'cc-sidebar',
+    templateUrl: './sidebar.component.html',
+    styleUrls: ["./sidebar.component.scss"],
+    standalone: false
 })
 export class SidebarComponent {
 	private _open: boolean = false;
