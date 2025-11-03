@@ -1,76 +1,67 @@
 @import "../../../../theme.scss";
 @import "../../../../screen.scss";
 
-
-.navigation{
+.navigation {
   display: flex;
   justify-content: space-between;
-
   min-height: 48px;
-
   box-shadow: inset 0 -1px 0 #373e47;
-
   font-size: 1em;
-	color: map-get(map-get($theme, foreground), text);
+  color: map-get(map-get($theme, foreground), text);
 
-  li{
+  li {
     transition: background 0.25s ease-out;
-    &:hover{
+    &:hover {
       background-color: rgba(map-get($mat-accent, darker), 0.25);
       border-radius: 3px;
     }
   }
 
-  li.hidden{ visibility: hidden; }
-  & > ul{
+  // hidden items now use display:none to completely remove from layout
+  li.hidden {
+    display: none;
+  }
+
+  & > ul {
     position: relative;
     display: flex;
     align-items: center;
-
     gap: 8px;
     list-style-type: none;
-
     margin: 0;
     padding: 0 10px;
-
     box-sizing: border-box;
-
     overflow: hidden;
-    li{
+
+    li {
       display: inline-flex;
       word-wrap: break-word;
       box-sizing: border-box;
 
-      a{
+      a {
         display: flex;
         align-items: center;
         cursor: pointer;
-
         line-height: 30px;
         padding: 0 10px;
         text-align: center;
         position: relative;
-
         color: inherit;
         text-decoration: none;
-        &.active:after{
+
+        &.active:after {
           content: "";
-
           position: absolute;
-
           height: 3px;
           width: 100%;
-
           bottom: calc(50% - 25px);
           right: 50%;
           transform: translate(50%, -50%);
-
-		      background: map-get($mat-accent, darker);
+          background: map-get($mat-accent, darker);
           border-radius: 6px;
-
         }
 
-        .icon{
+        .icon {
           color: inherit;
           display: inline;
           margin-right: 8px;
@@ -78,60 +69,56 @@
       }
     }
   }
-  .details{
+
+  .details {
     display: flex;
     align-items: center;
-
     margin-left: 20px;
     margin-right: 10px;
 
-    .more_btn{
+    .more_btn {
       position: relative;
       display: flex;
       justify-content: center;
       align-items: center;
-
       width: 30px;
       height: 30px;
-
       text-align: center;
-
       border-radius: 100%;
-
       transition: background 0.25s ease-out;
-      &:hover{
+
+      &:hover {
         cursor: pointer;
         background: rgba(map-get($mat-accent, darker), 0.25);
       }
-      .more_box{
+
+      .more_box {
         z-index: 10;
         position: absolute;
         display: none;
-
         padding: 8px;
-
         border-radius: 6px;
-
         border: 1px solid #373e47;
         background-color: map-get(map-get($theme, background), dialog);
-
         top: calc(100% + 5px);
         right: 0;
 
-        &.open{
+        &.open {
           display: block;
         }
-        ul{
+
+        ul {
           display: flex;
           flex-direction: column;
           margin: 0;
           padding: 0;
-
           list-style-type: none;
           text-align: left;
-          li{
+
+          li {
             padding: 8px;
-            a{
+
+            a {
               color: inherit;
               text-decoration: none;
             }
