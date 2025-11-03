@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
-import type { PageEvent } from '@angular/material/paginator';
+import type { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
 import { Observable, BehaviorSubject, of as observableOf, combineLatest as observableCombineLatest, switchMap, startWith, debounceTime, distinctUntilChanged, share, filter } from 'rxjs';
 
 import { InventoryService } from './inventory.service';

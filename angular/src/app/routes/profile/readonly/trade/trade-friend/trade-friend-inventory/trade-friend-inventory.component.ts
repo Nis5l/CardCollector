@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { Observable, map, tap, filter, switchMap, combineLatest as observableCombineLatest, share, catchError, of as observableOf } from 'rxjs';
 
 import { TradeFriendInventoryService } from './trade-friend-inventory.service';

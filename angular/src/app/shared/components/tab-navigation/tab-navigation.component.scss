@@ -1,18 +1,17 @@
-@import "../../../../theme.scss";
 @import "../../../../screen.scss";
 
 .navigation {
   display: flex;
   justify-content: space-between;
   min-height: 48px;
-  box-shadow: inset 0 -1px 0 #373e47;
+  box-shadow: inset 0 -1px 0 #373e47; //TODO: variable
   font-size: 1em;
-  color: map-get(map-get($theme, foreground), text);
+  color: var(--mdc-theme-on-surface);
 
   li {
     transition: background 0.25s ease-out;
     &:hover {
-      background-color: rgba(map-get($mat-accent, darker), 0.25);
+      background-color: rgba(var(--mdc-theme-secondary-rgb, 157, 129, 208), 0.25);
       border-radius: 3px;
     }
   }
@@ -57,7 +56,7 @@
           bottom: calc(50% - 25px);
           right: 50%;
           transform: translate(50%, -50%);
-          background: map-get($mat-accent, darker);
+          background-color: var(--mdc-theme-secondary);
           border-radius: 6px;
         }
 
@@ -89,7 +88,7 @@
 
       &:hover {
         cursor: pointer;
-        background: rgba(map-get($mat-accent, darker), 0.25);
+        background-color: rgba(var(--mdc-theme-secondary-rgb, 157, 129, 208), 0.25);
       }
 
       .more_box {
@@ -98,8 +97,8 @@
         display: none;
         padding: 8px;
         border-radius: 6px;
-        border: 1px solid #373e47;
-        background-color: map-get(map-get($theme, background), dialog);
+        border: 1px solid #373e47; //TODO
+        background-color: var(--mdc-theme-surface);
         top: calc(100% + 5px);
         right: 0;
 

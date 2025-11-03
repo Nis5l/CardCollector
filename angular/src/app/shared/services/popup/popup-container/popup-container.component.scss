@@ -1,12 +1,10 @@
-@import "../../../../../theme.scss";
-
 .popup-container{
 	z-index: 10;
 	padding: 10px;
 	position: absolute;
 
-	color: map-get(map-get($theme, foreground), text);
-	background-color: map-get(map-get($theme, background), dialog);
+  color: var(--mdc-theme-on-surface);
+  background-color: var(--mdc-theme-surface);
 	box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 	border-radius: 5px;
 }

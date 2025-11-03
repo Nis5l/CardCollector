@@ -1,5 +1,3 @@
-@import "../../../../../../../theme.scss";
-
 .card-type-content {
 	margin: 24px 16px;
 
@@ -13,7 +11,7 @@
 			font-size: 13px;
 			line-height: 21px;
 			//height: 13px;
-			color: map-get(map-get($theme, foreground), secondary-text);
+      color: var(--mdc-theme-on-surface-variant);
 		}
 	}
 }

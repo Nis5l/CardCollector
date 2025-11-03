@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { NgVarModule } from '../../../../shared/directives';
 
 import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
+import { MatLegacyPaginatorModule as MatPaginatorModule } from '@angular/material/legacy-paginator';
 
 import { RequestCardCardTypeModule } from './request-cards';
 import { RequestCardCardModule } from './request-cards';

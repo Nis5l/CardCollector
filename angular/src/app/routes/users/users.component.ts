@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Observable, BehaviorSubject, debounceTime, distinctUntilChanged, startWith, switchMap, combineLatest as observableCombineLatest, tap } from 'rxjs';
 import { FormControl, FormGroup } from '@angular/forms';
-import type { PageEvent } from '@angular/material/paginator';
+import type { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
 
 import { UsersService } from './users.service';
 import type { UsersResponse } from './types';

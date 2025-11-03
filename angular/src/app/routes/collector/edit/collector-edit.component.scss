@@ -1,4 +1,3 @@
-@import "../../../../theme.scss";
 @import "../../../../screen.scss";
 
 .banner {
@@ -52,6 +51,6 @@
 	}
 
 	.description {
-		color: map-get(map-get($theme, foreground), hint-text);
+    color: var(--mdc-theme-on-surface-variant);
 	}
 }
