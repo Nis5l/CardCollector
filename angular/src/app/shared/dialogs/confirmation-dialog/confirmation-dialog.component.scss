@@ -1,5 +1,5 @@
 .confirmation-dialog {
-	width: 50vw;
+  margin: 20px;
 	min-width: 250px;
 	max-width: 500px;
 	display: flex;
@@ -7,11 +7,12 @@
 	align-items: center;
 
 	p {
+    color: var(--mat-sys-color-on-surface);
 		display: flex;
 		justify-content: center;
 		align-items: center;
 		margin-top: 10px;
-		margin-bottom: 15px;
+		margin-bottom: 20px;
 		min-height: 50px;
 	}
 

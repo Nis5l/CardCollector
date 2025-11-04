@@ -87,10 +87,6 @@ export class CollectorReadonlyComponent extends SubscriptionManagerComponent {
 		this.router.navigate(["edit"], { relativeTo: this.activatedRoute });
 	}
 
-	public openAddDialog(collectorId: Id): void {
-		CollectorAddDialogComponent.open(this.matDialog, collectorId);
-	}
-
 	public reloadCardTypes(): void {
 		this.reloadCardTypesSubject.next();
 	}

@@ -10,14 +10,14 @@
     </ng-container>
     <cc-card-type-selector formControlName="type" (cardType)="cardTypeChange($event)" [collectorId]="collectorId"></cc-card-type-selector>
     <input #imageInput hidden="true" type="file" (change)="imageChange($event.target)" accept="image/jpeg"/>
-    <button mat-button type="button" (click)="imageInput.click()" [color]="formGroup.hasError('noImage') ? 'error' : 'text'"><mat-icon color="accent" svgIcon="add_a_photo"></mat-icon>Image</button>
+    <button matButton="outlined" type="button" (click)="imageInput.click()" [color]="formGroup.hasError('noImage') ? 'error' : 'text'"><mat-icon color="accent" svgIcon="add_a_photo"></mat-icon>Image</button>
     <div class="request">
       <div *ngVar="(error$ | async) as error" class="error">
         @if (error != null) {
           <mat-error>{{error}}</mat-error>
         }
       </div>
-      <button mat-button type="submit" [disabled]="!formGroup.valid">Submit</button>
+      <button matButton="outlined" type="submit" [disabled]="!formGroup.valid">Submit</button>
     </div>
   </form>
   @if (card != null) {

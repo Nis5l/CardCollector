@@ -3,7 +3,7 @@
     <mat-form-field>
       <input matInput type="text" formControlName="search" placeholder="Search" />
     </mat-form-field>
-    <button class="new-collector" mat-raised-button (click)="newCollector()">New</button>
+    <button class="new-collector" matButton="outlined" (click)="newCollector()">New</button>
   </form>
   <cc-loading [observable]="loading$" [boolObservable]="true"></cc-loading>
   <ng-container *ngVar="(collectorIndexResponse$ | async) as res">

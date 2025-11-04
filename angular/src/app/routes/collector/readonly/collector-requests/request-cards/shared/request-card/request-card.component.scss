@@ -13,7 +13,6 @@
 		display: block;
 
 		mat-divider {
-			margin: 0 16px;
 			margin-bottom: 10px;
 		}
 		/* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version.*/
@@ -37,7 +36,7 @@
 	}
 	/* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version.*/
 	mat-card-actions {
-		padding-top: 5px;
+		padding: 20px 0;
 		display: flex;
 		gap: 50px;
 		margin: 0 9px;

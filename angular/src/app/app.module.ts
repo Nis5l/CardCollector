@@ -85,6 +85,9 @@ export class AppModule {
       'more_vert',
       'add',
       'add_a_photo',
+      'list_alt',
+      'home',
+      'backpack',
     ].forEach(icon => {
       iconRegistry.addSvgIcon(
         icon,

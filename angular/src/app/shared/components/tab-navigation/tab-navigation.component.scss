@@ -6,12 +6,12 @@
   min-height: 48px;
   box-shadow: inset 0 -1px 0 #373e47; //TODO: variable
   font-size: 1em;
-  color: var(--mdc-theme-on-surface);
+  color: var(--mat-sys-color-on-surface);
 
   li {
     transition: background 0.25s ease-out;
     &:hover {
-      background-color: rgba(var(--mdc-theme-secondary-rgb, 157, 129, 208), 0.25);
+      background-color: color-mix(in srgb, var(--mat-sys-color-secondary) 25%, transparent);
       border-radius: 3px;
     }
   }
@@ -56,7 +56,7 @@
           bottom: calc(50% - 25px);
           right: 50%;
           transform: translate(50%, -50%);
-          background-color: var(--mdc-theme-secondary);
+          background-color: var(--mat-sys-color-secondary);
           border-radius: 6px;
         }
 
@@ -88,7 +88,7 @@
 
       &:hover {
         cursor: pointer;
-        background-color: rgba(var(--mdc-theme-secondary-rgb, 157, 129, 208), 0.25);
+        background-color: color-mix(in srgb, var(--mat-sys-color-secondary) 25%, transparent);
       }
 
       .more_box {
@@ -98,7 +98,7 @@
         padding: 8px;
         border-radius: 6px;
         border: 1px solid #373e47; //TODO
-        background-color: var(--mdc-theme-surface);
+        background-color: var(--mat-sys-color-surface);
         top: calc(100% + 5px);
         right: 0;
 

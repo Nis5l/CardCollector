@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { BehaviorSubject, Observable, share, switchMap, filter, map, startWith } from 'rxjs';
@@ -18,6 +18,9 @@ import type { CollectorAddCardConfig, CardRequestRequest } from './types';
     standalone: false
 })
 export class CollectorAddCardComponent extends SubscriptionManagerComponent {
+	@Output()
+	public readonly onClose: EventEmitter<void> = new EventEmitter<void>();
+
 	private _collectorId: Id | null = null;
 	@Input()
 	public set collectorId(id: Id) {
@@ -151,7 +154,7 @@ export class CollectorAddCardComponent extends SubscriptionManagerComponent {
 		this.loadingService.waitFor(this.collectorAddCardService.createCardRequest(cardData).pipe(
 			switchMap(({ id }) => this.collectorAddCardService.setCardImage(id, image))
 		)).subscribe({
-			next: () => { /* TODO: goto created request */},
+			next: () => { this.onClose.emit(); },
 			error: (err: HttpErrorResponse) => {
 				this.errorSubject.next(err.error?.error ?? "Creating card failed");
 			}

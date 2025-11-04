@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { SubscriptionManagerComponent } from '../../../../shared/abstract';
 import { switchMap, Observable } from 'rxjs';
 
 import { CollectorService } from '../../collector.service';
 
+import { UserService } from '../../../../shared/services';
 import type { Collector } from '../../../../shared/types';
 
 @Component({
@@ -16,21 +17,33 @@ import type { Collector } from '../../../../shared/types';
 export class CollectorDashboardComponent extends SubscriptionManagerComponent {
   public readonly collector$: Observable<Collector>;
 
+	public readonly isAdmin$: Observable<boolean>;
+
   constructor(
     private readonly collectorService: CollectorService,
-    activatedRoute: ActivatedRoute,
+		private readonly router: Router,
+    private readonly activatedRoute: ActivatedRoute,
+		private readonly userService: UserService,
   ){
     super();
     const params$ = activatedRoute.parent?.params ?? activatedRoute.params;
     this.collector$ = params$.pipe(
-		switchMap(params => {
-			const collectorId = params["collectorId"] as unknown;
-			if(typeof collectorId !== "string") {
-				throw new Error("collectorId is not a string");
-			}
+      switchMap(params => {
+        const collectorId = params["collectorId"] as unknown;
+        if(typeof collectorId !== "string") {
+          throw new Error("collectorId is not a string");
+        }
 
-			return this.collectorService.getCollector(collectorId);
-		})
-	);
+        return this.collectorService.getCollector(collectorId);
+      })
+    );
+
+		this.isAdmin$ = this.collector$.pipe(
+			switchMap(({ id: collectorId }) => this.userService.isCollectorAdmin(collectorId))
+		);
   }
+
+	public edit(): void {
+		this.router.navigate(["../edit"], { relativeTo: this.activatedRoute });
+	}
 }

@@ -2,4 +2,9 @@
   @if (collector != null) {
     <cc-collector-open [collectorId]="collector.id"></cc-collector-open>
   }
+  @if ((isAdmin$ | async) === true) {
+    <button class="floating-button-br" mat-fab aria-label="Edit" (click)="edit()">
+      <mat-icon color="primary" svgIcon="edit"></mat-icon>
+    </button>
+  }
 </ng-container>

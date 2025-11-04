@@ -56,7 +56,10 @@ export class NewCollectorDialogComponent extends SubscriptionManagerComponent {
 	}
 
 	public static open(matDialog: MatDialog): Observable<undefined> {
-		return matDialog.open<NewCollectorDialogComponent, undefined, undefined>(NewCollectorDialogComponent, {}).afterClosed();
+		return matDialog.open<NewCollectorDialogComponent, undefined, undefined>(NewCollectorDialogComponent, {
+      width: "50vw",
+      height: "auto"
+    }).afterClosed();
 	}
 
 	public onCreate(): void {

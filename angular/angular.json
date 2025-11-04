@@ -38,7 +38,8 @@
             ],
             "styles": [
               "src/styles.scss",
-              "src/theme.scss"
+              "src/theme.scss",
+              "src/tokens.scss"
             ],
             "scripts": [],
             "browser": "src/main.ts"
@@ -106,7 +107,8 @@
             ],
             "styles": [
               "src/styles.scss",
-              "src/theme.scss"
+              "src/theme.scss",
+              "src/tokens.scss"
             ],
             "scripts": []
           }

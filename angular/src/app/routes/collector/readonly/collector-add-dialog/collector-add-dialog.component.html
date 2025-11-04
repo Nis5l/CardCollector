@@ -1,10 +1,10 @@
 <div class="collector-add">
 	<mat-tab-group mat-stretch-tabs>
 		<mat-tab label="Card">
-			<cc-collector-add-card [collectorId]="collectorId"></cc-collector-add-card>
+			<cc-collector-add-card [collectorId]="collectorId" (onClose)="close()"></cc-collector-add-card>
 		</mat-tab>
 		<mat-tab label="Type">
-			<cc-collector-add-card-type [collectorId]="collectorId"></cc-collector-add-card-type>
+			<cc-collector-add-card-type [collectorId]="collectorId" (onClose)="close()"></cc-collector-add-card-type>
 		</mat-tab>
 	</mat-tab-group>
 </div>

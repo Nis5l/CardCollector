@@ -69,8 +69,13 @@ export class CollectorRequestsComponent extends SubscriptionManagerComponent {
   }
 
 	public openAddDialog(collectorId: Id): void {
-		CollectorAddDialogComponent.open(this.matDialog, collectorId);
+		this.registerSubscription(CollectorAddDialogComponent.open(this.matDialog, collectorId).subscribe(
+      result => {
+        if(result == "refresh") this.reloadSubject.next();
+      }
+    ));
 	}
+
 	public reload(): void {
 		this.reloadSubject.next();
 	}

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, EventEmitter, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable, share, BehaviorSubject } from 'rxjs';
 
@@ -15,6 +15,9 @@ import { HttpErrorResponse } from '@angular/common/http';
     standalone: false
 })
 export class CollectorAddCardTypeComponent {
+	@Output()
+	public readonly onClose: EventEmitter<void> = new EventEmitter<void>();
+
 	private _collectorId: Id | null = null;
 	@Input()
 	public set collectorId(id: Id) {
@@ -46,7 +49,7 @@ export class CollectorAddCardTypeComponent {
 
 	public createCardTypeRequest(): void {
 		this.loadingService.waitFor(this.collectorAddCardTypeService.createCollectorRequest(this.collectorId, this.formGroup.getRawValue())).subscribe({
-			next: () => { /* TODO: goto created request */},
+			next: () => { this.onClose.emit() },
 			error: (err: HttpErrorResponse) => {
 				this.errorSubject.next(err.error?.error ?? "Creating type failed");
 			}
