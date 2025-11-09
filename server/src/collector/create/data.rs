@@ -1,5 +1,5 @@
 use rocketjson::JsonBody;
-use validator::{Validate, ValidationError};
+use validator::{Validate, ValidationError, ValidateArgs};
 use serde::{Serialize, Deserialize};
 use std::borrow::Cow;
 use regex::Regex;
@@ -8,9 +8,9 @@ use crate::shared::Id;
 use crate::config;
 
 #[derive(Debug, Deserialize, Validate, JsonBody)]
-//#[derive(Debug, Deserialize, Validate)]
+#[validate(context = config::Config)]
 pub struct CollectorCreateRequest {
-    #[validate(custom(function="validate_collector_name", arg="&'v_a config::Config"))]
+    #[validate(custom(function="validate_collector_name", use_context))]
     pub name: String
 }
 

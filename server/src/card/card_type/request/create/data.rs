@@ -1,6 +1,6 @@
 use serde::{Serialize, Deserialize};
 use rocketjson::JsonBody;
-use validator::{Validate, ValidationError};
+use validator::{Validate, ValidationError, ValidateArgs};
 use std::borrow::Cow;
 use regex::Regex;
 
@@ -8,8 +8,9 @@ use crate::config;
 use crate::shared::Id;
 
 #[derive(Debug, Deserialize, Validate, JsonBody)]
+#[validate(context = config::Config)]
 pub struct CardTypeRequestCreateRequest {
-    #[validate(custom(function="validate_collector_type_name", arg="&'v_a config::Config"))]
+    #[validate(custom(function="validate_collector_type_name", use_context))]
     pub name: String
 }
 
