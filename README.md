@@ -26,8 +26,8 @@ For developement [XAMPP](https://www.apachefriends.org/download.html) might be a
 ## Docker
 For production docker-compose a [LetsEncrypt proxy](https://github.com/evertramos/nginx-proxy-automation/tree/master/docs) is used.
 ## TODO:
-  Folder management for client. \
-  Cleanup client code. \
+  //Folder management for client. \
+  //Cleanup client code. \
   Verify User. \
   Fix Theme. \
   Fix Notifications. \

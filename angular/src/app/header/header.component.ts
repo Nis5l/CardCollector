@@ -41,4 +41,8 @@ export class HeaderComponent {
 		const userId = this.authService.getUserId();
 		this.router.navigate(userId == null ? ["logout"]  :[`user/${userId}`]);
 	}
+
+	public closeSidebar(): void {
+		this.toggleSidebarSubject.next(false);
+	}
 }

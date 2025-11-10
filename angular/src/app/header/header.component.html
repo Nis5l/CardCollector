@@ -33,7 +33,7 @@
       </button>
     </mat-menu>
   </mat-toolbar>
-  <cc-sidebar [open]="toggleSidebar$ | async">
+  <cc-sidebar [open]="toggleSidebar$ | async" (closeSidebar)="closeSidebar()">
     <ng-content></ng-content>
   </cc-sidebar>
 </div>

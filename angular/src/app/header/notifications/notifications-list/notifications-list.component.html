@@ -1,4 +1,6 @@
-@for (notification of notifications$ | async; track notification) {
-  <cc-notification-item [notification]="notification" (onClick)="navigate($event)">
-  </cc-notification-item>
-}
+<div class="notification-list-container">
+  @for (notification of notifications$ | async; track notification) {
+    <cc-notification-item [notification]="notification" (onClick)="navigate($event)">
+    </cc-notification-item>
+  }
+</div>

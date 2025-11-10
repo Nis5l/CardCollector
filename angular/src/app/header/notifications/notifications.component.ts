@@ -9,7 +9,6 @@ import type { Notification } from './types';
 import { PopupService } from '../../shared/services';
 import { SubscriptionManagerComponent } from '../../shared/abstract';
 
-//TODO: fix if notification are too long you can sroll
 @Component({
     selector: 'cc-notifications',
     templateUrl: './notifications.component.html',
@@ -23,7 +22,7 @@ export class NotificationsComponent extends SubscriptionManagerComponent {
 	constructor(
 		private readonly notificationsService: NotificationsService,
 		private readonly popupService: PopupService
-	){
+	) {
 		super();
 		this.notifications$ = this.notificationsSubject.asObservable();
 	}
@@ -38,7 +37,7 @@ export class NotificationsComponent extends SubscriptionManagerComponent {
 
 	onClick(e: any){
 		let width = 300;
-		let height = 100;
+		let height = 500;
 
 		let pos = e.originalTarget.getBoundingClientRect();
 

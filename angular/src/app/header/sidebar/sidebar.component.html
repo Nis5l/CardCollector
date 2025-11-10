@@ -1,11 +1,11 @@
-<mat-drawer-container autosize *ngVar="(screenWidth$ | async) as screenWidth">
-  @if (screenWidth != null) {
-    <mat-drawer #drawer class="sidenav" [mode]="screenWidth > 600 ? 'side' : 'over'" [opened]="open">
+<mat-drawer-container autosize *ngVar="(sidebarMode$ | async) as sidebarMode">
+  @if (sidebarMode != null) {
+    <mat-drawer #drawer class="sidenav" [mode]="sidebarMode" [opened]="open">
       <div class="routes">
-        <button mat-button routerLink="collectors">
+        <button mat-button (click)="navigate('collectors', sidebarMode)">
           <div class="button-content"><mat-icon color="accent" svgIcon="featured_play_list"></mat-icon> Collectors</div>
         </button>
-        <button mat-button routerLink="users">
+        <button mat-button (click)="navigate('users', sidebarMode)">
           <div class="button-content"><mat-icon color="accent" svgIcon="group"></mat-icon> Users</div>
         </button>
       </div>
