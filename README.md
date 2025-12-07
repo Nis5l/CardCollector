@@ -30,7 +30,3 @@ For production docker-compose a [LetsEncrypt proxy](https://github.com/evertramo
   //Cleanup client code. \
   Fix Theme. \
   Fix Notifications. \
-  Dont list Unverified Users.
-
-
-verify system
