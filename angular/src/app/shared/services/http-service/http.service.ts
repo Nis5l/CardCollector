@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
-import { catchError, Observable, throwError as observableThrowError, tap, switchMap, share } from 'rxjs';
+import { catchError, Observable, throwError as observableThrowError, tap, switchMap, share, shareReplay, EMPTY } from 'rxjs';
 
 import { AuthService } from '../auth-service';
 import type { RefreshResponse } from './types';
@@ -25,15 +25,19 @@ export class HttpService {
 	constructor(
 		private readonly httpClient: HttpClient,
 		private readonly router: Router,
+    private ngZone: NgZone,
 		private readonly authService: AuthService
 	) {
 		this.refreshRequest = this.httpClient.get<RefreshResponse>(this.apiUrl("/refresh"), { withCredentials: true }).pipe(
 			catchError((err: unknown) => {
-				this.router.navigate(["logout"]);
-				throw err;
+        this.ngZone.run(() => {
+          this.router.navigate(['logout']);
+        });
+        return EMPTY;
 			}),
 			tap(res => this.authService.setAccessToken(res.accessToken)),
 			share(),
+      //shareReplay(1)
 		);
 	}
 
@@ -78,6 +82,11 @@ export class HttpService {
 						switchMap(() => req())
 					);
 				}
+				if(error.status === 403) {
+          console.log("IN HERE");
+          this.router.navigate(["verify"]);
+          return observableThrowError(() => error);
+				}
 				return observableThrowError(() => error);
 			}),
 		);
@@ -85,6 +94,8 @@ export class HttpService {
 
 	private getHeaders(): Headers {
 		const accessToken = this.authService.getAccessToken();
+
+    console.log("accessToken", accessToken);
 
 		let headers = { ...this.headers};
 		if(accessToken != null) headers = { ...headers, Authorization: `Bearer ${accessToken}` };

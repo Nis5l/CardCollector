@@ -28,8 +28,7 @@ mod scripts;
 
 #[get("/")]
 fn index() -> &'static str {
-    println!("index");
-    "WaifuCollector API"
+    "CardCollector API"
 }
 
 #[launch]
@@ -82,6 +81,7 @@ async fn rocket() -> _ {
             admission::verify::check::verify_check_route,
             admission::verify::confirm::verify_confirm_route,
             admission::verify::resend::verify_resend_route,
+            admission::verify::time::verify_time_route,
             admission::email::get::email_get_route,
             admission::email::change::email_change_route,
             admission::email::delete::email_delete_route,

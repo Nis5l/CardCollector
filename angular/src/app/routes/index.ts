@@ -12,3 +12,4 @@ export { HomeModule, HomeComponent } from './home';
 export { CollectorReadonlyModule, CollectorReadonlyComponent, CollectorEditModule, CollectorEditComponent } from './collector';
 export { CardViewModule, CardViewComponent, CardUpgradeComponent, CardUpgradeModule } from './card';
 export { UsersModule, UsersComponent } from './users';
+export { VerifyModule, VerifyComponent } from './verify';

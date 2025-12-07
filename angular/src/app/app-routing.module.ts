@@ -15,13 +15,15 @@ import {
   CardUpgradeComponent,
   UsersComponent,
   ProfileReadonlyTradeComponent,
+  VerifyComponent,
 } from './routes';
 import { canActivateAuth, canActivateCollectorAdmin } from './shared/guards';
 
 const routes: Routes = [
 	{ path: "login", component: LoginComponent },
-	{ path: "logout", component: LogoutComponent, canActivate: [ canActivateAuth ] },
+	{ path: "logout", component: LogoutComponent}, //, canActivate: [ canActivateAuth ] },
 	{ path: "register", component: RegisterComponent },
+	{ path: "verify", component: VerifyComponent },
 
 	{ path: "collectors", component: CollectorsComponent },
 	{ path: "collector/:collectorId/edit", component: CollectorEditComponent, canActivate: [ canActivateAuth, canActivateCollectorAdmin ] },

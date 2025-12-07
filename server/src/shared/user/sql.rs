@@ -96,9 +96,9 @@ pub async fn set_verification_key(sql: &Sql, user_id: &Id, key: &str) -> Result<
 
     sqlx::query(
         "INSERT INTO verificationkeys
-         (uid, vkkey)
+         (uid, vkkey, vkcreated)
          VALUES
-         (?, ?);")
+         (?, ?, NOW());")
         .bind(user_id)
         .bind(key)
         .execute(&mut transaction)

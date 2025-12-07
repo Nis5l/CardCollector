@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import type { UnlockedCard, CardInfo, CardFrame, CardType, CardEffect } from '../../shared/types/card';
 
 @Component({
-    selector: 'gc-home',
+    selector: 'cc-home',
     templateUrl: './home.component.html',
     styleUrls: ['./home.component.scss'],
     standalone: false

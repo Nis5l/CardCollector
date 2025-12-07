@@ -2,7 +2,7 @@ use serde::Serialize;
 use sqlx::FromRow;
 use chrono::{DateTime, Utc};
 
-use crate::shared::{Id, IdInt};
+use crate::shared::{Id};
 use crate::shared::card::data::UnlockedCard;
 
 #[derive(Debug, Serialize, FromRow)]

@@ -15,6 +15,7 @@ pub struct Config {
 
     pub domain: String,
     pub verification_key_length: usize,
+    pub verification_key_resend_cooldown: u32,
     pub id_length: usize,
 
     pub username_len_min: u32,
@@ -94,6 +95,7 @@ impl Default for Config {
 
             domain: String::from("https://waifucollector.com"),
             verification_key_length: 20,
+            verification_key_resend_cooldown: 30,
             id_length: 13,
 
             username_len_min: 4,

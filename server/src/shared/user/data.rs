@@ -70,7 +70,8 @@ macro_rules! verify_user {
                 Some(vd) => {
                     if ($is_verified) {
                         match rocketjson::rjtry!(crate::shared::user::data::UserVerified::from_db(&vd.email, vd.verified)) {
-                            crate::shared::user::data::UserVerified::NotVerified => return rocketjson::ApiResponseErr::api_err(rocket::http::Status::Unauthorized, format!("User {} not verified", $user_id)),
+                            crate::shared::user::data::UserVerified::NotVerified => return rocketjson::ApiResponseErr::api_err(rocket::http::Status::Forbidden, format!("User {} not verified", $user_id)),
+                            //TODO: remove???
                             crate::shared::user::data::UserVerified::MailNotSet => return rocketjson::ApiResponseErr::api_err(rocket::http::Status::Unauthorized, format!("Mail for {} not set", $user_id)),
                             crate::shared::user::data::UserVerified::Ok => ()
                         }
