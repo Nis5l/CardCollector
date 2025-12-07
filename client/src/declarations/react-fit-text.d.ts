@@ -1,1 +1,0 @@
-declare module '@plutonium-js/react-fit-text';
