@@ -4,24 +4,25 @@ use rocket::State;
 use rand::{thread_rng, Rng};
 
 use super::data::{UpgradeResponse, UpgradeRequest, UpgradeCardsResult};
-use crate::crypto::JwtToken;
+use crate::shared::crypto::JwtToken;
 use crate::sql::Sql;
-use crate::shared::card::{self, data::Card, data::CardCreateData};
+use crate::shared::card::{self, data::{UnlockedCard, UnlockedCardCreateData, CardFrame}};
 use crate::config::Config;
+use crate::shared::Id;
 use crate::verify_user;
 
 #[post("/card/upgrade", data="<data>")]
 pub async fn upgrade_route(sql: &State<Sql>, token: JwtToken, data: UpgradeRequest, config: &State<Config>) -> ApiResponseErr<UpgradeResponse> {
     let user_id = token.id;
     
-    verify_user!(sql, user_id);
+    verify_user!(sql, &user_id, true);
 
-    let card_one: Card = match rjtry!(card::sql::get_card(sql, data.card_one, Some(user_id), config).await) {
+    let card_one: UnlockedCard = match rjtry!(card::sql::get_unlocked_card(sql, &data.card_one, Some(&user_id), config).await) {
         None => return ApiResponseErr::api_err(Status::NotFound, format!("Card not found: {}", data.card_one)),
         Some(card) => card
     };
 
-    let card_two: Card = match rjtry!(card::sql::get_card(sql, data.card_two, Some(user_id), config).await) {
+    let card_two: UnlockedCard = match rjtry!(card::sql::get_unlocked_card(sql, &data.card_two, Some(&user_id), config).await) {
         None => return ApiResponseErr::api_err(Status::NotFound, format!("Card not found: {}", data.card_two)),
         Some(card) => card
     };
@@ -30,7 +31,11 @@ pub async fn upgrade_route(sql: &State<Sql>, token: JwtToken, data: UpgradeReque
         return ApiResponseErr::api_err(Status::BadRequest, format!("Can not upgrade itself: {} {}", card_one.id, card_two.id));
     }
 
-    if card_one.card_info.id != card_two.card_info.id || card_one.level != card_two.level {
+    if card_one.card.collector_id != card_two.card.collector_id {
+        return ApiResponseErr::api_err(Status::BadRequest, format!("Cards are not from the same collector: {} {}", card_one.id, card_two.id));
+    }
+
+    if card_one.card.card_info.id != card_two.card.card_info.id || card_one.level != card_two.level {
         return ApiResponseErr::api_err(Status::BadRequest,
                                            format!("Character and level have to match: {}:{} {}:{}",
                                                    card_one.id,
@@ -42,10 +47,11 @@ pub async fn upgrade_route(sql: &State<Sql>, token: JwtToken, data: UpgradeReque
 
     let UpgradeCardsResult { create_card_data: new_card_data, success } = upgrade_cards(&card_one, &card_two, config);
 
-    let new_card_uuid = rjtry!(card::sql::add_card(sql, user_id, &new_card_data).await);
+    let new_card_uuid = Id::new(config.id_length);
+    rjtry!(card::sql::add_card(sql, &user_id, &new_card_uuid, &card_one.card.collector_id, &new_card_data).await);
 
-    rjtry!(card::sql::delete_card(sql, card_one.id).await);
-    rjtry!(card::sql::delete_card(sql, card_two.id).await);
+    rjtry!(card::sql::delete_card(sql, &card_one.id).await);
+    rjtry!(card::sql::delete_card(sql, &card_two.id).await);
 
     ApiResponseErr::ok(Status::Ok, UpgradeResponse {
         success,
@@ -53,7 +59,7 @@ pub async fn upgrade_route(sql: &State<Sql>, token: JwtToken, data: UpgradeReque
     })
 }
 
-fn upgrade_cards(card_one: &Card, card_two: &Card, config: &Config) -> UpgradeCardsResult {
+fn upgrade_cards(card_one: &UnlockedCard, card_two: &UnlockedCard, config: &Config) -> UpgradeCardsResult {
     let upgrade_chance = ((card_one.quality + card_two.quality) * 10) as f32;
 
     let mut rng = thread_rng();
@@ -78,10 +84,13 @@ fn upgrade_cards(card_one: &Card, card_two: &Card, config: &Config) -> UpgradeCa
          }
     }
 
-    let create_card_data = CardCreateData {
-            card_id: card_one.card_info.id,
+    let create_card_data = UnlockedCardCreateData {
+            card_id: card_one.card.card_info.id.clone(),
             //TODO: if more frames are introduced change this
-            frame_id: card_one.card_frame.id,
+            frame_id: match card_one.card_frame {
+                Some(CardFrame { id, .. }) => Some(id),
+                None => None
+            },
             quality: new_quality,
             level: new_level
         };

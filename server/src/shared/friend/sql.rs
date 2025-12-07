@@ -2,7 +2,7 @@ use super::data::{FriendDb, FriendUsernameDb};
 use crate::sql::Sql;
 use crate::shared::Id;
 
-pub async fn used_friend_slots(sql: &Sql, user_id: Id) -> Result<i64, sqlx::Error> {
+pub async fn used_friend_slots(sql: &Sql, user_id: &Id) -> Result<i64, sqlx::Error> {
     let mut con = sql.get_con().await?;
 
     let (count, ): (i64, ) = sqlx::query_as(
@@ -18,7 +18,7 @@ pub async fn used_friend_slots(sql: &Sql, user_id: Id) -> Result<i64, sqlx::Erro
 }
 
 
-pub async fn user_friends_username(sql: &Sql, user_id: Id) -> Result<Vec<FriendUsernameDb>, sqlx::Error> {
+pub async fn user_friends_username(sql: &Sql, user_id: &Id) -> Result<Vec<FriendUsernameDb>, sqlx::Error> {
     let mut con = sql.get_con().await?;
 
     let friends: Vec<FriendUsernameDb> = sqlx::query_as(
@@ -50,7 +50,7 @@ pub async fn user_friends_username(sql: &Sql, user_id: Id) -> Result<Vec<FriendU
 }
 
 //TODO: return Friend not frienddb
-pub async fn user_friend(sql: &Sql, user_id: Id, user_friend_id: Id) -> Result<Option<FriendDb>, sqlx::Error> {
+pub async fn user_friend(sql: &Sql, user_id: &Id, user_friend_id: &Id) -> Result<Option<FriendDb>, sqlx::Error> {
     let mut con = sql.get_con().await?;
 
     let friends: Result<FriendDb, sqlx::Error> = sqlx::query_as(
@@ -77,7 +77,7 @@ pub async fn user_friend(sql: &Sql, user_id: Id, user_friend_id: Id) -> Result<O
     Ok(Some(friends?))
 }
 
-pub async fn user_has_friend(sql: &Sql, user_id: Id, user_friend_id: Id) -> Result<bool, sqlx::Error> {
+pub async fn user_has_friend(sql: &Sql, user_id: &Id, user_friend_id: &Id) -> Result<bool, sqlx::Error> {
     let mut con = sql.get_con().await?;
 
     let (count, ): (i64, ) = sqlx::query_as(

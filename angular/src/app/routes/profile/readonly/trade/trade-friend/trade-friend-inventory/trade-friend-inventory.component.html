@@ -1,0 +1,12 @@
+<div>
+  <cc-inventory
+    [collectorId]="collectorId$ | async"
+    [userId]="userId$ | async"
+    click="event"
+    (clickEvent)="addSuggestion($event)"
+    [excludeUuids]="excludeUuids$ | async"
+  ></cc-inventory>
+  <button class="floating-button-br" mat-fab aria-label="Add" (click)="closeSuggestion()">
+    <mat-icon color="accent" svgIcon="remove"></mat-icon>
+  </button>
+</div>

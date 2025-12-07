@@ -4,44 +4,50 @@ use rocket::State;
 use chrono::{DateTime, Utc, Duration};
 use rand::{thread_rng, Rng};
 use std::ops::RangeInclusive;
-use std::sync::Arc;
-use tokio::sync::Mutex;
 
 use super::data::{PackOpenResponse, CanOpenPack};
 use super::sql;
 use super::super::shared;
-use crate::crypto::JwtToken;
+use crate::shared::crypto::JwtToken;
 use crate::sql::Sql;
 use crate::config::Config;
-use crate::shared::card::{self, data::CardCreateData};
-use crate::verify_user;
-use crate::shared::card::packstats::data::PackStats;
+use crate::shared::card::{self, data::UnlockedCardCreateData};
+use crate::shared::Id;
+use crate::{verify_user, verify_collector};
+use crate::shared::card::packstats::sql::add_pack_stats;
+use crate::shared::collector::{get_collector_setting, CollectorSetting};
 
-#[post("/pack/open")]
-pub async fn pack_open_route(sql: &State<Sql>, token: JwtToken, config: &State<Config>, pack_stats: &State<Arc<Mutex<PackStats>>>) -> ApiResponseErr<PackOpenResponse> {
+#[post("/pack/<collector_id>/open")]
+pub async fn pack_open_route(collector_id: Id, sql: &State<Sql>, token: JwtToken, config: &State<Config>) -> ApiResponseErr<PackOpenResponse> {
     let user_id = token.id;
 
-    verify_user!(sql, user_id);
+    verify_user!(sql, &user_id, true);
+    verify_collector!(sql, &collector_id);
 
-    let last_opened = rjtry!(shared::sql::get_pack_time(sql, user_id).await);
+    let pack_amount = rjtry!(get_collector_setting(sql, &collector_id, CollectorSetting::PackAmount, config.pack_amount).await);
+    let pack_quality_min = rjtry!(get_collector_setting(sql, &collector_id, CollectorSetting::PackQualityMin, config.pack_quality_min).await);
+    let pack_quality_max = rjtry!(get_collector_setting(sql, &collector_id, CollectorSetting::PackQualityMax, config.pack_quality_max).await);
 
-    if let CanOpenPack::No(next_time) = can_open_pack(last_opened, config.pack_cooldown) {
+    let last_opened = rjtry!(shared::sql::get_pack_time(sql, &user_id, &collector_id).await);
+
+    if let CanOpenPack::No(next_time) = can_open_pack(last_opened, rjtry!(get_collector_setting(sql, &collector_id, CollectorSetting::PackCooldown, config.pack_cooldown).await)) {
         return ApiResponseErr::api_err(Status::Conflict, format!("Wait until: {}", next_time));
     }
 
-    let cards_create_data = rjtry!(get_random_cards(sql, config.pack_amount, config.pack_quality_min..=config.pack_quality_max).await);
+    let cards_create_data = rjtry!(get_random_cards(sql, pack_amount, pack_quality_min..=pack_quality_max, &collector_id).await);
 
     let mut inserted_cards_uuids = Vec::new();
     for card_create_data in cards_create_data.iter() {
-        let inserted_card_uuid = rjtry!(card::sql::add_card(&sql, user_id, card_create_data).await);
+        let inserted_card_uuid = Id::new(config.id_length);
+        rjtry!(card::sql::add_card(&sql, &user_id, &inserted_card_uuid, &collector_id, card_create_data).await);
         inserted_cards_uuids.push(inserted_card_uuid);
     }
 
-    rjtry!(sql::set_pack_time(&sql, user_id, Utc::now()).await);
+    rjtry!(sql::set_pack_time(&sql, &user_id, &collector_id, Utc::now()).await);
 
-    let cards = rjtry!(card::sql::get_cards(&sql, inserted_cards_uuids, None, config).await);
+    let cards = rjtry!(card::sql::get_unlocked_cards(&sql, inserted_cards_uuids, None, config).await);
 
-    rjtry!(PackStats::add_pack_stats(pack_stats.inner().clone(), config.pack_amount as i32).await);
+    rjtry!(add_pack_stats(sql, &user_id, &collector_id, pack_amount as i32, &Utc::now()).await);
 
     ApiResponseErr::ok(Status::Ok, PackOpenResponse {
         cards
@@ -63,8 +69,8 @@ fn can_open_pack(last_opened: Option<DateTime<Utc>>, pack_cooldown: u32) -> CanO
     }
 }
 
-async fn get_random_cards(sql: &Sql, amount: u32, quality_range: RangeInclusive<i32>) -> Result<Vec<CardCreateData>, sqlx::Error> {
-    let new_cards_create = sql::get_random_card_data(sql, amount).await?;
+async fn get_random_cards(sql: &Sql, amount: u32, quality_range: RangeInclusive<i32>, collector_id: &Id) -> Result<Vec<UnlockedCardCreateData>, sqlx::Error> {
+    let new_cards_create = sql::get_random_card_data(sql, amount, collector_id).await?;
 
 	//NOTE: maybe this could be smth for the future:
     // (highest-level)^3 * 0.5
@@ -86,10 +92,10 @@ async fn get_random_cards(sql: &Sql, amount: u32, quality_range: RangeInclusive<
             }
         }
 
-        let card_create_data = CardCreateData {
-            card_id: card.card_id,
-            frame_id: card.frame_id,
+        let card_create_data = UnlockedCardCreateData {
+            card_id: card.card_id.clone(),
             level,
+            frame_id: None,
             quality
         };
 

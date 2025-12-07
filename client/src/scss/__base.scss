@@ -3,6 +3,20 @@
 $background-primary: #252525;
 $background-secondary: #1E1E1E;
 
+/* Navbar */
+$navbar-background: $background-primary;
+$navbar-color: #d8d8d8;
+$navbar-height: 60px;
+
+/* Login Button */
+$login-btn-color: black;
+$login-btn-background: white;
+$login-btn-border: white;
+
+$login-btn-color-hover: white;
+$login-btn-background-hover: transparent;
+$login-btn-border-hover: white;
+
 /* Sidebar */
 
 $sidebar-bg-color: $background-primary;

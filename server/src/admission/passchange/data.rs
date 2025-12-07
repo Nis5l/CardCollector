@@ -1,14 +1,15 @@
 use serde::{Serialize, Deserialize};
 use rocketjson::JsonBody;
-use validator::Validate;
+use validator::{Validate, ValidateArgs};
 
-use crate::config::Config;
+use crate::config;
 use crate::shared::user::data::validate_password;
 
-#[derive(Debug, Deserialize, JsonBody, Validate)]
+#[derive(Debug, Deserialize, Validate, JsonBody)]
 #[serde(rename_all="camelCase")]
+#[validate(context = config::Config)]
 pub struct PassChangeRequest {
-    #[validate(custom(function="validate_password", arg="&'v_a Config"))]
+    #[validate(custom(function="validate_password", use_context))]
     pub new_password: String
 }
 

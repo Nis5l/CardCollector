@@ -1,0 +1,4 @@
+<div class="user" *ngVar="(userId$ | async) as userId" (click)="navigateUser(userId)">
+	<cc-profile-image [userId]="userId"></cc-profile-image>
+	<p>{{username$ | async}}</p>
+</div>

@@ -2,15 +2,20 @@ use rocket::http::Status;
 use rocket::State;
 use rocketjson::{ApiResponseErr, rjtry, error::ApiErrorsCreate};
 
+use crate::{verify_user, verify_collector};
 use crate::sql::Sql;
 use crate::shared::Id;
 use crate::config::Config;
-use crate::shared::card;
+use crate::shared::{card, card::data::UnlockedCard};
 
-#[get("/user/<user_id>/flex")]
-pub async fn flex_route(user_id: Id, sql: &State<Sql>, config: &State<Config>) -> ApiResponseErr<Vec<card::data::Card>> {
+#[get("/user/<user_id>/<collector_id>/flex")]
+pub async fn flex_route(user_id: Id, collector_id: Id, sql: &State<Sql>, config: &State<Config>) -> ApiResponseErr<Vec<UnlockedCard>> {
+    verify_user!(sql, &user_id, false);
+    verify_collector!(sql, &collector_id);
+
     let cards = rjtry!(card::sql::get_inventory(sql, config, &card::data::InventoryOptions {
         user_id,
+        collector_id,
         count: config.flex_cards_amount,
         exclude_uuids: Vec::new(),
         offset: 0,

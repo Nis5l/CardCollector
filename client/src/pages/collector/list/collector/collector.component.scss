@@ -1,0 +1,49 @@
+@import "../../../../scss/__base.scss";
+
+.collector-card-wrapper{
+    overflow: hidden;
+
+    width: 100%;
+    height: 100%;
+
+    background-color: $background-primary;
+
+    border-radius: 5px;
+
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+
+    &:hover{
+        cursor: pointer;
+    }
+
+    .collector-card-image{
+
+        width: 100%;
+        height: auto;
+        img{
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+    }
+
+    .collector-card-content{
+        padding: 10px;
+        text-align: center;
+    }
+}
+
+.zoom{
+    .collector-card-image{
+        overflow: hidden;
+        img{
+            transition: transform 0.5s;
+        }
+    }
+    &:hover{
+        .collector-card-image img{
+            transform: scale(1.25);
+        }
+    }
+}

@@ -1,0 +1,102 @@
+@import "../../../scss/__base.scss";
+
+.login{
+
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    width: 70%;
+    height: 80%;
+
+    max-width: 400px;
+    max-height: 600px;
+
+    transform: translate(-50%, -50%);
+
+    @media screen and (max-width: $breakpoint-sm) {
+        
+        width: 100%;
+        min-height: 100%;
+
+        max-width: none;
+        max-height: none;
+
+        height: auto;
+
+    }
+
+    .card-content 
+    {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+
+    .logo{
+
+        display: block;
+
+        width: 50%;
+        height: auto;
+
+        margin: 0px auto;
+
+        @media screen and (max-height: 512px) {
+            
+            width: 20%;
+
+            max-width: 100px;
+
+        }
+
+        @media screen and (max-height: 320px) {
+            
+            width: 10%;
+
+        }
+
+    }
+
+    form{
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        margin: auto 0;
+
+        input[type=text], input[type=password]{
+
+            display: block;
+
+            width: 50%;
+            
+            padding: 5px;
+
+            margin: 10px auto;
+
+        }
+
+        input[type=submit]{
+
+            display: block;
+
+            width: 40%;
+            padding: 5px;
+
+            margin: 10px auto;
+
+        }
+
+    }
+
+}
+
+label{
+    input[type="checkbox"]{
+        margin: 10px 0;
+        margin-right: 10px;
+    }
+}

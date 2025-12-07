@@ -1,0 +1,3 @@
+<div class="popup-container" [hidden]="!hasPopup()" [style]="getStyle()" (click)="onClick()" (window:resize)="onResize($event)">
+	<ng-template popupHost></ng-template>
+</div>

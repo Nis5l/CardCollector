@@ -1,0 +1,142 @@
+@import "../../../scss/__base.scss";
+
+.friendslist
+{
+
+    height: 100%;
+
+    .friendRequests
+    {
+        width: 100%;
+        min-height: 20px;
+        height: fit-content;
+
+        &>div
+        {
+            position: relative;
+            height: 100%;
+        }
+    }
+
+    ul
+    {
+        width: 100%;
+        overflow: hidden;
+        transition: transform linear 0.2s;
+        position: relative;
+
+        height: fit-content;
+
+        list-style-type: none;
+    }
+
+    .hideFriends
+    {
+        animation: hideFriendsAnimation 0.5s forwards;
+    }
+
+    .showFriends
+    {
+        animation: showFriendsAnimation 0.5s forwards;
+    }
+
+    .friend
+    {
+
+        margin: 10px 0;
+
+        display: flex;
+        flex-wrap: wrap;
+
+        align-items: center;
+
+        height: 50px;
+        width: 100%;
+
+        &>img
+        {
+
+            display: inline-block;
+
+            height: calc(100% - 2px);
+            width: auto;
+
+            border-radius: 100%;
+            border: 1px solid #fff;
+
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            -ms-transform: translateZ(0); /* IE 9 */
+            -webkit-transform: translateZ(0); /* Chrome, Safari, Opera */
+            transform: translateZ(0);
+
+        }
+
+        .profileName
+        {
+            color: $sidebar-color;
+
+            display: inline-block;
+
+            margin-left: 10px;
+        }
+
+        .threeDotsMenu, .icons
+        {
+            margin-left: auto;
+        }
+
+        .fa-times, .fa-check
+        {
+            width: 30px;
+            margin-bottom: 1px;
+            font-size: 24px;
+        }
+
+        .fa-times
+        {
+            color: $color-decline;
+
+            &:hover
+            {
+                color: $color-decline-highlight;
+            }
+        }
+
+        .fa-check
+        {
+            color: $color-accept;
+            &:hover
+            {
+                color: $color-accept-highlight;
+            }
+        }
+    }
+
+}
+
+@keyframes hideFriendsAnimation
+{
+    100%
+    {
+        position: absolute;
+        top: 0;
+        left: 0;
+        transform: translateY(-100%);
+    }
+}
+
+@keyframes showFriendsAnimation
+{
+    0%
+    {
+        position: absolute;
+        top: 0;
+        left: 0;
+        transform: translateY(-100%);
+    }
+    100%
+    {
+        position: relative;
+    }
+}

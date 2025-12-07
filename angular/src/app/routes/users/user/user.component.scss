@@ -1,0 +1,12 @@
+.user {
+	display: flex;
+	flex-direction: row;
+	gap: 30px;
+	padding: 20px;
+	cursor: pointer;
+
+	.user-image {
+		width: 100px;
+		height: 100px;
+	}
+}

@@ -1,0 +1,34 @@
+.cards {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 40px;
+  justify-content: center;
+}
+
+.confirm {
+  .line {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 19px;
+    position: absolute;
+    width: 100%;
+    div {
+      position: relative;
+      width: 45%;
+      height: 1px;
+      box-shadow: inset 0 1px 0 #373e47;
+    }
+  }
+
+  button {
+    display: flex;
+    justify-content: center;
+    margin: auto;
+    transform: scale(2);
+  }
+
+  margin-top: 50px;
+  height: 100px;
+}

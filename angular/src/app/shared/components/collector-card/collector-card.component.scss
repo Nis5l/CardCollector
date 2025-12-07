@@ -1,0 +1,22 @@
+.collector {
+	display: flex;
+	flex-direction: row;
+	gap: 30px;
+	padding: 20px;
+	cursor: pointer;
+
+	.collector-image {
+		width: 100px;
+		height: 100px;
+	}
+
+  .trade {
+    display: flex;
+    margin-left: auto;
+    margin-right: 50px;
+    align-items: center;
+    mat-icon {
+      transform: scale(2.3);
+    }
+  }
+}

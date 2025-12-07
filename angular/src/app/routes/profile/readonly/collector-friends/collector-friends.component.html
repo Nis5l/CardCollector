@@ -1,0 +1,7 @@
+<div *ngVar="(friends$ | async) as friends" class="collector-friends">
+  @if (friends != null) {
+    @for (friend of friends; track friend) {
+      <cc-friend-card (onFriendDecline)="declineFriend($event)" (onFriendAccept)="acceptFriend($event)" [friend]="friend"></cc-friend-card>
+    }
+  }
+</div>

@@ -61,17 +61,26 @@ impl UserVerified {
 
 #[macro_export]
 macro_rules! verify_user {
-    ( $sql:expr, $token:expr ) => {
+    ( $sql:expr, $user_id:expr, $is_verified:expr ) => {
         {
-            let vd = rocketjson::rjtry!(crate::shared::user::sql::get_verify_data($sql, $token).await);
+            let vd = rocketjson::rjtry!(crate::shared::user::sql::get_verify_data($sql, $user_id).await);
 
-            match rocketjson::rjtry!(crate::shared::user::data::UserVerified::from_db(&vd.email, vd.verified)) {
-                crate::shared::user::data::UserVerified::NotVerified => return rocketjson::ApiResponseErr::api_err(rocket::http::Status::Unauthorized, String::from("Not verified")),
-                crate::shared::user::data::UserVerified::MailNotSet => return rocketjson::ApiResponseErr::api_err(rocket::http::Status::Unauthorized, String::from("Mail not set")),
-                crate::shared::user::data::UserVerified::Ok => ()
+            match vd {
+                None => return rocketjson::ApiResponseErr::api_err(rocket::http::Status::NotFound, format!("User with id {} not found", $user_id)),
+                Some(vd) => {
+                    if ($is_verified) {
+                        match rocketjson::rjtry!(crate::shared::user::data::UserVerified::from_db(&vd.email, vd.verified)) {
+                            crate::shared::user::data::UserVerified::NotVerified => return rocketjson::ApiResponseErr::api_err(rocket::http::Status::Forbidden, format!("User {} not verified", $user_id)),
+                            //TODO: remove???
+                            crate::shared::user::data::UserVerified::MailNotSet => return rocketjson::ApiResponseErr::api_err(rocket::http::Status::Unauthorized, format!("Mail for {} not set", $user_id)),
+                            crate::shared::user::data::UserVerified::Ok => ()
+                        }
+                    }
+                    vd.username
+                }
             }
         }
-    };
+    }
 }
 
 pub fn validate_password(password: &str, config: &Config) -> Result<(), validator::ValidationError> {
@@ -84,6 +93,8 @@ pub fn validate_password(password: &str, config: &Config) -> Result<(), validato
 
 #[derive(Debug, FromRow)]
 pub struct EmailVerifiedDb {
+    #[sqlx(rename="uusername")]
+    pub username: String,
     #[sqlx(rename="uverified")]
     pub verified: i32,
     #[sqlx(rename="uemail")]
@@ -98,9 +109,9 @@ pub struct Badge {
 
 //TODO: this is obv. a placeholder and should be stored in the database!
 //8,3: Nissl and SmallCode
-const DEVS: [Id; 2] = [8, 3];
+const DEVS: [Id; 0] = [];
 
-pub fn get_badges(user_id: Id) -> Vec<Badge> {
+pub fn get_badges(user_id: &Id) -> Vec<Badge> {
     let mut badges = Vec::new();
     if DEVS.contains(&user_id) {
         badges.push(Badge {

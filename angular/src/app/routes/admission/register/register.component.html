@@ -1,0 +1,46 @@
+<div class="wrap">
+  <div class="register-wrapper">
+    <mat-card appearance="outlined">
+      <form class="register" [formGroup]="formGroup" (submit)="register()">
+        <mat-form-field *ngVar="formGroup.controls.username as usernameFormControl">
+          <input matInput type="text" formControlName="username" placeholder="Username" [minlength]="config.username.minLength" [maxlength]="config.username.maxLength" />
+          @if (usernameFormControl.hasError('required') || usernameFormControl.hasError('minlength')) {
+            <mat-error>
+              Username has to be {{config.username.minLength}}-{{config.username.maxLength}} characters
+            </mat-error>
+          }
+          @if (usernameFormControl.hasError('pattern')) {
+            <mat-error>
+              Username can only contain letters, numbers, _ and whitespaces in between words
+            </mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field >
+          <input matInput type="text" formControlName="email" placeholder="Email" />
+          <mat-error>Email has to be a valid Email</mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput type="password" formControlName="password" placeholder="Password" [minlength]="this.config.password.minLength" [maxlength]="this.config.password.maxLength"/>
+          <mat-error>Password has to be {{config.password.minLength}}-{{config.password.maxLength}} characters</mat-error>
+        </mat-form-field>
+        <mat-form-field *ngVar="formGroup.controls.passwordRepeat as passwordRepeatFormControl">
+          <input matInput type="password" formControlName="passwordRepeat" placeholder="Repeat Password" />
+          @if (passwordRepeatFormControl.hasError('required') || passwordRepeatFormControl.hasError('minlength')) {
+            <mat-error>
+              Password has to be {{config.password.minLength}}-{{config.password.maxLength}} characters
+            </mat-error>
+          }
+          @if (passwordRepeatFormControl.hasError('passwordNotSame')) {
+            <mat-error>Passwords do not match</mat-error>
+          }
+        </mat-form-field>
+        <div *ngVar="(error$ | async) as error" class="error">
+          @if (error != null) {
+            <mat-error>{{error}}</mat-error>
+          }
+        </div>
+        <button matButton="outlined" type="submit" [disabled]="!formGroup.valid">Register</button>
+      </form>
+    </mat-card>
+  </div>
+</div>

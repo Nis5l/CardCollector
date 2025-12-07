@@ -1,0 +1,87 @@
+.card{
+	max-width: 300px;
+}
+
+.card-container{
+	position: relative;
+	margin: 10%;
+	.card-inner{
+		position: relative;
+		width: 100%;
+		height: 100%;
+
+    .card-not-found {
+      //TODO: fix css
+      width: 330px;
+      height: 516px;
+    }
+	}
+	.card-frame{
+		position: absolute;
+		top: -10%;
+		left: -15%;
+		width: 130%;
+		height: 122%;
+
+    .frame-back {
+      position: absolute;
+      top: 0;
+      left: 0;
+      transform: rotateY(180deg);
+      backface-visibility: hidden;
+    }
+
+    .frame-front {
+      transform: rotateY(0deg);
+      backface-visibility: hidden;
+    }
+	}
+	.card-inner img, .card-frame img{
+		display: block;
+		width: 100%;
+		height: 100%;
+		aspect-ratio: 330 / 516;
+		object-fit: cover;
+	}
+	.card-effect{
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+	}
+	.card-name{
+		position: absolute;
+		top: 3%;
+		left: 27%;
+    z-index: 1;
+	}
+	.card-type-name{
+		position: absolute;
+		left: 35%;
+		bottom: 4%;
+	}
+	.card-text{
+		width: 40%;
+		height: 5%;
+		color: black;
+		text-align: center;
+    z-index: 1;
+	}
+  .level {
+    position: absolute;
+    color: #FFD700;
+    font-size: 25pt;
+    top: -3px;
+    left: -2px;
+    z-index: 1;
+  }
+  .quality {
+    position: absolute;
+    color: #C0C0C0;
+    font-size: 25pt;
+    top: -3px;
+    right: 2px;
+    z-index: 1;
+  }
+}

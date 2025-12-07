@@ -1,0 +1,155 @@
+@import './scss/__base.scss';
+@import './scss/effects.scss';
+
+*{
+
+    margin: 0;
+    padding: 0;
+
+}
+
+h1, h2, h3, h4, h5, h6, p, span, a, table, div{
+
+    font-family: 'Epilogue';
+    
+}
+
+main.content{
+
+    display: block;
+    position: relative;
+
+    box-sizing: border-box;
+
+    padding: clamp(10px, 4%, 40px);
+
+    height: calc(100vh - #{$navbar-height +1});
+    width: 100%;
+
+    overflow: auto;
+
+    background-color: $background-secondary;
+
+    color: #D8D8D8;
+}
+
+.text_input
+{
+    color: $input-text-color;
+    background-color: $input-background;
+    border: 1px solid $input-border-color;
+    outline: none;
+    border-radius: 5px;
+    height: 35px;
+    text-align: center;
+    cursor: pointer;
+    &:focus
+    {
+        border-color: $input-border-color-selected;
+        animation: pulseinputshadow 2s ease-out infinite;
+    }
+
+    &:hover
+    {
+        border-color: $input-border-color-hover;
+    }
+
+    &.invalid
+    {
+        border-color: red;
+        animation: pulseinputshadowinvalid 2s ease-out infinite;
+    }
+}
+
+.button_input
+{
+    color: $input-text-color;
+    background-color: $input-background;
+    border: 1px solid $input-border-color;
+    outline: none;
+    border-radius: 5px;
+    height: 35px;
+    text-align: center;
+    cursor: pointer;
+    &:focus
+    {
+        border-color: $input-border-color-selected;
+        animation: pulseinputshadow 2s ease-out infinite;
+    }
+
+    &:hover:enabled
+    {
+        border-color: $input-border-color-hover;
+    }
+
+    &:disabled
+    {
+        border-color: $input-border-color-disabled;
+        color: $input-text-color-disabled;
+        animation: none;
+        cursor: default;
+    }
+}
+
+.blurbackground
+{
+    position: fixed;
+    margin: 0;
+    padding: 0;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #000000bb;
+    z-index: 1010;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+}
+
+.clickable
+{
+    cursor: pointer;
+}
+
+.underlined
+{
+    text-decoration: underline;
+}
+
+.defaultpointer
+{
+    cursor: default;
+}
+
+.error
+{
+    text-align: center;
+    margin: 10px auto;
+    font-weight: bold;
+
+    color: $color-error;
+    animation: shake-small 0.5s ease 0.1s, text-appear 0.3s;
+    filter: contrast(1);
+    font-size: 12pt;
+}
+
+.success
+{
+    text-align: center;
+    margin: 10px auto;
+    font-weight: bold;
+
+    color: $color-success;
+    animation: shake-small 0.5s ease 0.1s, text-appear 0.3s;
+    filter: contrast(1);
+    font-size: 12pt;
+}
+
+.unselectable {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}

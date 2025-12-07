@@ -1,0 +1,10 @@
+.popup-container {
+  z-index: 10;
+  padding: 10px;
+  position: absolute;
+
+  color: var(--mat-sys-color-on-surface);
+  background-color: var(--mat-sys-color-surface);
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  border-radius: 5px;
+}

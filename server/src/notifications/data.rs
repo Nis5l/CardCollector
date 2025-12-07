@@ -6,16 +6,11 @@ use crate::shared::Id;
 
 #[derive(Debug, Serialize, FromRow)]
 pub struct Notification {
-    pub id: Id,
+    pub id: i8,
     #[sqlx(rename = "userId")]
     pub user_id: Id,
     pub title: String,
     pub message: String,
     pub url: String,
     pub time: DateTime<Utc>
-}
-
-#[derive(Debug, Serialize)]
-pub struct NotificationResponse {
-    pub notifications: Vec<Notification>
 }

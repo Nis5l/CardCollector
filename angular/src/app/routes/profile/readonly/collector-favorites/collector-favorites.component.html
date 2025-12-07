@@ -1,0 +1,9 @@
+<div *ngVar="(favoriteCollectors$ | async) as favoriteCollectors" class="collector-favorites">
+  @if (favoriteCollectors != null) {
+    <ng-container class="collectors">
+      @for (collector of favoriteCollectors; track collector) {
+        <cc-collector-card [collector]="collector" [tradeId]="tradeId$ | async"></cc-collector-card>
+      }
+    </ng-container>
+  }
+</div>

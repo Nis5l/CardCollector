@@ -1,0 +1,83 @@
+@import '../../../scss/__base.scss';
+
+.cardpage_wrapper
+{
+    width: 100%;
+    height: 100%;
+
+    display: grid;
+
+    grid-template-columns: 7fr 3fr;
+    grid-template-rows: 1fr;
+    grid-gap: 20px;
+
+    grid-template-areas:
+        "card maincard";
+
+    @media screen and (max-width: $breakpoint-lg)
+    {
+        grid-template-columns: 1fr;
+        grid-template-rows: minmax(min-content, max-content) 1fr;
+
+        grid-template-areas:
+            "maincard"
+            "card";
+    }
+
+    .cardpage_wrapper_wrapper
+    {
+        height: 100%;
+        grid-area: card;
+    }
+
+    .card_wrapper
+    {
+        width: 100%;
+        min-height: calc(100% - 30px);
+
+        display: flex;
+        align-items: center;
+        justify-items: center;
+        justify-content: center;
+        align-content: center;
+        flex-wrap: wrap;
+
+        overflow: unset;
+        padding-bottom: 30px;
+
+
+        .cardpage_card_wrapper
+        {
+            margin: 10px;
+            height: fit-content;
+            width: fit-content;
+        }
+
+        .pack_load .pack_empty
+        {
+            height: 100%;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .pack_empty
+        {
+            font-size: 14pt;
+        }
+    }
+
+    .cardpage_maincard
+    {
+        @media screen and (max-width: $breakpoint-lg)
+        {
+            margin-bottom: 10px;
+        }
+
+        grid-area: maincard;    
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+}

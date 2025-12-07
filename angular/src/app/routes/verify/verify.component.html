@@ -1,0 +1,16 @@
+<div class="wrap">
+  <div class="verify-wrapper">
+    <mat-card appearance="outlined">
+      <div class="verify">
+        <h2>Email Verification</h2>
+        <p>A verification email has been sent to <strong>{{ email$ | async }}</strong>.</p>
+
+        <button [disabled]="!(canResend$ | async)" matButton="outlined" color="primary" (click)="resend()">Resend</button>
+
+        <p *ngIf="!(canResend$ | async)" class="cooldown">
+          Resend available in {{ countdown$ | async }}
+        </p>
+      </div>
+    </mat-card>
+  </div>
+</div>

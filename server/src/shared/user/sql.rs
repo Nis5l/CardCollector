@@ -20,7 +20,7 @@ pub async fn user_id_from_username(sql: &Sql, username: &str) -> Result<Option<I
     Ok(Some(stmt?.0))
 }
 
-pub async fn username_from_user_id(sql: &Sql, user_id: Id) -> Result<Option<String>, sqlx::Error> {
+pub async fn username_from_user_id(sql: &Sql, user_id: &Id) -> Result<Option<String>, sqlx::Error> {
     let mut con = sql.get_con().await?;
 
     let stmt: Result<(String, ), sqlx::Error> = sqlx::query_as(
@@ -38,7 +38,7 @@ pub async fn username_from_user_id(sql: &Sql, user_id: Id) -> Result<Option<Stri
     Ok(Some(stmt?.0))
 }
 
-pub async fn set_email(sql: &Sql, user_id: Id, email: Option<&str>) -> Result<() , sqlx::Error> {
+pub async fn set_email(sql: &Sql, user_id: &Id, email: Option<&str>) -> Result<() , sqlx::Error> {
     let mut con = sql.get_con().await?;
 
     sqlx::query(
@@ -53,7 +53,7 @@ pub async fn set_email(sql: &Sql, user_id: Id, email: Option<&str>) -> Result<()
     Ok(())
 }
 
-pub async fn user_verified(sql: &Sql, user_id: Id) -> Result<Result<UserVerifiedDb, DbParseError>, sqlx::Error> {
+pub async fn user_verified(sql: &Sql, user_id: &Id) -> Result<Result<UserVerifiedDb, DbParseError>, sqlx::Error> {
     let mut con = sql.get_con().await?;
 
     let (verified, ): (i32, ) = sqlx::query_as(
@@ -82,7 +82,7 @@ pub async fn email_exists(sql: &Sql, email: &str) -> Result<bool, sqlx::Error> {
     Ok(count != 0)
 }
 
-pub async fn set_verification_key(sql: &Sql, user_id: Id, key: &str) -> Result<(), sqlx::Error> {
+pub async fn set_verification_key(sql: &Sql, user_id: &Id, key: &str) -> Result<(), sqlx::Error> {
     let mut con = sql.get_con().await?;
 
     let mut transaction = con.begin().await?;
@@ -96,9 +96,9 @@ pub async fn set_verification_key(sql: &Sql, user_id: Id, key: &str) -> Result<(
 
     sqlx::query(
         "INSERT INTO verificationkeys
-         (uid, vkkey)
+         (uid, vkkey, vkcreated)
          VALUES
-         (?, ?);")
+         (?, ?, NOW());")
         .bind(user_id)
         .bind(key)
         .execute(&mut transaction)
@@ -109,7 +109,7 @@ pub async fn set_verification_key(sql: &Sql, user_id: Id, key: &str) -> Result<(
     Ok(())
 }
 
-pub async fn get_user_rank(sql: &Sql, user_id: Id) -> Result<Result<UserRanking, DbParseError>, sqlx::Error> {
+pub async fn get_user_rank(sql: &Sql, user_id: &Id) -> Result<Result<UserRanking, DbParseError>, sqlx::Error> {
     let mut con = sql.get_con().await?;
 
     let (ranking, ): (i32, ) = sqlx::query_as(
@@ -123,14 +123,20 @@ pub async fn get_user_rank(sql: &Sql, user_id: Id) -> Result<Result<UserRanking,
     Ok(UserRanking::from_db(ranking))
 }
 
-pub async fn get_verify_data(sql: &Sql, user_id: Id) -> Result<EmailVerifiedDb, sqlx::Error> {
+pub async fn get_verify_data(sql: &Sql, user_id: &Id) -> Result<Option<EmailVerifiedDb>, sqlx::Error> {
     let mut con = sql.get_con().await?;
 
-    sqlx::query_as(
-        "SELECT uemail, uverified
+    let stmt: Result<EmailVerifiedDb, sqlx::Error> = sqlx::query_as(
+        "SELECT uusername, uemail, uverified
          FROM users
          WHERE uid=?;")
         .bind(user_id)
         .fetch_one(&mut con)
-        .await
+        .await;
+
+    if let Err(sqlx::Error::RowNotFound) = stmt {
+        return Ok(None)
+    }
+
+    Ok(Some(stmt?))
 }

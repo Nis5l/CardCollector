@@ -1,0 +1,34 @@
+<nav class="navigation">
+  <ul #navItems>
+    @for (item of items; track item; let i = $index) {
+      <li [ngClass]="hiddenId <= i ? 'hidden' : ''">
+        <a [routerLink]="getLink(item)" routerLinkActive="active">
+          @if (item.icon != '') {
+            <mat-icon color="accent" [svgIcon]="item.icon" class="icon" fontSet="material-icons-outlined"></mat-icon>
+          }
+          <span>{{item.name}}</span>
+        </a>
+      </li>
+    }
+  </ul>
+
+  @if (items.length != hiddenId) {
+    <div class="details">
+      <div class="more_btn" (click)="toggleOpen()">
+        <mat-icon color="accent" svgIcon="more_vert"></mat-icon>
+        <div [ngClass]="open ? 'open' : ''" class="more_box">
+          <ul>
+            @for (item of items; track item; let i = $index) {
+              @if (hiddenId <= i) {
+                <li>
+                  <a [routerLink]="getLink(item)">{{item.name}}</a>
+                </li>
+              }
+            }
+          </ul>
+        </div>
+      </div>
+    </div>
+  }
+</nav>
+

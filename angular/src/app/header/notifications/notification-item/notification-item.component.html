@@ -1,0 +1,7 @@
+@if (notification != null) {
+  <div class="notification-item" (click)="onClick.emit(notification)">
+    <p class="date">{{notification.time | date:'medium' }}</p>
+    <h3 class="title">{{notification.title}}</h3>
+    <p class="message">{{notification.message}}</p>
+  </div>
+}

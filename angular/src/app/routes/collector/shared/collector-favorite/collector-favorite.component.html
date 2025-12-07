@@ -1,0 +1,8 @@
+@if ({favorite: collectorFavorite$ | async}; as data) {
+  <button mat-icon-button color="accent" aria-label="Favorite"
+    (click)="setFavorite(!data.favorite)"
+    matTooltip="Favor"
+    matTooltipShowDelay="500">
+    <mat-icon color="accent" [svgIcon]="data.favorite ? 'star' : 'star_outline'"></mat-icon>
+  </button>
+}

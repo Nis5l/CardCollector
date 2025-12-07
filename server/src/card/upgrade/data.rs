@@ -2,7 +2,7 @@ use serde::{Serialize, Deserialize};
 use rocketjson::JsonBody;
 use validator::Validate;
 
-use crate::shared::card::data::CardCreateData;
+use crate::shared::card::data::UnlockedCardCreateData;
 use crate::shared::Id;
 
 #[derive(Debug, Serialize)]
@@ -20,6 +20,6 @@ pub struct UpgradeRequest {
 
 pub struct UpgradeCardsResult {
     pub success: bool,
-    pub create_card_data: CardCreateData
+    pub create_card_data: UnlockedCardCreateData
 }
 

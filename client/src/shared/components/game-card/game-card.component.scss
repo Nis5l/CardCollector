@@ -1,0 +1,114 @@
+@import '../../../scss/_base';
+
+.waifucard
+{
+  position: relative;
+
+  .waifucard-inner,
+  .waifucard-framefront,
+  .waifucard-frameback,
+  .waifucard-effect,
+  .waifucard-name,
+  .waifucard-anime,
+  .waifucard-quality,
+  .waifucard-level,
+  .waifucard-color
+  {
+    backface-visibility: hidden;
+    position: absolute;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    top: 0;
+    left: 0;
+    transition-duration: 1s;
+
+    .resizetext
+    {
+      margin-top: 2%;
+    }
+  }
+
+  .waifucard-inner, .waifucard-color{
+    margin: 12% 10%;
+    width: 80%;
+    height: 84%;
+  }
+
+  .waifucard-effect{
+    margin: 12% 11.2%;
+    width: 77%;
+    height: 83%;
+  }
+
+  .waifucard-framefront, .waifucard-frameback
+  {
+    width: 100%;
+    height: 100%;
+  }
+
+  .waifucard-name, .waifucard-anime
+  {
+    color: $cardFontColor;
+    width: 49%;
+    height: 7%;
+    font-size: 500%;
+  }
+
+  .waifucard-name
+  {
+    margin-left: 23%;
+    margin-top: 3%;
+  }
+
+  .waifucard-anime
+  {
+    margin-left: 31.8%;
+    margin-top: 132%;
+  }
+
+  .waifucard-quality, .waifucard-level
+  { 
+    width: min-content;
+    text-shadow:
+      -1.5px -1.5px 0 #000,
+       0   -1.5px 0 #000,
+       1.5px -1.5px 0 #000,
+       1.5px  0   0 #000,
+       1.5px  1.5px 0 #000,
+       0    1.5px 0 #000,
+      -1.5px  1.5px 0 #000,
+      -1.5px  0   0 #000;
+
+    transform-origin: 50% 50%;
+  }
+
+  .waifucard-quality
+  {
+    margin-left: 84%;
+    color: $cardFontColorQuality;
+  }
+
+  .waifucard-level
+  {
+    color: $cardFontColorLevel;
+    margin-left: 1%;
+  }
+}
+
+.waifucard_load
+{
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-size: 90% 95%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.waifucard_upgrade
+{
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}

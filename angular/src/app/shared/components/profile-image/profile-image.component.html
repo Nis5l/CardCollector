@@ -1,0 +1,3 @@
+<div class="profile-image">
+	<cc-image-circle [image]="profileImage$ | async" [editable]="isEditable()" (onImageChange)="uploadImage($event)"></cc-image-circle>
+</div>

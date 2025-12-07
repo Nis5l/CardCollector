@@ -1,0 +1,39 @@
+<div class="body-container">
+  <mat-toolbar *ngVar="(loggedIn$ | async) as loggedIn">
+    @if (loggedIn) {
+      <button mat-icon-button (click)="toggleSidebar()">
+        <mat-icon color="accent" svgIcon="menu"></mat-icon>
+      </button>
+    }
+    <span>CardCollector</span>
+    <span class="spacer"></span>
+    @if (!loggedIn) {
+      <button routerLink="login" mat-icon-button matTooltip="Login">
+        <mat-icon color="accent" svgIcon="login"></mat-icon>
+      </button>
+    }
+    @if (!loggedIn) {
+      <button routerLink="register" mat-icon-button matTooltip="Register">
+        <mat-icon color="accent" svgIcon="person_add"></mat-icon>
+      </button>
+    }
+
+    @if (loggedIn) {
+      <cc-notifications></cc-notifications>
+    }
+    @if (loggedIn) {
+      <button mat-button [matMenuTriggerFor]="menu">{{username$ | async}}</button>
+    }
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="navigateProfile()">
+        <mat-icon color="accent" svgIcon="person"></mat-icon> Profile
+      </button>
+      <button mat-menu-item routerLink="logout" matTooltip="Logout">
+        <mat-icon color="accent" svgIcon="logout"></mat-icon> Logout
+      </button>
+    </mat-menu>
+  </mat-toolbar>
+  <cc-sidebar [open]="toggleSidebar$ | async" (closeSidebar)="closeSidebar()">
+    <ng-content></ng-content>
+  </cc-sidebar>
+</div>

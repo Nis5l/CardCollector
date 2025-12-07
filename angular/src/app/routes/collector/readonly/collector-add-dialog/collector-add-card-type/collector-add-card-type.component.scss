@@ -1,0 +1,24 @@
+.collector-add-card-type {
+	display: flex;
+	height: 520px;
+	margin: 20px;
+
+	form {
+		display: flex;
+		flex: 1;
+		flex-direction: column;
+
+		.create {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			margin-top: auto;
+
+			gap: 20px;
+
+			button {
+				width: 400px;
+			}
+		}
+	}
+}

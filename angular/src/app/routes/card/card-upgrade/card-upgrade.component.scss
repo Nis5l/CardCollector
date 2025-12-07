@@ -1,0 +1,48 @@
+@import '../../../../screen.scss';
+
+.card-upgrade {
+  display: flex;
+  flex-direction: row;
+  @media (max-width: $breakpoint-xl) {
+    flex-direction: column;
+  }
+  .card {
+    display: flex;
+    flex-basis: 380px;
+    flex-grow: 0;
+    flex-shrink: 0;
+    justify-content: center;
+
+    cc-card {
+      position: fixed;
+      margin-top: 255px;
+      @media (max-width: $breakpoint-xl) {
+        position: relative;
+        margin-top: 30px;
+      }
+    }
+  }
+  .cards-wrapper {
+    display: flex;
+    flex-direction: column;
+    margin: 30px;
+    justify-content: center;
+    width: 100%;
+    .cards {
+      display: flex;
+      flex-grow: 2;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 40px;
+      justify-content: center;
+    }
+    /* TODO(mdc-migration): The following rule targets internal classes of paginator that may no longer apply for the MDC version. */
+    mat-paginator {
+      margin-top: 30px;
+    }
+  }
+
+  mat-divider {
+    margin: 10px 0;
+  }
+}

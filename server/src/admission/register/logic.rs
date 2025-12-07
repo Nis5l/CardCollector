@@ -4,8 +4,8 @@ use rocket::State;
 
 use crate::sql::Sql;
 use crate::config::Config;
-use crate::crypto::{bcrypt_hash, verification_key::generate_verification_key};
-use crate::shared::{user, email};
+use crate::shared::crypto::{bcrypt_hash, random_string::generate_random_string};
+use crate::shared::{user, email, Id};
 use super::data::{RegisterRequest, RegisterResponse};
 use super::sql;
 
@@ -22,13 +22,14 @@ pub async fn register_route(data: RegisterRequest, sql: &State<Sql>, config: &St
 
     let password_hash = rjtry!(bcrypt_hash(&data.password));
 
-    let user_id = rjtry!(sql::register(&sql, &data.username, &password_hash, &data.email).await);
+    let user_id = Id::new(config.id_length);
+    rjtry!(sql::register(&sql, &user_id, &data.username, &password_hash, &data.email).await);
 
-    let verification_key = generate_verification_key(config.verification_key_length);
+    let verification_key = generate_random_string(config.verification_key_length);
 
-    rjtry!(user::sql::set_verification_key(sql, user_id, &verification_key).await);
+    rjtry!(user::sql::set_verification_key(sql, &user_id, &verification_key).await);
 
-    email::send_email_async(config.email.clone(), config.email_password.clone(), data.email.clone(), verification_key, config.domain.clone(), config.smtp_server.clone());
-    
+    email::send_email_async(config.email.clone(), config.email_password.clone(), data.email.clone(), verification_key, config.domain.clone(), config.smtp_server.clone(), data.username.clone());
+
     return ApiResponseErr::api_err(Status::Ok, format!("Register succeeded, verification email will be sent to {} soon", &data.email))
 }

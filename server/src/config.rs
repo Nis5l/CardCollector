@@ -8,18 +8,36 @@ pub struct Config {
     pub jwt_secret: String,
     //seconds
     pub jwt_duration: u32,
+    pub refresh_token_secret: String,
+    pub refresh_token_duration: u32,
+
+    pub refresh_token_rotation_strategy: bool,
+
     pub domain: String,
     pub verification_key_length: usize,
+    pub verification_key_resend_cooldown: u32,
+    pub id_length: usize,
 
     pub username_len_min: u32,
     pub username_len_max: u32,
+
+    pub collector_len_min: u32,
+    pub collector_len_max: u32,
+
+    pub card_type_len_min: u32,
+    pub card_type_len_max: u32,
+
+    pub card_name_len_min: u32,
+    pub card_name_len_max: u32,
 
     pub password_len_min: u32,
     pub password_len_max: u32,
 
     pub users_page_amount: u32,
+    pub collectors_page_amount: u32,
     pub inventory_page_amount: u32,
     pub flex_cards_amount: u32,
+    pub card_type_page_amount: u32,
 
     pub max_friends: u32,
     pub max_trades: u32,
@@ -46,6 +64,10 @@ pub struct Config {
     pub achievements_image_base: String,
     pub badges_image_base: String,
 
+    pub user_fs_base: String,
+    pub collector_fs_base: String,
+    pub card_fs_base: String,
+
     pub log_file: String,
 
     pub email: String,
@@ -63,21 +85,41 @@ impl Default for Config {
 
             //NOTE: important to change
             jwt_secret: String::from("CHANGE_THE_SECRET"),
-            jwt_duration: 2678400,
+            //jwt_duration: 60 * 15,
+            jwt_duration: 20,
+
+            refresh_token_secret: String::from("CHANGE_THE_SECRET"),
+            refresh_token_duration: 60 * 60 * 24,
+            
+            refresh_token_rotation_strategy: true,
+
             domain: String::from("https://waifucollector.com"),
             verification_key_length: 20,
+            verification_key_resend_cooldown: 30,
+            id_length: 13,
 
             username_len_min: 4,
             username_len_max: 20,
+
+            collector_len_min: 4,
+            collector_len_max: 20,
+
+            card_type_len_min: 4,
+            card_type_len_max: 20,
+
+            card_name_len_min: 3,
+            card_name_len_max: 20,
 
             password_len_min: 8,
             password_len_max: 30,
 
             users_page_amount: 5,
+            collectors_page_amount: 5,
             inventory_page_amount: 20,
             flex_cards_amount: 9,
+            card_type_page_amount: 10,
 
-            max_friends: 50,
+            max_friends: 999,
             max_trades: 5,
 
             pack_cooldown: 30,
@@ -99,6 +141,10 @@ impl Default for Config {
             achievements_image_base: String::from("achievements"),
             badges_image_base: String::from("badges"),
 
+            user_fs_base: String::from("static/user"),
+            collector_fs_base: String::from("static/collector"),
+            card_fs_base: String::from("static/card"),
+
             log_file: String::from("./log-file.log"),
 
             email: String::from("foo@bar.baz"),
@@ -107,11 +153,11 @@ impl Default for Config {
 
             db_init_files: vec![
                 String::from("./sqlfiles/tables.sql"),
-                String::from("./sqlfiles/cardtypes.sql"),
+                /* String::from("./sqlfiles/cardtypes.sql"),
                 String::from("./sqlfiles/cards.sql"),
                 String::from("./sqlfiles/cardframes.sql"),
                 String::from("./sqlfiles/cardeffects.sql"),
-                String::from("./sqlfiles/achievements.sql")
+                String::from("./sqlfiles/achievements.sql") */
             ]
         }
     }

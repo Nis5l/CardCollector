@@ -1,0 +1,32 @@
+.profile-wrapper {
+	margin-top: 30px;
+	width: 100%;
+	height: 100%;
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+	.profile {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 10px;
+
+		cc-profile-image {
+			height: 200px;
+			width: 200px;
+		}
+
+		.username {
+			margin: 0;
+			font-size: 50px;
+		}
+
+		.stats {
+			margin: 0;
+			font-size: 20px;
+      color: var(--mat-theme-on-surface-variant);
+		}
+	}
+}

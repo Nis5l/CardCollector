@@ -1,0 +1,17 @@
+<mat-drawer-container autosize *ngVar="(sidebarMode$ | async) as sidebarMode">
+  @if (sidebarMode != null) {
+    <mat-drawer #drawer class="sidenav" [mode]="sidebarMode" [opened]="open">
+      <div class="routes">
+        <button mat-button (click)="navigate('collectors', sidebarMode)">
+          <div class="button-content"><mat-icon color="accent" svgIcon="featured_play_list"></mat-icon> Collectors</div>
+        </button>
+        <button mat-button (click)="navigate('users', sidebarMode)">
+          <div class="button-content"><mat-icon color="accent" svgIcon="group"></mat-icon> Users</div>
+        </button>
+      </div>
+    </mat-drawer>
+  }
+  <div class="container">
+    <ng-content></ng-content>
+  </div>
+</mat-drawer-container>

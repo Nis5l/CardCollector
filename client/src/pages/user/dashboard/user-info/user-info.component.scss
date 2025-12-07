@@ -1,0 +1,68 @@
+@import "../../../../scss/__base.scss";
+
+.user-info{
+	grid-area: account;
+	.avatar {
+		display: flex;
+
+		justify-content: center;
+
+		height: 50%;
+		width: 100%;
+
+		@media screen and (max-width: $breakpoint-md){
+			max-height: 400px;
+		}
+
+		.profile_image{
+			height: 17vh;
+			width: 17vh;
+
+			border-radius: 100%;
+			border: 1px solid white;
+
+			backface-visibility: hidden;
+			-ms-transform: translateZ(0); /* IE 9 */
+			-webkit-transform: translateZ(0); /* Chrome, Safari, Opera */
+			transform: translateZ(0);
+
+			@media screen and (max-width: $breakpoint-md){
+				width: 100%;
+				height: auto;
+				max-width: 200px;
+			}
+		}
+	}
+
+	.profile-name{
+		display: flex;
+		justify-content: center;
+
+		margin-top: 10px;
+
+		text-align: center;
+
+		.profileName{
+			font-size: 18px;
+			letter-spacing: 0.1em;
+		}
+	}
+
+	.stats{
+		margin-top: 10px;
+
+		width: 100%;
+
+		letter-spacing: 0.05em;
+
+		td:nth-child(2){
+			text-align: right;
+		}
+	}
+
+	@media screen and (max-width: $breakpoint-md){
+		&{
+			height: fit-content;
+		}
+	}
+}

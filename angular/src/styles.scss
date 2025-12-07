@@ -1,0 +1,30 @@
+/* You can add global styles to this file, and also import other style files */
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+//https://github.com/angular/components/issues/8842
+/* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
+.mat-button-wrapper {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	font-size: 1.25em;
+}
+
+.floating-button-br {
+	position: fixed !important;
+	right: 60px !important;
+	bottom: 60px !important;
+	transform: translate(50%, 50%) scale(1.1) !important;
+}
+
+.wrap{
+  position: relative;
+  width: 92%;
+  max-width: 1024px;
+  margin: 0 auto;
+  margin-top: 10px;
+  box-sizing: border-box;
+}

@@ -1,0 +1,9 @@
+<div class="image-circle-wrapper">
+  <img [src]="image$ | async" alt="Image" class="image-circle" (click)="selectImage()" [style.cursor]="editable ? 'pointer' : 'unset'"/>
+  <input #imageInput hidden="true" type="file" (change)="imageChange($event.target)" accept="image/jpeg"/>
+  @if (editable) {
+    <button mat-fab class="edit-button" (click)="selectImage()">
+      <mat-icon color="primary" svgIcon="edit"></mat-icon>
+    </button>
+  }
+</div>

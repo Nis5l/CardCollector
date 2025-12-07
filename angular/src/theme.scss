@@ -1,0 +1,24 @@
+@use '@angular/material' as mat;
+
+// Create a default (light) theme
+$my-light-theme: mat.define-theme((
+  color: (
+    theme-type: light,
+  )
+));
+
+// Create a dark theme
+$my-dark-theme: mat.define-theme((
+  color: (
+    theme-type: dark,
+  )
+));
+
+// Apply the theme mixin
+:root {
+  @include mat.all-component-themes($my-light-theme);
+}
+
+.dark {
+  @include mat.all-component-themes($my-dark-theme);
+}

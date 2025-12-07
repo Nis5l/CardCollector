@@ -1,8 +1,12 @@
 {
+	"debug": false,
 	"port": 8080,
 	"address": "0.0.0.0",
 	"jwt_secret": "SECRET",
-	"jwt_duration": 2678400,
+	"jwt_duration": 20,
+	"refresh_token_secret": "CHANGE_THE_SECRET",
+	"refresh_token_duration": 604800,
+	"refresh_token_rotation_strategy": true,
 	"domain": "http://localhost:8080",
 	"verification_key_length": 20,
 	"username_len_min": 4,
@@ -29,11 +33,6 @@
 	"email_password": "EMAIL_PASSWORD",
 	"smtp_server": "smtp.gmail.com",
 	"db_init_files": [
-		"./sqlfiles/tables.sql",
-		"./sqlfiles/cardtypes.sql",
-		"./sqlfiles/cards.sql",
-		"./sqlfiles/cardframes.sql",
-		"./sqlfiles/cardeffects.sql",
-		"./sqlfiles/achievements.sql"
+		"./sqlfiles/tables.sql"
 	]
 }

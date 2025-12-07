@@ -3,39 +3,35 @@ use rocket::State;
 use rocket::http::Status;
 use chrono::Utc;
 
-use super::data::{FriendRemoveRequest, FriendRemoveResponse};
+use super::data::FriendRemoveResponse;
 use super::sql;
-use crate::shared::{user, notification};
+use crate::shared::notification;
 use crate::sql::Sql;
-use crate::crypto::JwtToken;
+use crate::shared::crypto::JwtToken;
 use crate::verify_user;
+use crate::shared::Id;
 
-#[post("/friend/remove", data="<data>")]
-pub async fn friend_remove_route(data: FriendRemoveRequest, sql: &State<Sql>, token: JwtToken) -> ApiResponseErr<FriendRemoveResponse> {
-    let user_id = token.id;
-    let username = token.username;
+#[post("/friend/<friend_user_id>/remove")]
+pub async fn friend_remove_route(friend_user_id: Id, sql: &State<Sql>, token: JwtToken) -> ApiResponseErr<FriendRemoveResponse> {
+    let JwtToken { id: user_id, username } = token;
 
-    verify_user!(sql, user_id);
+    verify_user!(sql, &user_id, true);
+    let friend_username = verify_user!(sql, &friend_user_id, false);
 
-    let (user_id_remove, username_remove) = match rjtry!(user::sql::username_from_user_id(sql, data.user_id).await) {
-        None => return ApiResponseErr::api_err(Status::NotFound, format!("User with id {} not found", data.user_id)),
-        Some(username) => (data.user_id, username)
-    };
-
-    if !rjtry!(sql::remove_friend(sql, user_id, user_id_remove).await) {
-        return ApiResponseErr::api_err(Status::Conflict, format!("Not friend with {}", username_remove));
+    if !rjtry!(sql::remove_friend(sql, &user_id, &friend_user_id).await) {
+        return ApiResponseErr::api_err(Status::Conflict, format!("Not friend with {}", &friend_username));
     }
 
     //TODO: clear trade
 
-    rjtry!(notification::sql::add_notification(sql, user_id_remove, &notification::data::NotificationCreateData {
+    rjtry!(notification::sql::add_notification(sql, &friend_user_id, None, &notification::data::NotificationCreateData {
         title: String::from("Friend Removed"),
-        message: format!("{} removed you as a friend", username),
-        url: String::from("friends"),
+        message: format!("{} removed you as a friend", &username),
+        url: format!("/user/{}", user_id),
         time: Utc::now()
     }).await);
 
     ApiResponseErr::ok(Status::Ok, FriendRemoveResponse {
-        message: format!("Removed {} as a friend", username_remove)
+        message: format!("Removed {} as a friend", &friend_username)
     })
 }

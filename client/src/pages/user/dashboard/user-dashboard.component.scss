@@ -1,0 +1,166 @@
+@import "../../../scss/__base.scss";
+
+.container{
+    display: grid;
+
+    box-sizing: border-box;
+
+    width: 100%;
+    height: 100%;
+
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+
+    grid-gap: 20px;
+
+    grid-template-areas: 
+        "user friends achievements"
+        "user friends achievements";
+
+	.user-info {
+		grid-area: user;
+	}
+
+    .achievements{
+
+        grid-area: achievements;
+
+        .card-content
+        {
+            min-height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            
+            @media screen and (max-width: $breakpoint-md){
+                height: 300px;
+            }
+        }
+
+        @media screen and (max-width: $breakpoint-md){
+
+            &{
+                height: fit-content;
+            }
+
+        }
+
+    }
+
+    .packs{
+
+        grid-area: packs;
+
+        .packs-grid{
+
+            //display: grid;
+
+            display: flex;
+
+            justify-content: center;
+            align-items: center;
+
+            width: 100%;
+            height: 100%;
+
+            //grid-template-columns: 100%;
+
+            //column-gap: 25px;
+            //row-gap: 25px;
+
+            //grid-template-areas: 
+            //    "pack1"
+            //    "pack2";
+
+            .pack1{
+
+                grid-area: pack1;
+
+                height: 100%;
+                width: auto;
+
+                margin: 0 auto;
+
+            }
+
+            //.pack2{
+
+                //grid-area: pack2;
+
+                //height: 100%;
+                //width: auto;
+
+                //margin: 0 auto;
+
+            //}
+
+            //@media screen and (max-width: $breakpoint-xl) {
+        
+                //grid-template-columns: 50% 50%;
+        
+                //grid-template-areas: 
+                //"pack1 pack2";
+        
+            //}
+
+            //@media screen and (max-width: $breakpoint-md){
+        
+                //grid-template-columns: 100%;
+        
+                //grid-template-areas: 
+                //"pack1"
+                //"pack2";
+        
+            //}
+
+        }
+
+    }
+
+    .friends{
+
+        grid-area: friends;
+        height: 100%;
+
+        overflow: hidden;
+
+        .card-content
+        {
+            overflow: hidden;
+        }
+
+        @media screen and (max-width: $breakpoint-md){
+            &{
+                height: fit-content;
+            }
+        }
+    }
+
+    // @media screen and (max-width: $breakpoint-xl) {
+    //     grid-template-columns: 1fr 1fr 1fr;
+
+    //     grid-template-areas: 
+    //     "packs packs packs"
+    //     "account achievements friends";
+    // }
+
+    @media screen and (max-width: $breakpoint-md){
+        grid-template-columns: 1fr;
+        grid-template-rows: 100% min-content min-content min-content;
+
+        box-sizing: unset;
+
+        grid-template-areas: 
+        "user"
+        "achievements"
+        "friends";
+    }
+
+    // .friends_wrapper
+    // {
+    //     grid-area: friends;
+    //     @media screen and (max-width: $breakpoint-md){
+    //         padding-bottom: 30px;
+    //     }
+    // }
+}

@@ -1,0 +1,32 @@
+.create-collector-card{
+    position: absolute;
+    width: 70%;
+    max-width: 400px;
+
+    top: 50%;
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+    .create-collector-card-content{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-flow: column;
+
+        input{
+            margin: 10px;
+            &[type="submit"]{
+                padding: 5px 10px;
+            }
+        }
+    }
+
+    @media screen and (max-width: 576px){
+        width: calc(100% - 20px);
+        min-height: calc(100% - 20px);
+        max-width: none;
+        max-height: none;
+        height: auto;
+        padding: 10px;
+    }
+}

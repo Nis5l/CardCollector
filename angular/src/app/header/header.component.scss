@@ -1,0 +1,16 @@
+.spacer {
+	flex: 1 1 auto;
+}
+
+.body-container {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+
+	cc-sidebar {
+		height: calc(100% - 60px);
+	}
+}
+.mat-toolbar cc-notifications{
+	margin-right: 10px;
+}

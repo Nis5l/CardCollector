@@ -2,7 +2,7 @@ use crate::sql::Sql;
 use crate::shared::Id;
 use crate::shared::user::data::UserVerifiedDb;
 
-pub async fn user_verified(sql: &Sql, user_id: Id) -> Result<i32, sqlx::Error> {
+pub async fn user_verified(sql: &Sql, user_id: &Id) -> Result<i32, sqlx::Error> {
     let mut con = sql.get_con().await?;
 
     let (verified, ): (i32, ) = sqlx::query_as(
@@ -16,7 +16,7 @@ pub async fn user_verified(sql: &Sql, user_id: Id) -> Result<i32, sqlx::Error> {
     Ok(verified)
 }
 
-pub async fn verify_user(sql: &Sql, user_id: Id) -> Result<(), sqlx::Error> {
+pub async fn verify_user(sql: &Sql, user_id: &Id) -> Result<(), sqlx::Error> {
     let mut con = sql.get_con().await?;
 
     sqlx::query(
@@ -31,7 +31,7 @@ pub async fn verify_user(sql: &Sql, user_id: Id) -> Result<(), sqlx::Error> {
     Ok(())
 }
 
-pub async fn delete_verification_key(sql: &Sql, user_id: Id) -> Result<(), sqlx::Error> {
+pub async fn delete_verification_key(sql: &Sql, user_id: &Id) -> Result<(), sqlx::Error> {
     let mut con = sql.get_con().await?;
 
     sqlx::query(
@@ -44,7 +44,7 @@ pub async fn delete_verification_key(sql: &Sql, user_id: Id) -> Result<(), sqlx:
     Ok(())
 }
 
-pub async fn get_verification_key(sql: &Sql, user_id: Id) -> Result<Option<String>, sqlx::Error> {
+pub async fn get_verification_key(sql: &Sql, user_id: &Id) -> Result<Option<String>, sqlx::Error> {
     let mut con = sql.get_con().await?;
 
     let stmt: Result<(String, ), sqlx::Error> = sqlx::query_as(

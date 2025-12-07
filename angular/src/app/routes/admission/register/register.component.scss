@@ -1,0 +1,32 @@
+@import "../../../../screen.scss";
+
+.register-wrapper {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+	width: 100%;
+	margin-top: 150px;
+
+	.register {
+		display: flex;
+		flex-direction: column;
+
+		width: 400px;
+
+		@media (max-width: $breakpoint-md) {
+      width: 300px;
+		}
+
+		gap: 30px;
+		padding: 30px;
+
+		.error {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+
+			width: 100%;
+		}
+	}
+}

@@ -1,0 +1,94 @@
+@import "../../../../screen.scss";
+
+.collector {
+  overflow: hidden;
+}
+
+.banner {
+	width: 100%;
+	height: 200px;
+	background: red;
+	object-fit: cover;
+}
+
+.head {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	gap: 20px;
+	margin-top: 20px;
+
+	cc-collector-favorite {
+		//NOTE: not center otherwise
+		margin-top: 3px;
+		transform: scale(1.6);
+		@media (max-width: $breakpoint-md) {
+			margin-top: -6px;
+			transform: scale(1.2);
+		}
+	}
+
+	.collector-image {
+		margin-top: -70px;
+		width: 150px;
+		height: 150px;
+		@media (max-width: $breakpoint-md) {
+			margin-top: -110px;
+			width: 120px;
+			height: 120px;
+		}
+	}
+
+	.info {
+		margin-left: 5px;
+		margin-right: 45px;
+		@media (max-width: $breakpoint-md) {
+			//new line
+			flex-basis: 100%;
+		}
+		.name-wrapper {
+			display: flex;
+			flex-direction: row;
+			gap: 20px;
+			@media (max-width: $breakpoint-md) {
+				gap: 8px;
+			}
+
+			.name {
+				font-size: 30pt;
+				@media (max-width: $breakpoint-md) {
+					font-size: 18pt;
+				}
+				margin: 0;
+			}
+		}
+	}
+
+	.description {
+		margin: 5px 0 0 0;
+	}
+
+  .description, .owner{
+    color: var(--mat-theme-on-surface-variant);
+  }
+
+  .creator{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 10px;
+    .owner{ margin: 0 5px 0 0; }
+    &, cc-user{
+      height: 1em;
+    }
+  }
+}
+
+.request-container {
+	margin: 20px;
+	display: flex;
+	gap: 30px;
+	justify-content: center;
+	flex-direction: column;
+}
