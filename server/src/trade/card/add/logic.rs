@@ -55,14 +55,14 @@ pub async fn trade_card_add_route(card_unlocked_id: Id, user_friend_id: Id, coll
         notification::data::NotificationCreateData {
             title: String::from("Card Suggestion Accepted"),
             message: format!("{} accepted a card suggestion you made, click to view!", username),
-            url: format!("trade/{}", &user_id),
+            url: format!("user/{}/trade/{}", &user_id, &collector_id),
             time: Utc::now()
         }
     } else {
         notification::data::NotificationCreateData {
             title: String::from("Card Added To Trade"),
             message: format!("{} added a new card to the trade, click to view!", &username),
-            url: format!("trade/{}", &user_id),
+            url: format!("user/{}/trade/{}", &user_id, &collector_id),
             time: Utc::now()
         }
     };

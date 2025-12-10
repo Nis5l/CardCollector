@@ -49,7 +49,7 @@ pub async fn trade_confirm_route(user_friend_id: Id, collector_id: Id, sql: &Sta
             title: String::from("Trade Completed"),
             message: format!("Completed trade with {}", user_friend_username),
             time: Utc::now(),
-            url: format!("trade/{}", &user_id)
+            url: format!("user/{}/trade/{}", &user_id, &collector_id),
         }).await);
 
         rjtry!(sql::complete_trade(sql, &trade_id).await);
@@ -66,7 +66,7 @@ pub async fn trade_confirm_route(user_friend_id: Id, collector_id: Id, sql: &Sta
         title: String::from("Trade Confirmed"),
         message: format!("{} confirmed the trade", &user_friend_username),
         time: Utc::now(),
-        url: format!("trade/{}", &user_id)
+        url: format!("user/{}/trade/{}", &user_id, &collector_id),
     }).await);
 
     ApiResponseErr::ok(Status::Ok, TradeConfirmReponse {

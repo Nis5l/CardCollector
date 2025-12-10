@@ -35,7 +35,7 @@ pub async fn trade_suggestion_remove_route(user_friend_id: Id, card_unlocked_id:
     rjtry!(notification::sql::add_notification(sql, &user_friend_id, Some(&collector_id), &notification::data::NotificationCreateData {
         title: String::from("Card Suggestion Removed"),
         message: format!("{} removed a card suggestion, click to view!", username),
-        url: format!("trade/{}", user_id),
+        url: format!("user/{}/trade/{}", &user_id, &collector_id),
         time: Utc::now()
     }).await);
 
