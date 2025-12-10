@@ -3,12 +3,18 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject, map, shareReplay } from 'rxjs';
 
+import { CollectorService } from '../../collector/collector.service';
+import type { CollectorConfig } from '../../collector/types';
 import { NewCollectorDialogService } from './new-collector-dialog.service';
-import type { NewCollectorConfig } from './types';
 
 import { SubscriptionManagerComponent } from '../../../shared/abstract';
+
+type LocalFormGroup = FormGroup<{
+  name: FormControl<string>;
+  description: FormControl<string>;
+}>
 
 @Component({
     selector: "cc-new-collector-dialog",
@@ -17,42 +23,37 @@ import { SubscriptionManagerComponent } from '../../../shared/abstract';
     standalone: false
 })
 export class NewCollectorDialogComponent extends SubscriptionManagerComponent {
-	public formGroup;
-	public config: NewCollectorConfig;
+  public formGroup$: Observable<LocalFormGroup>;
+  public config$: Observable<CollectorConfig>;
 
 	private readonly errorSubject: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
 	public readonly error$: Observable<string | null>;
 
-	public loading$: Observable<boolean>;
-
 	constructor(
 		public readonly newCollectorDialogService: NewCollectorDialogService,
+		private readonly collectorService: CollectorService,
 		private readonly dialogRef: MatDialogRef<NewCollectorDialogComponent>,
 		private readonly router: Router,
 	) {
 		super();
 		this.error$ = this.errorSubject.asObservable();
 
-		this.config = this.newCollectorDialogService.getConfig();
-		this.formGroup = new FormGroup({
-			name: new FormControl("", {
-				nonNullable: true,
-				validators: [ Validators.required, Validators.minLength(this.config.name.minLength), Validators.maxLength(this.config.name.maxLength) ]
-			})
-		});
+    this.config$ = this.collectorService.getConfig().pipe(shareReplay(1));
 
-		this.loading$ = this.newCollectorDialogService.loading();
-		this.registerSubscription(
-			this.loading$.subscribe(() => {
-				this.config = this.newCollectorDialogService.getConfig();
-				this.formGroup = new FormGroup({
-					name: new FormControl("", {
-						nonNullable: true,
-						validators: [ Validators.required, Validators.minLength(this.config.name.minLength), Validators.maxLength(this.config.name.maxLength) ]
-					})
-				});
-			})
-		);
+    //TODO: loadingservice?
+		this.formGroup$ = this.config$.pipe(
+      map(config => new FormGroup({
+          name: new FormControl("", {
+            nonNullable: true,
+            validators: [ Validators.required, Validators.minLength(config.name.minLength), Validators.maxLength(config.name.maxLength) ]
+          }),
+          description: new FormControl("", {
+            nonNullable: true,
+            validators: [ Validators.required, Validators.minLength(config.description.minLength), Validators.maxLength(config.description.maxLength) ]
+          })
+        })
+       ),
+    );
 	}
 
 	public static open(matDialog: MatDialog): Observable<undefined> {
@@ -62,9 +63,9 @@ export class NewCollectorDialogComponent extends SubscriptionManagerComponent {
     }).afterClosed();
 	}
 
-	public onCreate(): void {
+	public onCreate(formGroup: LocalFormGroup): void {
 		this.registerSubscription(
-			this.newCollectorDialogService.createCollector(this.formGroup.getRawValue()).subscribe({
+			this.newCollectorDialogService.createCollector(formGroup.getRawValue()).subscribe({
 				next: res => {
 					this.errorSubject.next(null);
 					this.dialogRef.close();

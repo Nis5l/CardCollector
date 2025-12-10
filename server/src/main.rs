@@ -146,7 +146,8 @@ async fn rocket() -> _ {
             admin::give::card::give_card_route,
 
             collector::create::create_collector_route,
-            collector::create_config::get_create_config_collector_route,
+            collector::update::update_collector_route,
+            collector::config::get_collector_config_route,
             collector::favorite::add::collector_favorite_add_route,
             collector::favorite::remove::collector_favorite_remove_route,
             collector::favorite::get::collector_favorite_get_route,

@@ -15,17 +15,18 @@ pub async fn collector_exists(sql: &Sql, collector_name: &str) -> Result<bool, s
     Ok(count != 0)
 }
 
-pub async fn create_collector(sql: &Sql, collector_name: &str, collector_id: &Id, user_id: &Id) -> Result<(), sqlx::Error> {
+pub async fn create_collector(sql: &Sql, collector_name: &str, collector_description: &str, collector_id: &Id, user_id: &Id) -> Result<(), sqlx::Error> {
     let mut con = sql.get_con().await?;
 
     sqlx::query(
         "INSERT INTO collectors
-         (coid, uid, coname)
+         (coid, uid, coname, codescription)
          VALUES
-         (?, ?, ?);")
+         (?, ?, ?, ?);")
         .bind(collector_id)
         .bind(user_id)
         .bind(collector_name)
+        .bind(collector_description)
         .execute(&mut con)
         .await?;
 

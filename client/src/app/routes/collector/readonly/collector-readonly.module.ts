@@ -11,7 +11,7 @@ import { CollectorReadonlyComponent } from './collector-readonly.component';
 import { CollectorReadonlyService } from './collector-readonly.service';
 import { CollectorService } from '../collector.service';
 import { HttpModule, AuthModule } from '../../../shared/services';
-import { NgVarModule } from '../../../shared/directives';
+import { NgVarModule, RenderedModule } from '../../../shared/directives';
 import {
 	CollectorImageModule,
 	CollectorFavoriteModule,
@@ -45,6 +45,7 @@ const MATERIAL_MODULES = [
 		HttpModule,
 		AuthModule,
 		NgVarModule,
+    RenderedModule,
 
 		CollectorImageModule,
 		CollectorFavoriteModule,

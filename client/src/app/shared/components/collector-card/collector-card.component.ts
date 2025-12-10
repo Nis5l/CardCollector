@@ -24,6 +24,8 @@ export class CollectorCardComponent {
 		return this._collector;
 	}
 
+  public descriptionOverflows: boolean = false;
+
 	constructor(private readonly router: Router) {}
 
 	public collectorClick(): void {
@@ -34,4 +36,10 @@ export class CollectorCardComponent {
     if(this.tradeId == null) throw new Error("tradeId should be set here");
 		this.router.navigate(["user", this.tradeId, "trade", this.collector.id]);
 	}
+
+  public onDescriptionChange(el: HTMLElement) {
+    console.log(el.offsetHeight);
+
+    this.descriptionOverflows = el.offsetHeight > 63;
+  }
 }

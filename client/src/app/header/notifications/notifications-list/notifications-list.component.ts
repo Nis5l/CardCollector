@@ -1,6 +1,6 @@
 import { Component, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject, Subject } from 'rxjs';
 
 import { Popup } from '../../../shared/services/popup';
 
@@ -19,6 +19,8 @@ export class NotificationsListComponent extends SubscriptionManagerComponent imp
   @Output() public onClick = new EventEmitter<Notification>();
 	private readonly notificationsSubject: BehaviorSubject<Notification[]> = new BehaviorSubject<Notification[]>([]);
 	public readonly notifications$: Observable<Notification[]>;
+
+  public readonly closeSubject = new Subject<void>();
 
 	constructor(
 	  private notificationsService: NotificationsService,
@@ -39,6 +41,7 @@ export class NotificationsListComponent extends SubscriptionManagerComponent imp
   public navigate(notification: Notification): void {
     this.registerSubscription(this.notificationsService.deleteNotification(notification.id).subscribe(() => {
       this.router.navigate([notification.url]);
+      this.closeSubject.next();
     }));
   }
 

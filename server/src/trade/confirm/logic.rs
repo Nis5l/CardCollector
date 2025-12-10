@@ -39,6 +39,11 @@ pub async fn trade_confirm_route(user_friend_id: Id, collector_id: Id, sql: &Sta
         return ApiResponseErr::api_err(Status::Conflict, format!("Wait until: {}", next_time));
     }
 
+    if rjtry!(trade::sql::user_has_suggestions_in_trade(sql, &trade_id, &user_id).await) {
+        return ApiResponseErr::api_err(Status::Conflict, format!("Can not confirm with open suggestions."));
+    }
+
+
     if let trade::data::TradeStatus::Confirmed = friend_status {
         rjtry!(notification::sql::add_notification(sql, &user_friend_id, Some(&collector_id), &notification::data::NotificationCreateData {
             title: String::from("Trade Completed"),

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router, Route } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import type { PageEvent } from '@angular/material/paginator';
@@ -47,6 +47,9 @@ export class CollectorReadonlyComponent extends SubscriptionManagerComponent {
     { name: "Inventory", link: () => `./${this.authService.getUserId()}/inventory`, icon: "backpack" },
   ];
 
+  public showToggle = false;
+  public descriptionExpanded = false;
+
 	constructor(
 		private readonly router: Router,
 		private readonly collectorService: CollectorService,
@@ -82,6 +85,18 @@ export class CollectorReadonlyComponent extends SubscriptionManagerComponent {
 		this.cardTypeIndex$ = this.cardTypeIndexSubject.asObservable();
 		this.reloadCardTypes();
 	}
+
+  public onDescriptionChange(el: HTMLElement) {
+    console.log(el.offsetHeight);
+
+    this.showToggle = el.scrollHeight > 100;
+
+    if (!this.showToggle) {
+      this.descriptionExpanded = true;
+    } else {
+      this.descriptionExpanded = false;
+    }
+  }
 
 	public edit(): void {
 		this.router.navigate(["edit"], { relativeTo: this.activatedRoute });

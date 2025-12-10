@@ -8,6 +8,7 @@ use crate::shared::Id;
 pub struct Collector {
     pub id: Id,
     pub name: String,
+    pub description: String,
     #[sqlx(rename="userId")]
     pub user_id: Id
 }

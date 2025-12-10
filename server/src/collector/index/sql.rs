@@ -9,6 +9,7 @@ pub async fn get_collectors(sql: &Sql, mut search: String, amount: u32, offset: 
     let collectors = sqlx::query_as(
         "SELECT coid as id,
                 coname as name,
+                codescription as description,
                 uid as userId
          FROM collectors
          WHERE coname LIKE CONCAT('%', ?, '%')

@@ -45,9 +45,11 @@ pub async fn trade_card_add_route(card_unlocked_id: Id, user_friend_id: Id, coll
 
     rjtry!(trade::sql::trade_add_card(sql, &trade_id, &card_unlocked_id).await);
 
-    rjtry!(sql::remove_suggestions(sql, &card_unlocked_id).await);
+    if !rjtry!(trade::sql::suggestion_in_trade(sql, &trade_id, &card_unlocked_id).await) {
+        rjtry!(trade::sql::set_trade_status(sql, &trade_id, trade::data::TradeStatus::UnConfirmed).await);
+    }
 
-    rjtry!(trade::sql::set_trade_status(sql, &trade_id, trade::data::TradeStatus::UnConfirmed).await);
+    rjtry!(sql::remove_suggestions(sql, &card_unlocked_id).await);
 
     let notification = if rjtry!(trade::sql::suggestion_in_trade(sql, &trade_id, &card_unlocked_id).await) {
         notification::data::NotificationCreateData {

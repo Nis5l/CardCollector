@@ -7,6 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { CollectorCardComponent } from './collector-card.component';
 //TODO: move to shared
 import { CollectorImageModule } from '../../../routes/collector';
+import { RenderedModule } from '../../../shared/directives';
 
 const MATERIAL_MODULES = [
 	MatCardModule,
@@ -19,6 +20,7 @@ const MATERIAL_MODULES = [
 
 		...MATERIAL_MODULES,
 
+    RenderedModule,
 		CollectorImageModule,
 	],
 	declarations: [ CollectorCardComponent ],

@@ -23,7 +23,7 @@ pub async fn verify_time_route(token: JwtToken, sql: &State<Sql>, config: &State
     let verified = rjtry!(user::data::UserVerified::from_db(&verify_db.email, verify_db.verified));
 
     if !matches!(verified, user::data::UserVerified::NotVerified) {
-        return ApiResponseErr::api_err(Status::Conflict, String::from("Account already verified or email not set"));
+        return ApiResponseErr::api_err(Status::Conflict, String::from("Account not verified or email not set"));
     }
 
     let next_time = match rjtry!(sql::get_verification_key_created(sql, &user_id).await) {

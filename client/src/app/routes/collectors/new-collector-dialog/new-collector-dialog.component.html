@@ -1,17 +1,25 @@
 <!-- <cc-loading-spinner *ngIf="loading$ | async"></cc-loading-spinner> TODO-->
-@if (!(loading$ | async)) {
-  <div class="new-collector-wrapper">
-    <form [formGroup]="formGroup" (submit)="onCreate()">
-      <mat-form-field>
-        <input matInput type="text" formControlName="name" placeholder="Name" />
-        <mat-error>Name has to be {{config.name.minLength}}-{{config.name.maxLength}} characters</mat-error>
-      </mat-form-field>
-      <div *ngVar="(error$ | async) as error" class="error">
-        @if (error != null) {
-          <mat-error>{{error}}</mat-error>
-        }
-      </div>
-      <button matButton="outlined" type="submit" [disabled]="!formGroup.valid">Create</button>
-    </form>
-  </div>
-}
+<ng-container *ngIf="(formGroup$ | async) as formGroup">
+  <ng-container *ngIf="(config$ | async) as config">
+    <div class="new-collector-wrapper">
+      <form [formGroup]="formGroup" (submit)="onCreate(formGroup)">
+        <mat-form-field appearance="outline">
+          <input matInput type="text" formControlName="name" placeholder="Name" />
+          <mat-error>Name has to be {{config.name.minLength}}-{{config.name.maxLength}} characters</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Description</mat-label>
+          <textarea matInput rows="4" formControlName="description"></textarea>
+          <mat-error>Description has to be {{config.description.minLength}}-{{config.description.maxLength}} characters</mat-error>
+        </mat-form-field>
+
+        <div *ngVar="(error$ | async) as error" class="error">
+          @if (error != null) {
+            <mat-error>{{error}}</mat-error>
+          }
+        </div>
+        <button matButton="outlined" type="submit" [disabled]="!formGroup.valid">Create</button>
+      </form>
+    </div>
+  </ng-container>
+</ng-container>

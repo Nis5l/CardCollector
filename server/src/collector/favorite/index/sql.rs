@@ -9,7 +9,8 @@ pub async fn get_favorites(sql: &Sql, user_id: &Id) -> Result<Vec<Collector>, sq
         "SELECT
          collectors.coid as id,
          collectors.uid as userId,
-         collectors.coname as name
+         collectors.coname as name,
+         collectors.codescription as description
          FROM collectorfavorites, collectors
          WHERE collectors.coid = collectorfavorites.coid
          AND collectorfavorites.uid = ?;")

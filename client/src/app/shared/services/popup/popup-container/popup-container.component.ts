@@ -1,4 +1,5 @@
 import { Component, ViewChild, HostListener } from '@angular/core';
+import { Subscription } from 'rxjs';
 
 import { Popup, PopupStyle } from '../types';
 import { PopupDirective } from '../popup.directive';
@@ -19,6 +20,7 @@ export class PopupContainerComponent extends SubscriptionManagerComponent {
 	@ViewChild(PopupDirective) popupHost!: PopupDirective;
 
 	private popupInstance: Popup | null = null;
+  private popupCloeSubscription: Subscription | undefined = undefined;
 
 	constructor(
 		private popupService: PopupService
@@ -38,6 +40,7 @@ export class PopupContainerComponent extends SubscriptionManagerComponent {
 		const viewContainerRef = this.popupHost.viewContainerRef;
 		// Call onClose so that Popup can clean up if needed
 		if(this.popupInstance != null) this.popupInstance.onClose();
+    if(this.popupCloeSubscription != null) this.popupCloeSubscription.unsubscribe();
 		viewContainerRef.clear();
 
 		this.popupInstance = null;
@@ -49,6 +52,13 @@ export class PopupContainerComponent extends SubscriptionManagerComponent {
 		const viewContainerRef = this.popupHost.viewContainerRef;
 		const componentRef = viewContainerRef.createComponent<Popup>(this.popupItem.component);
 		this.popupInstance = componentRef.instance;
+    if(componentRef.instance.closeSubject != null) {
+      const subscription = componentRef.instance.closeSubject.subscribe(
+        () => this.closePopup()
+      );
+      this.registerSubscription(subscription);
+      this.popupCloeSubscription = subscription;
+    }
 
 		//Call onOpen so that Popup can initialize stuff if needed
 		this.popupInstance.onOpen();

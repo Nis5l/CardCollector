@@ -1,8 +1,12 @@
 import { NgModule } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+
 
 import { CollectorEditComponent } from './collector-edit.component';
 import { CollectorService } from '../collector.service';
@@ -16,6 +20,8 @@ import {
 } from '../shared';
 
 const MATERIAL_MODULES = [
+  MatFormFieldModule,
+  MatInputModule,
 	MatButtonModule,
 	MatIconModule,
 ];
@@ -25,12 +31,13 @@ const MATERIAL_MODULES = [
 		HttpModule,
 		CommonModule,
 		RouterModule,
+    ReactiveFormsModule,
 
 		...MATERIAL_MODULES,
 
 		AuthModule,
 		NgVarModule,
-			
+
 		CollectorImageModule,
 		CollectorFavoriteModule,
 		CollectorBannerModule,

@@ -29,4 +29,6 @@ For production docker-compose a [LetsEncrypt proxy](https://github.com/evertramo
   //Folder management for client. \
   //Cleanup client code. \
   Fix Theme. \
-  Fix Notifications.
+  Fix Notifications. \
+  multiple collector admins \
+  Friend list with link to trade under collector and same for collectors in friends.

@@ -11,7 +11,21 @@
             <h2 class="name">{{collector.name}}</h2>
             <cc-collector-favorite [collectorId]="collector.id"></cc-collector-favorite>
           </div>
-          <p class="description">...desc...</p>
+
+          <div class="description-wrapper" [class.expanded]="descriptionExpanded">
+            <p class="description" ccRendered (rendered)="onDescriptionChange($event)">{{ collector.description }}</p>
+
+            <!-- Fade + Show more button (collapsed only) -->
+            <div class="fade-bar" *ngIf="showToggle && !descriptionExpanded">
+              <button class="toggle-btn" (click)="descriptionExpanded = true">Show more</button>
+            </div>
+
+            <!-- Show less button (expanded only) -->
+            <div class="show-less-wrapper" *ngIf="showToggle && descriptionExpanded">
+              <button class="toggle-btn" (click)="descriptionExpanded = false">Show less</button>
+            </div>
+          </div>
+
           <div class="creator">
             <p class="owner">by </p>
             <cc-user [userId]="collector.userId"></cc-user>

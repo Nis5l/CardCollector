@@ -7,6 +7,7 @@ pub async fn get_collector(sql: &Sql, collector_id: &Id) -> Result<Option<Collec
     let stmt: Result<Collector, sqlx::Error> = sqlx::query_as(
         "SELECT coid as id,
                 coname as name,
+                codescription as description,
                 uid as userId
          FROM collectors
          WHERE coid = ?;")

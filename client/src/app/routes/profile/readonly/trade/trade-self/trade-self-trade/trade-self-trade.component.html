@@ -1,5 +1,5 @@
-<div>
-  <div *ngVar="tradeInfo$ | async as tradeInfo">
+<div *ngVar="tradeInfo$ | async as tradeInfo">
+  <div>
     <cc-loading [observable]="tradeInfo$" class="loading"></cc-loading>
     @if (tradeInfo != null) {
       <div class="wrap cards">
@@ -22,8 +22,8 @@
         <mat-icon color="accent" svgIcon="check"></mat-icon>
       </button>
     }
-    @if (confirmed === false) {
-      <button color="error" mat-icon-button matTooltip="Confirm" aria-label="Confirm" (click)="confirm()">
+    @if (confirmed === false && tradeInfo != null) {
+      <button color="error" mat-icon-button matTooltip="Confirm" aria-label="Confirm" [disabled]="tradeInfo.friendCardSuggestions.length > 0" (click)="confirm()">
         <mat-icon color="accent" svgIcon="close"></mat-icon>
       </button>
     }

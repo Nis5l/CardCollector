@@ -56,6 +56,7 @@ CREATE TABLE collectors (
 	coid VARCHAR(13) NOT NULL,
 	uid VARCHAR(13) NOT NULL,
 	coname TEXT NOT NULL,
+	codescription TEXT NOT NULL,
 	PRIMARY KEY (coid),
 	FOREIGN KEY (uid) REFERENCES users (uid)
 ) ENGINE = InnoDB;

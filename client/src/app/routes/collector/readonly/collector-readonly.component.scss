@@ -41,35 +41,31 @@
 	}
 
 	.info {
-		margin-left: 5px;
-		margin-right: 45px;
-		@media (max-width: $breakpoint-md) {
-			//new line
-			flex-basis: 100%;
-		}
-		.name-wrapper {
-			display: flex;
-			flex-direction: row;
-			gap: 20px;
-			@media (max-width: $breakpoint-md) {
-				gap: 8px;
-			}
+    margin-left: 5px;
+    margin-right: 45px;
+    @media (max-width: $breakpoint-md) {
+      //new line
+      flex-basis: 100%;
+    }
+    .name-wrapper {
+      display: flex;
+      flex-direction: row;
+      gap: 20px;
+      @media (max-width: $breakpoint-md) {
+        gap: 8px;
+      }
 
-			.name {
-				font-size: 30pt;
-				@media (max-width: $breakpoint-md) {
-					font-size: 18pt;
-				}
-				margin: 0;
-			}
-		}
-	}
+    .name {
+      font-size: 30pt;
+      @media (max-width: $breakpoint-md) {
+        font-size: 18pt;
+      }
+      margin: 0;
+    }
+  }
+ }
 
-	.description {
-		margin: 5px 0 0 0;
-	}
-
-  .description, .owner{
+  .owner{
     color: var(--mat-theme-on-surface-variant);
   }
 
@@ -91,4 +87,68 @@
 	gap: 30px;
 	justify-content: center;
 	flex-direction: column;
+}
+
+.collector .info .description-wrapper {
+  position: relative;
+  margin-top: 7px;
+  max-height: 100px;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+
+  &.expanded {
+    max-height: 1000px;
+  }
+
+  .description {
+    margin: 0;
+    white-space: pre-wrap;
+    color: var(--md-sys-color-on-surface-variant);
+  }
+
+  .fade-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    display: flex;
+    justify-content: center; /* center horizontally */
+    align-items: flex-end;
+    padding-bottom: 10px;
+    background: linear-gradient(
+      to top,
+      var(--mat-sys-color-background) 0%,   /* solid bottom for button */
+      var(--mat-sys-color-background) 20%,
+      rgba(255, 255, 255, 0) 100%           /* fade to transparent */
+    );
+
+    .toggle-btn {
+      background: transparent;
+      color: var(--mat-sys-color-primary);
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-family: var(--mat-sys-plain-font-family);
+      font-weight: var(--mat-sys-regular-font-weight);
+      border-radius: 4px;
+    }
+  }
+
+  .show-less-wrapper {
+    margin-top: 5px;
+    display: flex;
+    justify-content: center; /* center horizontally */
+
+    .toggle-btn {
+      background: transparent;
+      color: var(--mat-sys-color-primary);
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-family: var(--mat-sys-plain-font-family);
+      font-weight: var(--mat-sys-regular-font-weight);
+      border-radius: 4px;
+    }
+  }
 }

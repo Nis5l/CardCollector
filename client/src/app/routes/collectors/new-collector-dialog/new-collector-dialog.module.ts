@@ -13,6 +13,7 @@ import { LoadingModule } from '../../../shared/services/loading';
 import { NgVarModule } from '../../../shared/directives';
 import { NewCollectorDialogService } from './new-collector-dialog.service';
 import { NewCollectorDialogComponent } from './new-collector-dialog.component';
+import { CollectorService } from '../../collector/collector.service';
 
 const MATERIAL_MODULES = [
 	MatFormFieldModule,
@@ -33,7 +34,7 @@ const MATERIAL_MODULES = [
 		ImageCircleModule,
 		NgVarModule,
 	],
-	providers: [ NewCollectorDialogService ],
+	providers: [ NewCollectorDialogService, CollectorService ],
 	declarations: [ NewCollectorDialogComponent ],
 })
 export class NewCollectorDialogModule {}

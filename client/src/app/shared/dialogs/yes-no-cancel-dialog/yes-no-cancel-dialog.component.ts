@@ -19,7 +19,11 @@ export class YesNoCancelDialogComponent {
 	}
 
 	public static open(matDialog: MatDialog, message: string): Observable<boolean | undefined> {
-		return matDialog.open<YesNoCancelDialogComponent, { message: string }, boolean>(YesNoCancelDialogComponent, { data: { message } }).afterClosed();
+		return matDialog.open<YesNoCancelDialogComponent, { message: string }, boolean>(YesNoCancelDialogComponent, {
+      data: { message },
+      width: "50vw",
+      height: "auto"
+    }).afterClosed();
 	}
 
 	public yes(): void {

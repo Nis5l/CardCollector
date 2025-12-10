@@ -96,6 +96,23 @@ pub async fn suggestion_in_trade(sql: &Sql, trade_id: &Id, card_unlocked_id: &Id
     Ok(count != 0)
 }
 
+pub async fn user_has_suggestions_in_trade(sql: &Sql, trade_id: &Id, user_id: &Id) -> Result<bool, sqlx::Error> {
+    let mut con = sql.get_con().await?;
+
+    let (count, ): (i64, ) = sqlx::query_as(
+        "SELECT COUNT(*)
+         FROM tradesuggestions, cardunlocks
+         WHERE tid=?
+         AND cardunlocks.uid=?
+         AND tradesuggestions.cuid=cardunlocks.cuid")
+        .bind(trade_id)
+        .bind(user_id)
+        .fetch_one(&mut con)
+        .await?;
+
+    Ok(count != 0)
+}
+
 //NOTE: this has to be called not just by confirm
 pub async fn create_trade(sql: &Sql, id: &Id, user_id: &Id, user_friend_id: &Id, collector_id: &Id) -> Result<Id, sqlx::Error> {
     let mut con = sql.get_con().await?;

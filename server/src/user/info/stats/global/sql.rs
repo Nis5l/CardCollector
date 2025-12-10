@@ -5,7 +5,10 @@ pub async fn get_favorite_collectors(sql: &Sql, user_id: &Id) -> Result<Vec<Coll
     let mut con = sql.get_con().await?;
 
     let collectors: Vec<Collector> = sqlx::query_as(
-        "SELECT coid AS id, coname AS name
+        "SELECT
+            coid AS id,
+            coname AS name,
+            codescription AS description
          FROM collectors, collectorfavorites
          WHERE collectors.coid=collectorfavorites.coid
          AND collectorfavorites.uid=?;")

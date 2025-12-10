@@ -15,13 +15,14 @@ pub async fn create_collector_route(data: CollectorCreateRequest, token: JwtToke
     verify_user!(&sql, &user_id, true);
 
     let collector_name = data.name;
+    let collector_description = data.description;
 
     if rjtry!(sql::collector_exists(&sql, &collector_name).await) {
         return ApiResponseErr::api_err(Status::Conflict, format!("Collector with the name {} alread exists", &collector_name));
     }
 
     let collector_id = Id::new(config.id_length);
-    rjtry!(sql::create_collector(&sql, &collector_name, &collector_id, &user_id).await);
+    rjtry!(sql::create_collector(&sql, &collector_name, &collector_description, &collector_id, &user_id).await);
 
     ApiResponseErr::ok(Status::Ok, CollectorCreateResponse {
         id: collector_id

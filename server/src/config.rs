@@ -23,6 +23,8 @@ pub struct Config {
 
     pub collector_len_min: u32,
     pub collector_len_max: u32,
+    pub collector_desciption_len_min: u32,
+    pub collector_desciption_len_max: u32,
 
     pub card_type_len_min: u32,
     pub card_type_len_max: u32,
@@ -103,6 +105,8 @@ impl Default for Config {
 
             collector_len_min: 4,
             collector_len_max: 20,
+            collector_desciption_len_min: 1,
+            collector_desciption_len_max: 500,
 
             card_type_len_min: 4,
             card_type_len_max: 20,

@@ -1,4 +1,4 @@
-<ng-container *ngVar="(collector$ | async) as collector">
+<div class="dashboard-wrapper" *ngVar="(collector$ | async) as collector">
   @if (collector != null) {
     <cc-collector-open [collectorId]="collector.id"></cc-collector-open>
   }
@@ -7,4 +7,4 @@
       <mat-icon color="primary" svgIcon="edit"></mat-icon>
     </button>
   }
-</ng-container>
+</div>
