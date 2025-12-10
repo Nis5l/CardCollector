@@ -5,10 +5,10 @@
         <div class="user-image">
           <cc-profile-image [userId]="friendResponse.userId" [editable]="false"></cc-profile-image>
         </div>
-        <div>
+        <div class="info">
           <mat-card-title>{{friendResponse.username}}</mat-card-title>
-          <mat-card-subtitle>...description...</mat-card-subtitle>
-          <mat-card-subtitle>...stats...</mat-card-subtitle>
+          <!--<mat-card-subtitle>...description...</mat-card-subtitle>
+          <mat-card-subtitle>...stats...</mat-card-subtitle>-->
         </div>
         @if (friendResponse.status === FriendStatus.Pending && isSelf) {
           <div class="friend-status">

@@ -5,6 +5,16 @@
 	padding: 20px;
 	cursor: pointer;
 
+  .info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    mat-card-title {
+      font-size: 25px;
+    }
+  }
+
 	.user-image {
 		width: 100px;
 		height: 100px;
