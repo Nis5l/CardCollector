@@ -1,4 +1,18 @@
 .collectors-wrapper {
+  form {
+    width: 100%;
+    display: flex;
+    align-items: center;
+
+    mat-form-field {
+      width: min(100%, 400px);
+    }
+
+    button {
+      margin-bottom: 15px;
+    }
+  }
+
 	.loading {
 		width: 100%;
 		display: flex;

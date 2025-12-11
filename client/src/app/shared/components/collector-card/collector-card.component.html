@@ -3,7 +3,7 @@
     <cc-collector-image [editable]="false" [collector]="collector"></cc-collector-image>
   </div>
   <div>
-    <mat-card-title>{{collector.name}}</mat-card-title>
+    <mat-card-title class="title">{{collector.name}}</mat-card-title>
     <mat-card-subtitle>
       <div class="description-wrapper">
         <p class="description" ccRendered (rendered)="onDescriptionChange($event)">{{ collector.description }}</p>

@@ -1,9 +1,15 @@
+@import "../../../../screen.scss";
+
 .user {
 	display: flex;
 	flex-direction: row;
 	gap: 30px;
 	padding: 20px;
 	cursor: pointer;
+
+  @media (max-width: $breakpoint-sm) {
+	  gap: 15px;
+  }
 
   .info {
     display: flex;
@@ -12,11 +18,20 @@
 
     mat-card-title {
       font-size: 25px;
+
+      @media (max-width: $breakpoint-sm) {
+        font-size: 18px;
+      }
     }
   }
 
 	.user-image {
 		width: 100px;
 		height: 100px;
+
+    @media (max-width: $breakpoint-sm) {
+      width: 60px;
+      height: 60px;
+    }
 	}
 }

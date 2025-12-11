@@ -1,3 +1,5 @@
+@import "../../../../screen.scss";
+
 .profile-wrapper {
 	margin-top: 30px;
 	width: 100%;
@@ -16,17 +18,21 @@
 		cc-profile-image {
 			height: 200px;
 			width: 200px;
+      margin-bottom: 10px;
+
+      @media (max-width: $breakpoint-sm) {
+        height: 150px;
+        width: 150px;
+      }
 		}
 
-		.username {
-			margin: 0;
-			font-size: 50px;
-		}
+    .username {
+      margin: 0;
+      font-size: 50px;
 
-		.stats {
-			margin: 0;
-			font-size: 20px;
-      color: var(--mat-theme-on-surface-variant);
-		}
+      @media (max-width: $breakpoint-sm) {
+        font-size: 35px;
+      }
+    }
 	}
 }

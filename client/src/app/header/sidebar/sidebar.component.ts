@@ -34,7 +34,7 @@ export class SidebarComponent {
     );
 
     this.sidebarMode$ = this.screenWidth$.pipe(
-      map((screenWidth) => screenWidth > 600 ? 'side' : 'over')
+      map((screenWidth) => screenWidth > 900 ? 'side' : 'over')
     );
   }
 

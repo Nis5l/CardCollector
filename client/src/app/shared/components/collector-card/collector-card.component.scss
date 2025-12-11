@@ -1,3 +1,5 @@
+@import "../../../../screen.scss";
+
 .collector {
 	display: flex;
 	flex-direction: row;
@@ -5,25 +7,57 @@
 	padding: 20px;
 	cursor: pointer;
 
+  @media (max-width: $breakpoint-sm) {
+	  gap: 15px;
+  }
+
+  .title {
+    font-size: 25px;
+
+    @media (max-width: $breakpoint-sm) {
+      font-size: 18px;
+      line-height: 20px;
+    }
+  }
+
 	.collector-image {
 		width: 100px;
 		height: 100px;
     flex-shrink: 0;
+
+    @media (max-width: $breakpoint-sm) {
+      width: 70px;
+      height: 70px;
+    }
 	}
 
   .trade {
     display: flex;
     margin-left: auto;
-    margin-right: 50px;
+    padding-left: 5px;
+    margin-right: 40px;
     align-items: center;
+
     mat-icon {
       transform: scale(2.3);
+
+      @media (max-width: $breakpoint-sm) {
+        transform: scale(1.8);
+      }
+    }
+
+    @media (max-width: $breakpoint-sm) {
+      margin-right: 20px;
     }
   }
 
   .description-wrapper {
     position: relative;
     max-height: 63px;
+    @media (max-width: $breakpoint-sm) {
+      max-height: 47px;
+    }
+
     overflow: hidden;
     margin-top: 3px;
 
@@ -31,7 +65,14 @@
       margin: 0;
       white-space: pre-wrap;
       color: var(--md-sys-color-on-surface-variant);
-      opacity: 0.8;
+      opacity: 0.7;
+      font-size: 15px;
+      line-height: 17px;
+
+      @media (max-width: $breakpoint-sm) {
+        font-size: 11px;
+        line-height: 12px;
+      }
     }
 
     .fade-bar {

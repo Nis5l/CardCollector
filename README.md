@@ -31,4 +31,6 @@ For production docker-compose a [LetsEncrypt proxy](https://github.com/evertramo
   Fix Theme. \
   Fix Notifications. \
   multiple collector admins \
-  Friend list with link to trade under collector and same for collectors in friends.
+  Friend list with link to trade under collector and same for collectors in friends. \
+  Sidebar theme. \
+  Notifications style

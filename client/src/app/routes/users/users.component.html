@@ -1,6 +1,6 @@
 <div *ngVar="(usersResponse$ | async) as usersResponse" class="wrap">
   <form [formGroup]="formGroup" class="search">
-    <mat-form-field>
+    <mat-form-field class="search-field">
       <input matInput type="text" formControlName="search" placeholder="Search" />
     </mat-form-field>
   </form>
