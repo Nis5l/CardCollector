@@ -16,7 +16,7 @@ COPY ./Cargo.toml ./Cargo.toml
 COPY ./src/ ./src/
 RUN cargo build --release
 
-FROM ubuntu:18.04
+FROM ubuntu:22.04
 
 RUN apt-get update && apt-get install -y \
     libssl-dev \
