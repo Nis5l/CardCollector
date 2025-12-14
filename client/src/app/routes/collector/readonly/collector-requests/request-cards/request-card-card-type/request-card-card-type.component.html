@@ -1,7 +1,9 @@
-<cc-request-card title="Card-Type" [userId]="cardType.userId" [collectorId]="collectorId" (onAccept)="accept()" (onDecline)="decline()">
-	<div class="card-type-content">
-		<div class="name">
-			<span class="label">Name:</span><span>{{cardType.name}}</span>
-		</div>
-	</div>
-</cc-request-card>
+<ng-container *ngIf="(voteResponse$ | async) as voteResponse">
+  <cc-request-card title="Card-Type" [userId]="cardType.userId" [collectorId]="collectorId" [vote]="voteResponse.vote" [votes]="voteResponse.count" (onAccept)="accept()" (onDecline)="decline()" (onVote)="vote(cardType.id, $event)">
+    <div class="card-type-content">
+      <div class="name">
+        <span class="label">Name:</span><span>{{cardType.name}}</span>
+      </div>
+    </div>
+  </cc-request-card>
+</ng-container>

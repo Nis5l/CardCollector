@@ -6,6 +6,7 @@ import type { Id } from '../../../../../../../shared/types';
 import { UserService } from '../../../../../../../shared/services';
 import { ConfirmationDialogComponent } from '../../../../../../../shared/dialogs';
 import { SubscriptionManagerComponent } from '../../../../../../../shared/abstract';
+import { CardVote } from '../types';
 
 @Component({
     selector: 'cc-request-card',
@@ -19,12 +20,21 @@ export class RequestCardComponent extends SubscriptionManagerComponent {
 	@Output()
 	public onDecline: EventEmitter<void> = new EventEmitter<void>();
 
-	public readonly isAdmin$: Observable<boolean>;
+	@Output()
+	public onVote: EventEmitter<CardVote> = new EventEmitter<CardVote>();
 
+  public readonly CardVote: typeof CardVote = CardVote;
+
+	public readonly isAdmin$: Observable<boolean>;
 	public readonly userId$: Observable<Id>;
 	public readonly collectorId$: Observable<Id>;
+	public readonly votes$: Observable<number>;
+	public readonly vote$: Observable<CardVote>;
+
 	private readonly userIdSubject: BehaviorSubject<Id | null> = new BehaviorSubject<Id | null>(null);
 	private readonly collectorIdSubject: BehaviorSubject<Id | null> = new BehaviorSubject<Id | null>(null);
+	private readonly votesSubject: BehaviorSubject<number | null> = new BehaviorSubject<number | null>(null);
+	private readonly voteSubject: BehaviorSubject<CardVote | null> = new BehaviorSubject<CardVote | null>(null);
 
 	@Input()
 	public set collectorId(id: Id) {
@@ -48,6 +58,28 @@ export class RequestCardComponent extends SubscriptionManagerComponent {
 	}
 
 	@Input()
+	public set votes(votes: number | null | undefined) {
+		if(votes == null) return;
+		this.votesSubject.next(votes);
+	}
+	public get votes(): number {
+		const votes = this.votesSubject.getValue();
+		if(votes == null) throw new Error("votes not set");
+		return votes;
+	}
+
+	@Input()
+	public set vote(vote: CardVote | null | undefined) {
+		if(vote == null) return;
+		this.voteSubject.next(vote);
+	}
+	public get vote(): CardVote {
+		const vote = this.voteSubject.getValue();
+		if(vote == null) throw new Error("vote not set");
+		return vote;
+	}
+
+	@Input()
 	public title: string = "UNSET";
 
 	constructor(
@@ -62,6 +94,9 @@ export class RequestCardComponent extends SubscriptionManagerComponent {
 		this.isAdmin$ = this.collectorId$.pipe(
 			switchMap(collectorId => this.userService.isCollectorAdmin(collectorId))
 		);
+
+		this.votes$ = this.votesSubject.asObservable().pipe(filter((votes): votes is number => votes != null));
+		this.vote$ = this.voteSubject.asObservable().pipe(filter((vote): vote is CardVote => vote != null));
 	}
 
 	public accept(): void {
@@ -79,4 +114,12 @@ export class RequestCardComponent extends SubscriptionManagerComponent {
 			this.onDecline.next();
 		}));
 	}
+
+	public upvote(currentVote: CardVote): void {
+    this.onVote.emit(currentVote == CardVote.Upvote ? CardVote.Neutral : CardVote.Upvote);
+  }
+
+	public downvote(currentVote: CardVote): void {
+    this.onVote.emit(currentVote == CardVote.Downvote ? CardVote.Neutral : CardVote.Downvote);
+  }
 }

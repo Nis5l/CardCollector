@@ -1,9 +1,12 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Observable, BehaviorSubject, combineLatest, switchMap, filter, startWith, Subject } from 'rxjs';
 
 import type { CardType, Id } from '../../../../../../shared/types';
 import { RequestCardCardTypeService } from './request-card-card-type.service';
 import { LoadingService } from '../../../../../../shared/services';
 import { SubscriptionManagerComponent } from '../../../../../../shared/abstract';
+import type { VoteGetResponse } from './types';
+import type { CardVote } from '../shared/types';
 
 //TODO: ADD TIMES FOR ALL CARDS
 //TODO: CHAT
@@ -18,14 +21,18 @@ export class RequestCardCardTypeComponent extends SubscriptionManagerComponent {
 	@Output()
 	public readonly onRemove: EventEmitter<void> = new EventEmitter<void>();
 
-	private _cardType: CardType | null = null;
+	private readonly refreshVoteSubject: Subject<void> = new Subject();
+
+	private readonly cardTypeSubject: BehaviorSubject<CardType | null> = new BehaviorSubject<CardType | null>(null);
 	@Input()
-	public set cardType(cardType: CardType) {
-		this._cardType = cardType;
+	public set cardType(cardType: CardType | undefined | null) {
+    if(cardType == null) return;
+    this.cardTypeSubject.next(cardType);
 	}
 	public get cardType(): CardType {
-		if(this._cardType == null) throw new Error("cardType not set");
-		return this._cardType;
+    const cardType = this.cardTypeSubject.getValue();
+		if(cardType == null) throw new Error("cardType not set");
+		return cardType;
 	}
 
 	private _collectorId: Id | null = null;
@@ -38,11 +45,21 @@ export class RequestCardCardTypeComponent extends SubscriptionManagerComponent {
 		return this._collectorId;
 	}
 
+  public readonly voteResponse$: Observable<VoteGetResponse>;
+
 	constructor(
 		private readonly requestCardCardTypeService: RequestCardCardTypeService,
 		private readonly loadingService: LoadingService
 	) {
 		super();
+
+    const cardType$: Observable<CardType> = this.cardTypeSubject.asObservable().pipe(
+      filter((cardType): cardType is CardType => cardType != null)
+    );
+
+    this.voteResponse$ = combineLatest([cardType$, this.refreshVoteSubject.pipe(startWith(0))]).pipe(
+      switchMap(([cardType]) => this.requestCardCardTypeService.votes(cardType.id))
+    );
 	}
 
 	public accept(): void {
@@ -57,5 +74,11 @@ export class RequestCardCardTypeComponent extends SubscriptionManagerComponent {
 			next: () => this.onRemove.next(),
 			error: () => console.error("Error declining Card-Type Request")
 		}));
+	}
+
+	public vote(card_type_id: Id, vote: CardVote): void {
+    this.registerSubscription(this.requestCardCardTypeService.vote(card_type_id, vote).subscribe(
+      () => this.refreshVoteSubject.next()
+    ));
 	}
 }

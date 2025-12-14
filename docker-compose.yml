@@ -1,4 +1,3 @@
-version: "3.5"
 services: 
   mysql:
     image: mariadb:latest
@@ -10,32 +9,27 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - ./mysql:/var/lib/mysql
     networks:
-      - default
+      - caddy_net
     restart: always
 
   server:
     build: server/
-    environment:
-      - VIRTUAL_HOST=api.waifucollector.com
-      - LETSENCRYPT_HOST=api.waifucollector.com
-      - LETSENCRYPT_EMAIL=kirchler.lion@gmail.com
+    expose:
+      - "8080"
     depends_on:
       - mysql
     networks:
-      - default
+      - caddy_net
 
   client:
     build: client/
-    environment:
-      - VIRTUAL_HOST=waifucollector.com
-      - LETSENCRYPT_HOST=waifucollector.com
-      - LETSENCRYPT_EMAIL=kirchler.lion@gmail.com
+    expose:
+      - "80"
     depends_on:
       - server
     networks:
-      - default
+      - caddy_net
 
 networks:
-  default:
+  caddy_net:
     external: true
-    name: proxy

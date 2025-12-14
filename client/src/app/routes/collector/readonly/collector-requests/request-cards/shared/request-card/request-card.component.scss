@@ -35,10 +35,40 @@
 		}
 	}
 	/* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version.*/
-	mat-card-actions {
+	.vote {
 		padding: 20px 0;
 		display: flex;
-		gap: 50px;
+		gap: 20px;
 		margin: 0 9px;
+
+    .vote-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .vote-count {
+      color: var(--md-sys-color-on-surface-variant);
+      font-weight: 600;
+      min-width: 24px;
+      text-align: center;
+    }
+
+    .active-up mat-icon {
+      color: var(--mat-sys-color-primary);
+    }
+
+    .active-down mat-icon {
+      color: var(--mat-sys-color-error);
+    }
 	}
+
+	.admin {
+		padding: 0;
+    padding-bottom: 20px;
+		display: flex;
+		gap: 63px;
+		margin: 0 9px;
+  }
 }

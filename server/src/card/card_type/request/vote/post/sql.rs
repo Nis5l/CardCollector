@@ -1,0 +1,19 @@
+use crate::sql::Sql;
+use crate::shared::Id;
+use crate::shared::card::data::CardVote;
+
+pub async fn vote(sql: &Sql, user_id: &Id, card_type_id: &Id, vote: CardVote) -> Result<(), sqlx::Error> {
+    let mut con = sql.get_con().await?;
+
+    sqlx::query("INSERT INTO cardtypevotes (uid, ctid, ctvtype)
+                 VALUES (?, ?, ?)
+                 ON DUPLICATE KEY UPDATE
+                 ctvtype = VALUES(ctvtype);")
+        .bind(user_id)
+        .bind(card_type_id)
+        .bind(vote as i32)
+        .execute(&mut con)
+        .await?;
+
+    Ok(())
+}

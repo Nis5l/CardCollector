@@ -1,6 +1,7 @@
 use serde::{Serialize, Deserialize};
 use sqlx::FromRow;
 use rocket::form::FromFormField;
+use serde_repr::Serialize_repr;
 
 use crate::config::Config;
 use crate::shared::{Id, IdInt};
@@ -209,3 +210,39 @@ pub struct InventoryOptions {
     pub level: Option<i32>,
     pub card_id: Option<Id>
 }
+
+#[derive(Debug, Clone, Copy, FromFormField, Serialize_repr)]
+#[repr(i32)]
+pub enum CardVote {
+    Neutral = 0,
+    Upvote = 1,
+    Downvote = -1,
+}
+
+impl<'de> Deserialize<'de> for CardVote {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+       where D: serde::Deserializer<'de> {
+            let i = i32::deserialize(deserializer)?;
+
+            Ok(if i == 0 {
+                Self::Neutral
+            } else if i < 0 {
+                Self::Downvote
+            } else {
+                Self::Upvote
+            })
+       }
+}
+
+impl CardVote {
+    pub fn from_db(vote: i32) -> Self {
+        if vote == 0 {
+            Self::Neutral
+        } else if vote < 0 {
+            Self::Downvote
+        } else {
+            Self::Upvote
+        }
+    }
+}
+

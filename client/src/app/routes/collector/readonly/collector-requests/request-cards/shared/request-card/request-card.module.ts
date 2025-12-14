@@ -8,6 +8,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 
 import { RequestCardComponent } from './request-card.component';
 import { UserModule } from '../../../../../../../shared/components';
+import { NgVarModule } from '../../../../../../../shared/directives';
 import { UserModule as UserServiceModule } from '../../../../../../../shared/services';
 import { ConfirmationDialogModule } from '../../../../../../../shared/dialogs';
 
@@ -24,6 +25,8 @@ const MATERIAL_MODULES = [
 		CommonModule,
 
 		...MATERIAL_MODULES,
+
+    NgVarModule,
 
 		UserModule,
 		UserServiceModule,

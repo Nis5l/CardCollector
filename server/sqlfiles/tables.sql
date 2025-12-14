@@ -235,3 +235,25 @@ CREATE TABLE achievementunlocks (
         FOREIGN KEY (aid) REFERENCES achievements(aid)
 		ON DELETE CASCADE
 ) ENGINE = InnoDB;
+
+CREATE TABLE cardvotes (
+        uid VARCHAR(13) NOT NULL,
+		cid VARCHAR(13) NOT NULL,
+		cvtype INT NOT NULL,
+        PRIMARY KEY (uid, cid),
+        FOREIGN KEY (uid) REFERENCES users(uid)
+		ON DELETE CASCADE,
+        FOREIGN KEY (cid) REFERENCES cards(cid)
+		ON DELETE CASCADE
+) ENGINE = InnoDB;
+
+CREATE TABLE cardtypevotes (
+        uid VARCHAR(13) NOT NULL,
+		ctid VARCHAR(13) NOT NULL,
+		ctvtype INT NOT NULL,
+        PRIMARY KEY (uid, ctid),
+        FOREIGN KEY (uid) REFERENCES users(uid)
+		ON DELETE CASCADE,
+        FOREIGN KEY (ctid) REFERENCES cardtypes(ctid)
+		ON DELETE CASCADE
+) ENGINE = InnoDB;

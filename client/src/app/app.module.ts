@@ -90,6 +90,8 @@ export class AppModule {
       'list_alt',
       'home',
       'backpack',
+      'arrow_upward',
+      'arrow_downward',
     ].forEach(icon => {
       iconRegistry.addSvgIcon(
         icon,
