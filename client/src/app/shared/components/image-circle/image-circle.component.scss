@@ -9,7 +9,8 @@
 
 		border-radius: 50%;
 		padding: 2%;
-    background-color: var(--mat-sys-color-secondary);
+    background-color: transparent;
+    border: 4px solid var(--mat-sys-color-secondary);
 		object-fit: cover;
 	}
 
