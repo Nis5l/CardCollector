@@ -84,7 +84,6 @@ export class HttpService {
 					);
 				}
 				if(error.status === 403) {
-          console.log("IN HERE");
           this.router.navigate(["verify"]);
           return observableThrowError(() => error);
 				}
