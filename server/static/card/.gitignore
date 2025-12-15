@@ -1,3 +1,6 @@
 *
 !.gitignore
+!card-frame-back-default
+!card-frame-front
+!card-frame-front-default
 !card-image-default
