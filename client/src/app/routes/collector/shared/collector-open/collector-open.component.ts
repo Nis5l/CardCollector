@@ -104,9 +104,9 @@ export class CollectorOpenComponent extends SubscriptionManagerComponent impleme
 			this.progress = 0;
 			return;
 		}
-    console.log("packTime", this.packTime, this.packTime.getTime(), "now", new Date(), Date.now());
 		let diff: number = (this.packTime.getTime() - Date.now());
 		this.progress =  Math.min(1.0, 1.0 - diff / this.maxTime);
+    console.log("packTime", this.packTime, this.packTime.getTime(), "now", new Date(), Date.now(), "diff", diff, "this.progress", this.progress);
 		setTimeout(() => {
 			this.displayText = this.createDisplayText();
 		});
