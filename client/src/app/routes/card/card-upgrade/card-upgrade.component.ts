@@ -38,7 +38,7 @@ export class CardUpgradeComponent extends SubscriptionManagerComponent {
       switchMap(cardId => this.cardService.getUnlockedCard(cardId))
 		);
     this.unlockedCardsResponse$ = observableCombibeLatest([this.unlockedCard$, this.pageSubject.asObservable()]).pipe(
-      switchMap(([unlockedCard, page]) => this.cardUpgradeService.getUpgradeCards(unlockedCard.userId, unlockedCard.card.collectorId, page, unlockedCard.level, [unlockedCard.id])),
+      switchMap(([unlockedCard, page]) => this.cardUpgradeService.getUpgradeCards(unlockedCard.userId, unlockedCard.card.collectorId, page, unlockedCard.level, [unlockedCard.id], unlockedCard.card.cardInfo.id)),
       share(),
     );
   }

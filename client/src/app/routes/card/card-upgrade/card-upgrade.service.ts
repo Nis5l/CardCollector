@@ -9,8 +9,8 @@ import type { UpgradeResponse, UpgradeRequest } from './types';
 export class CardUpgradeService {
   constructor(private readonly httpService: HttpService) {}
 
-  public getUpgradeCards(userId: Id, collectorId: Id, page: number, level: number, exludeIds: Id[]): Observable<InventoryResponse> {
-    return this.httpService.post(`/user/${userId}/${collectorId}/inventory`, { page, level, excludeUuids: exludeIds });
+  public getUpgradeCards(userId: Id, collectorId: Id, page: number, level: number, exludeIds: Id[], cardId: Id): Observable<InventoryResponse> {
+    return this.httpService.post(`/user/${userId}/${collectorId}/inventory`, { page, level, excludeUuids: exludeIds, cardId });
   }
 
   public upgrade(cardOne: Id, cardTwo: Id): Observable<UpgradeResponse> {
