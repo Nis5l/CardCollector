@@ -11,6 +11,7 @@ pub struct UserResponse {
 }
 
 #[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct UsersResponse {
     pub users: Vec<UserResponse>,
     pub page_size: u32,
