@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, EMPTY, combineLatest, tap, switchMap, shareReplay, interval, startWith, map, Subject } from 'rxjs';
+import { Observable, EMPTY, combineLatest, tap, switchMap, shareReplay, interval, startWith, map, Subject, filter, catchError } from 'rxjs';
 
 import { UserVerified } from './types';
 import { VerifyService } from './verify.service';
@@ -58,16 +58,18 @@ export class VerifyComponent extends SubscriptionManagerComponent {
 
     this.registerSubscription(
       key$.pipe(
-        switchMap(key => {
-          if (key) {
-            return this.verifyService.verify(key).pipe(
-              tap(() => {
-                router.navigate(["/"]);
-              })
-            );
-          }
-          return EMPTY;
-        })
+        filter((key): key is string => key != null),
+        switchMap(key =>
+          this.verifyService.verify(key).pipe(
+            tap(() => {
+              router.navigate(['/']);
+            }),
+            catchError(err => {
+              console.error('Verification failed', err);
+              return EMPTY;
+            })
+          )
+        )
       ).subscribe()
     );
 
