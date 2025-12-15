@@ -7,6 +7,7 @@
 
 	width: 100%;
 	margin-top: 150px;
+	margin-top: calc(50vh - (550px / 2) - 50px); //TODO: make less disgusting maybe
 
 	.register {
 		display: flex;
@@ -16,6 +17,10 @@
 
 		@media (max-width: $breakpoint-md) {
       width: 300px;
+		}
+
+		@media (max-width: $breakpoint-sm) {
+      width: 250px;
 		}
 
 		gap: 30px;

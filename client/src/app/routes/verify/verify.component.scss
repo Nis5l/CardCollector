@@ -6,7 +6,8 @@
 	align-items: center;
 
 	width: 100%;
-	margin-top: 200px;
+
+	margin-top: calc(50vh - (270px / 2) - 50px); //TODO: make less disgusting maybe
 
 	.verify {
 		display: flex;
@@ -17,6 +18,10 @@
 
 		@media (max-width: $breakpoint-md) {
       width: 300px;
+		}
+
+		@media (max-width: $breakpoint-sm) {
+      width: 250px;
 		}
 
 		gap: 30px;

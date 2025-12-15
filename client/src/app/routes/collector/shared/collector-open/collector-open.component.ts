@@ -106,7 +106,6 @@ export class CollectorOpenComponent extends SubscriptionManagerComponent impleme
 		}
 		let diff: number = (this.packTime.getTime() - Date.now());
 		this.progress =  Math.min(1.0, 1.0 - diff / this.maxTime);
-    console.log("packTime", this.packTime, this.packTime.getTime(), "now", new Date(), Date.now(), "diff", diff, "this.progress", this.progress);
 		setTimeout(() => {
 			this.displayText = this.createDisplayText();
 		});
@@ -126,7 +125,6 @@ export class CollectorOpenComponent extends SubscriptionManagerComponent impleme
 	}
 
 	private createDisplayText(): string{
-    console.log("progress", this.progress, "packTime", this.packTime);
 		if(this.progress >= 1.0) return "Open";
 		if(this.packTime == null) return "Error";
 
