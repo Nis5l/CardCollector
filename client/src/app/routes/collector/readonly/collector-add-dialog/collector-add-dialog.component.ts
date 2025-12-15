@@ -19,7 +19,9 @@ export class CollectorAddDialogComponent {
 	public static open(matDialog: MatDialog, collectorId: Id): Observable<"refresh" | undefined> {
 		return matDialog.open<CollectorAddDialogComponent, Id, undefined>(CollectorAddDialogComponent, {
       data: collectorId,
-      width: "min(800px, 70vw)"
+      minWidth: "250px",
+      width: "70vw",
+      maxWidth: "800px",
     }).afterClosed();
 	}
 

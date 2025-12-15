@@ -20,6 +20,11 @@
 
 		.request {
 			margin-top: auto;
+
+      @media (max-width: $breakpoint-md) {
+        margin-top: 25px;
+      }
+
 			.error {
 				text-align: center;
 			}

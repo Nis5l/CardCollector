@@ -10,6 +10,7 @@ use crate::sql::Sql;
 use crate::{verify_collector_admin, verify_user};
 use crate::shared::crypto::JwtToken;
 
+//TODO: delete card image file
 #[post("/card/request/<card_id>/decline")]
 pub async fn card_request_decline_route(card_id: Id, sql: &State<Sql>, token: JwtToken) -> ApiResponseErr<CardRequestDeclineResponse> {
     let user_id = &token.id;

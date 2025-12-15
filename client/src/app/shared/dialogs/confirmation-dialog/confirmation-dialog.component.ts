@@ -21,7 +21,9 @@ export class ConfirmationDialogComponent {
 	public static open(matDialog: MatDialog, message: string): Observable<boolean | undefined> {
 		return matDialog.open<ConfirmationDialogComponent, { message: string }, boolean>(ConfirmationDialogComponent, {
       data: { message },
+      minWidth: "250px",
       width: "50vw",
+	    maxWidth: "500px",
       height: "auto"
     }).afterClosed();
 	}
