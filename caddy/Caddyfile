@@ -1,0 +1,25 @@
+# ==============================================================================
+# MAIN SITE BLOCK (WILDCARD)
+# ==============================================================================
+api.waifucollector.com {
+    tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+    }
+
+    reverse_proxy server:8080 {
+        header_up Host {host}
+        header_up X-Real-IP {remote}
+    }
+}
+
+waifucollector.com, www.waifucollector.com {
+    tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+    }
+
+    reverse_proxy client:80 {
+        flush_interval -1
+        header_up Host {host}
+        header_up X-Real-IP {remote}
+    }
+}
