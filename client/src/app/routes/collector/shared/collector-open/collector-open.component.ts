@@ -149,8 +149,6 @@ export class CollectorOpenComponent extends SubscriptionManagerComponent impleme
 		}
 		text += seconds;
 
-    console.log("open text", text);
-
 		return text;
 	}
 
