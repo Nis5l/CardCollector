@@ -144,6 +144,9 @@ export class CollectorOpenComponent implements OnInit, OnDestroy {
 			text += "0";
 		}
 		text += seconds;
+
+    console.log("open text", text);
+
 		return text;
 	}
 

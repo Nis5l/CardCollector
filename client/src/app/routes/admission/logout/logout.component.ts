@@ -21,8 +21,9 @@ export class LogoutComponent extends SubscriptionManagerComponent implements OnI
 		};
 		this.registerSubscription(
 			this.httpService.post("/logout", {}, { withCredentials: true }).subscribe({
-				error: logout,
-				next: logout
+				error: () => logout(),
+				next: () => logout(),
+        complete: () => logout(),
 			})
 		);
 	}
