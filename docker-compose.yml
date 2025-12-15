@@ -20,6 +20,8 @@ services:
       - mysql
     networks:
       - caddy_net
+    volumes:
+      - ./server/static:/server/static
 
   client:
     build: client/
