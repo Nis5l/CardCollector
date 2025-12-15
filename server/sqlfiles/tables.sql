@@ -1,4 +1,4 @@
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
 	uid VARCHAR(13) NOT NULL,
 	uusername TINYTEXT NOT NULL,
 	upassword TINYTEXT NOT NULL,
@@ -8,7 +8,16 @@ CREATE TABLE users (
 	PRIMARY KEY (uid)
 ) ENGINE = InnoDB;
 
-CREATE TABLE refreshtokens (
+CREATE TABLE IF NOT EXISTS collectors (
+	coid VARCHAR(13) NOT NULL,
+	uid VARCHAR(13) NOT NULL,
+	coname TEXT NOT NULL,
+	codescription TEXT NOT NULL,
+	PRIMARY KEY (coid),
+	FOREIGN KEY (uid) REFERENCES users (uid)
+) ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS refreshtokens (
 	uid VARCHAR(13) NOT NULL,
 	rtoken TEXT(500) NOT NULL,
 	PRIMARY KEY (uid, rtoken(500)),
@@ -16,7 +25,7 @@ CREATE TABLE refreshtokens (
 	ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
-CREATE TABLE friends (
+CREATE TABLE IF NOT EXISTS friends (
 	frid INT AUTO_INCREMENT,
 	uidone VARCHAR(13) NOT NULL,
 	uidtwo VARCHAR(13) NOT NULL,
@@ -28,16 +37,16 @@ CREATE TABLE friends (
 	ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
-CREATE TABLE verificationkeys (
+CREATE TABLE IF NOT EXISTS verificationkeys (
 	uid VARCHAR(13) NOT NULL,
 	vkkey TEXT NOT NULL,
-    vkcreated DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,,
+    vkcreated DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (uid),
 	FOREIGN KEY (uid) REFERENCES users(uid)
 	ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
-CREATE TABLE notifications (
+CREATE TABLE IF NOT EXISTS notifications (
 	nid INT NOT NULL AUTO_INCREMENT,
 	uid VARCHAR(13) NOT NULL,
 	coid VARCHAR(13),
@@ -52,16 +61,7 @@ CREATE TABLE notifications (
 	ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
-CREATE TABLE collectors (
-	coid VARCHAR(13) NOT NULL,
-	uid VARCHAR(13) NOT NULL,
-	coname TEXT NOT NULL,
-	codescription TEXT NOT NULL,
-	PRIMARY KEY (coid),
-	FOREIGN KEY (uid) REFERENCES users (uid)
-) ENGINE = InnoDB;
-
-CREATE TABLE collectorfavorites (
+CREATE TABLE IF NOT EXISTS collectorfavorites (
 	coid VARCHAR(13) NOT NULL,
 	uid VARCHAR(13) NOT NULL,
 	PRIMARY KEY (coid, uid),
@@ -71,7 +71,7 @@ CREATE TABLE collectorfavorites (
 	ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
-CREATE TABLE collectorsettings (
+CREATE TABLE IF NOT EXISTS collectorsettings (
 	coid VARCHAR(13) NOT NULL,
 	coskey VARCHAR(255) NOT NULL,
 	cosvalue TINYTEXT,
@@ -80,7 +80,7 @@ CREATE TABLE collectorsettings (
 	ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
-CREATE TABLE cardtypes (
+CREATE TABLE IF NOT EXISTS cardtypes (
 	ctid VARCHAR(13) NOT NULL,
 	coid VARCHAR(13) NOT NULL,
 	uid VARCHAR(13),
@@ -93,7 +93,7 @@ CREATE TABLE cardtypes (
 	ON DELETE SET NULL
 ) ENGINE = InnoDB;
 
-CREATE TABLE cards (
+CREATE TABLE IF NOT EXISTS cards (
 	cid VARCHAR(13) NOT NULL,
 	cname TINYTEXT NOT NULL,
 	ctid VARCHAR(13) NOT NULL,
@@ -106,7 +106,7 @@ CREATE TABLE cards (
 	ON DELETE SET NULL
 ) ENGINE = InnoDB;
 
-CREATE TABLE cardframes (
+CREATE TABLE IF NOT EXISTS cardframes (
 	cfid INT NOT NULL,
 	coid VARCHAR(13) NOT NULL,
 	cfname TINYTEXT NOT NULL,
@@ -115,7 +115,7 @@ CREATE TABLE cardframes (
 	ON DELETE RESTRICT
 ) ENGINE = InnoDB;
 
-CREATE TABLE cardeffects (
+CREATE TABLE IF NOT EXISTS cardeffects (
 	ceid INT NOT NULL,
 	coid VARCHAR(13) NOT NULL,
 	ceopacity FLOAT NOT NULL,
@@ -124,7 +124,7 @@ CREATE TABLE cardeffects (
 	ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
-CREATE TABLE cardunlocks (
+CREATE TABLE IF NOT EXISTS cardunlocks (
 	cuid VARCHAR(13) NOT NULL,
 	uid VARCHAR(13) NOT NULL,
 	cid VARCHAR(13) NOT NULL,
@@ -140,7 +140,7 @@ CREATE TABLE cardunlocks (
 	ON DELETE RESTRICT
 ) ENGINE = InnoDB;
 
-CREATE TABLE trades (
+CREATE TABLE IF NOT EXISTS trades (
 	tid VARCHAR(13) NOT NULL,
 	coid VARCHAR(13) NOT NULL,
 	uidone VARCHAR(13) NOT NULL,
@@ -158,7 +158,7 @@ CREATE TABLE trades (
 	UNIQUE(uidone, uidtwo)
 ) ENGINE = InnoDB;
 
-CREATE TABLE tradecards (
+CREATE TABLE IF NOT EXISTS tradecards (
 	tid VARCHAR(13) NOT NULL,
 	cuid VARCHAR(13) NOT NULL,
 	PRIMARY KEY (tid, cuid),
@@ -168,7 +168,7 @@ CREATE TABLE tradecards (
 	ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
-CREATE TABLE tradesuggestions (
+CREATE TABLE IF NOT EXISTS tradesuggestions (
 	tid VARCHAR(13) NOT NULL,
 	cuid VARCHAR(13) NOT NULL,
 	PRIMARY KEY(tid, cuid),
@@ -178,7 +178,7 @@ CREATE TABLE tradesuggestions (
 	ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
-CREATE TABLE packstats (
+CREATE TABLE IF NOT EXISTS packstats (
         psid INT NOT NULL AUTO_INCREMENT,
         coid VARCHAR(13),
         uid VARCHAR(13),
@@ -190,7 +190,7 @@ CREATE TABLE packstats (
 		ON DELETE SET NULL
 ) ENGINE = InnoDB;
 
-CREATE TABLE packtimes (
+CREATE TABLE IF NOT EXISTS packtimes (
         uid VARCHAR(13) NOT NULL,
         coid VARCHAR(13) NOT NULL,
         ptlastopened DATETIME,
@@ -201,12 +201,12 @@ CREATE TABLE packtimes (
 		ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
-CREATE TABLE achievementypes (
+CREATE TABLE IF NOT EXISTS achievementtypes (
        attype VARCHAR(255) NOT NULL,
        PRIMARY KEY (attype)
 ) ENGINE = InnoDB;
 
-CREATE TABLE achievements (
+CREATE TABLE IF NOT EXISTS achievements (
         aid VARCHAR(13) NOT NULL,
         coid VARCHAR(13),
         aimage TEXT NOT NULL,
@@ -216,17 +216,17 @@ CREATE TABLE achievements (
 		ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
-CREATE TABLE achievementconditions (
+CREATE TABLE IF NOT EXISTS achievementconditions (
         aid VARCHAR(13) NOT NULL,
         attype VARCHAR(255) NOT NULL,
         PRIMARY KEY(aid, attype),
         FOREIGN KEY(aid) REFERENCES achievements(aid)
 		ON DELETE CASCADE,
-        FOREIGN KEY(attype) REFERENCES achievementypes(attype)
+        FOREIGN KEY(attype) REFERENCES achievementtypes(attype)
 		ON DELETE RESTRICT
 ) ENGINE = InnoDB;
 
-CREATE TABLE achievementunlocks (
+CREATE TABLE IF NOT EXISTS achievementunlocks (
         uid VARCHAR(13) NOT NULL,
         aid VARCHAR(13) NOT NULL,
         PRIMARY KEY (uid, aid),
@@ -236,7 +236,7 @@ CREATE TABLE achievementunlocks (
 		ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
-CREATE TABLE cardvotes (
+CREATE TABLE IF NOT EXISTS cardvotes (
         uid VARCHAR(13) NOT NULL,
 		cid VARCHAR(13) NOT NULL,
 		cvtype INT NOT NULL,
@@ -247,7 +247,7 @@ CREATE TABLE cardvotes (
 		ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
-CREATE TABLE cardtypevotes (
+CREATE TABLE IF NOT EXISTS cardtypevotes (
         uid VARCHAR(13) NOT NULL,
 		ctid VARCHAR(13) NOT NULL,
 		ctvtype INT NOT NULL,
