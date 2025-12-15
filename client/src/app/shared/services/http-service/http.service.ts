@@ -1,7 +1,8 @@
 import { Injectable, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
-import { catchError, Observable, throwError as observableThrowError, tap, switchMap, share, shareReplay, EMPTY } from 'rxjs';
+import { catchError, Observable, throwError as observableThrowError, tap, switchMap, share, EMPTY } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 
 import { AuthService } from '../auth-service';
 import type { RefreshResponse } from './types';
@@ -16,7 +17,7 @@ interface HttpOptions {
 
 @Injectable()
 export class HttpService {
-	private readonly api = "http://127.0.0.1:8080";
+	private readonly api = environment.apiUrl;
 	private readonly headers: Headers = {
 		'Content-Type': 'application/json',
 	};
