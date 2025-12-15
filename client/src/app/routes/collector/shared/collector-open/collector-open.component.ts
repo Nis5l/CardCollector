@@ -6,6 +6,7 @@ import { PackTimeResponse } from './types';
 import { CollectorOpenService } from './collector-open.service';
 
 import type { Id } from '../../../../shared/types';
+import { SubscriptionManagerComponent } from '../../../../shared/abstract';
 
 const UPDATE_FREQUENCY_MS = 100;
 
@@ -15,7 +16,7 @@ const UPDATE_FREQUENCY_MS = 100;
     styleUrls: ["./collector-open.component.scss"],
     standalone: false
 })
-export class CollectorOpenComponent implements OnInit, OnDestroy {
+export class CollectorOpenComponent extends SubscriptionManagerComponent implements OnInit, OnDestroy {
 
 	public _collectorId: Id | null = null;
 	@Input()
@@ -42,15 +43,18 @@ export class CollectorOpenComponent implements OnInit, OnDestroy {
 	constructor(
 		private readonly collectorOpenService: CollectorOpenService,
 		private readonly router: Router
-	){ }
+	){
+    super();
+  }
 
 	public ngOnInit(){
-		this.refreshTime().subscribe(() => {
+		this.registerSubscription(this.refreshTime().subscribe(() => {
 			this.startCounter();
-		});
+		}));
 	}
 
-	public ngOnDestroy(){
+	public override ngOnDestroy(){
+    super.ngOnDestroy();
 		this.stopCounter();
 	}
 
@@ -66,9 +70,9 @@ export class CollectorOpenComponent implements OnInit, OnDestroy {
 		if(this.progress < 1.0) return;
 		this.collectorOpenService.openPack(this.collectorId).subscribe((res) => {
 			this.progress = 0;
-			this.refreshTime().subscribe(() => {
+			this.registerSubscription(this.refreshTime().subscribe(() => {
 				this.startCounter();
-			});
+			}));
 			//TODO: change this if more than one card can be pulled
 			this.router.navigate(["card", res.cards[0].id], { queryParams: { unlocked: true } });
 		});
@@ -121,6 +125,7 @@ export class CollectorOpenComponent implements OnInit, OnDestroy {
 	}
 
 	private createDisplayText(): string{
+    console.log("progress", this.progress, "packTime", this.packTime);
 		if(this.progress >= 1.0) return "Open";
 		if(this.packTime == null) return "Error";
 
