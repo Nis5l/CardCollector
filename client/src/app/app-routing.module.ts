@@ -36,8 +36,9 @@ const routes: Routes = [
 	{ path: "card/:cardId", component: CardViewComponent },
 	{ path: "card/:cardId/upgrade", component: CardUpgradeComponent },
 
-	{ path: "home", component: HomeComponent },
 	{ path: "users", component: UsersComponent },
+	//{ path: "home", component: HomeComponent },
+	{ path: "**", redirectTo: "/collectors" },
 ];
 
 @NgModule({

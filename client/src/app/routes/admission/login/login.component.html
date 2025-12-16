@@ -1,7 +1,7 @@
 <div class="wrap">
-  <div class="login-wrapper">
-    <mat-card appearance="outlined">
-      <form class="login" [formGroup]="formGroup" (submit)="login()">
+  <div class="login-wrapper" *ngIf="(formGroup$ | async) as formGroup">
+    <mat-card appearance="outlined" *ngIf="(config$ | async) as config">
+      <form class="login" [formGroup]="formGroup" (submit)="login(formGroup)">
         <mat-form-field >
           <input matInput type="text" formControlName="username" placeholder="Username" />
           <mat-error>Username has to be {{config.username.minLength}}-{{config.username.maxLength}} characters</mat-error>

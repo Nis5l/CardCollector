@@ -1,22 +1,14 @@
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 
 import type { AdmissionConfig } from './types';
+import { HttpService } from '../../../shared/services';
 
 @Injectable()
 export class AdmissionService {
-	//TODO: get from server
-	private readonly config: AdmissionConfig = {
-		username: {
-			minLength: 4,
-			maxLength: 20
-		},
-		password: {
-			minLength: 8,
-			maxLength: 30
-		}
-	};
+  constructor(private readonly httpService: HttpService) {}
 
-	public getConfig(): AdmissionConfig {
-		return this.config;
+	public getConfig(): Observable<AdmissionConfig> {
+    return this.httpService.get<AdmissionConfig>("/admission/config");
 	}
 }

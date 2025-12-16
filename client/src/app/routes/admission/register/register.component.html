@@ -1,9 +1,9 @@
 <div class="wrap">
-  <div class="register-wrapper">
-    <mat-card appearance="outlined">
-      <form class="register" [formGroup]="formGroup" (submit)="register()">
+  <div class="register-wrapper" *ngIf="(formGroup$ | async) as formGroup">
+    <mat-card appearance="outlined" *ngIf="(config$ | async) as config">
+      <form class="register" [formGroup]="formGroup" (submit)="register(formGroup)">
         <mat-form-field *ngVar="formGroup.controls.username as usernameFormControl">
-          <input matInput type="text" formControlName="username" placeholder="Username" [minlength]="config.username.minLength" [maxlength]="config.username.maxLength" />
+          <input matInput type="text" formControlName="username" placeholder="Username" />
           @if (usernameFormControl.hasError('required') || usernameFormControl.hasError('minlength')) {
             <mat-error>
               Username has to be {{config.username.minLength}}-{{config.username.maxLength}} characters
@@ -20,7 +20,7 @@
           <mat-error>Email has to be a valid Email</mat-error>
         </mat-form-field>
         <mat-form-field>
-          <input matInput type="password" formControlName="password" placeholder="Password" [minlength]="this.config.password.minLength" [maxlength]="this.config.password.maxLength"/>
+          <input matInput type="password" formControlName="password" placeholder="Password"/>
           <mat-error>Password has to be {{config.password.minLength}}-{{config.password.maxLength}} characters</mat-error>
         </mat-form-field>
         <mat-form-field *ngVar="formGroup.controls.passwordRepeat as passwordRepeatFormControl">

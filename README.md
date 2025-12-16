@@ -1,6 +1,6 @@
-# WaifuCollector
+# CardCollector
 https://waifucollector.com \
-Website for collecting, upgrading and trading Waifus. \
+Website for collecting, upgrading and trading Cards. \
 I will be happy over every contribution, I don't care how bad the code is, we are all here to learn. \
 If you have any questions or need help contact me on [discord](https://discord.com/invite/hftNUqNgRj)
 ## Setup
@@ -21,16 +21,14 @@ For developement [XAMPP](https://www.apachefriends.org/download.html) might be a
 ## Starting
 ### Server (rust)
 `cargo run`
-### Client (react/js)
+### Client (angular)
 `yarn start`
 ## Docker
-For production docker-compose a [LetsEncrypt proxy](https://github.com/evertramos/nginx-proxy-automation/tree/master/docs) is used.
+For production docker-compose is used.
 ## TODO:
-  //Folder management for client. \
-  //Cleanup client code. \
   Fix Theme. \
   Fix Notifications. \
-  multiple collector admins \
+  multiple collector admins. \
   Friend list with link to trade under collector and same for collectors in friends. \
   Sidebar theme. \
   Notifications style

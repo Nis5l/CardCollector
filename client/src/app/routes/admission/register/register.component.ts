@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormGroup, FormControl, Validators, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, map, shareReplay } from 'rxjs';
 
 import { RegisterService } from './register.service';
 import { AdmissionService } from '../admission-service';
@@ -11,6 +11,13 @@ import type { AdmissionConfig } from '../admission-service';
 import { SubscriptionManagerComponent } from '../../../shared/abstract';
 import { LoadingService } from '../../../shared/services';
 
+type RegisterFormGroup = FormGroup<{
+  username: FormControl<string>,
+  email: FormControl<string>,
+  password: FormControl<string>
+  passwordRepeat: FormControl<string>
+}>;
+
 @Component({
     selector: 'cc-register',
     templateUrl: './register.component.html',
@@ -18,8 +25,8 @@ import { LoadingService } from '../../../shared/services';
     standalone: false
 })
 export class RegisterComponent extends SubscriptionManagerComponent {
-	public readonly formGroup;
-	public readonly config: AdmissionConfig;
+	public readonly formGroup$: Observable<RegisterFormGroup>;
+	public readonly config$: Observable<AdmissionConfig>;
 
 	private readonly errorSubject: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
 	public readonly error$: Observable<string | null>;
@@ -37,40 +44,51 @@ export class RegisterComponent extends SubscriptionManagerComponent {
 		private readonly loadingService: LoadingService
 	) {
 		super();
-		this.config = this.admissionService.getConfig();
-		this.formGroup = new FormGroup({
-			username: new FormControl("", {
-				nonNullable: true,
-				validators: [
-					Validators.required,
-					//TODO: error in html
-					Validators.pattern("^[a-zA-Z0-9_]+( [a-zA-Z0-9_]+)*$"),
-				]
-			}),
-			email: new FormControl("", {
-				nonNullable: true,
-				validators: [
-					Validators.required,
-					Validators.email
-				]
-			}),
-			password: new FormControl("", {
-				nonNullable: true,
-				validators: [
-					Validators.required
-				]
-			}),
-			passwordRepeat: new FormControl("", [
-				Validators.required,
-				this.passwordValidator
-			]),
-		});
+		this.config$ = this.admissionService.getConfig().pipe(shareReplay(1));
+		this.formGroup$ = this.loadingService.waitFor(this.config$.pipe(
+      map(config => new FormGroup({
+        username: new FormControl("", {
+          nonNullable: true,
+          validators: [
+            Validators.required,
+            //TODO: error in html
+            Validators.pattern("^[a-zA-Z0-9_]+( [a-zA-Z0-9_]+)*$"),
+            Validators.minLength(config.username.minLength),
+            Validators.maxLength(config.username.maxLength)
+          ]
+        }),
+        email: new FormControl("", {
+          nonNullable: true,
+          validators: [
+            Validators.required,
+            Validators.email
+          ]
+        }),
+        password: new FormControl("", {
+          nonNullable: true,
+          validators: [
+            Validators.required,
+            Validators.minLength(config.password.minLength),
+            Validators.maxLength(config.password.maxLength)
+          ]
+        }),
+        passwordRepeat: new FormControl("", {
+          nonNullable: true,
+          validators: [
+            Validators.required,
+            Validators.minLength(config.password.minLength),
+            Validators.maxLength(config.password.maxLength),
+            this.passwordValidator
+          ]
+        }),
+      }))
+    ));
 
 		this.error$ = this.errorSubject.asObservable();
 	}
 
-	public register(): void {
-		const { passwordRepeat , ...config} = this.formGroup.getRawValue();
+	public register(formGroup: RegisterFormGroup): void {
+		const { passwordRepeat , ...config} = formGroup.getRawValue();
 
 		this.registerSubscription(
 			this.loadingService.waitFor(this.registerService.register(config)).subscribe({
