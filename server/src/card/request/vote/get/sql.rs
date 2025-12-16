@@ -33,5 +33,5 @@ pub async fn get_vote(sql: &Sql, card_id: &Id, user_id: &Id) -> Result<CardVote,
 
     let (vote, ): (i32, ) = stmt?;
 
-    Ok(CardVote::from_db(vote))
+    Ok(CardVote::from(vote))
 }

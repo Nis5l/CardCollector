@@ -3,6 +3,7 @@ use serde::{Serialize, Deserialize};
 use sqlx::FromRow;
 use rocket::form::FromFormField;
 use serde_repr::Serialize_repr;
+use std::convert::From;
 
 use crate::config::Config;
 use crate::shared::{Id, IdInt};
@@ -225,16 +226,22 @@ impl Default for CardSortType {
     }
 }
 
+impl From<i32> for CardSortType {
+    fn from(value: i32) -> Self {
+        match value {
+            1 => Self::CardType,
+            2 => Self::Recent,
+            _ => Self::Name,
+        }
+    }
+}
+
 impl<'de> Deserialize<'de> for CardSortType {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
        where D: serde::Deserializer<'de> {
             let i = i32::deserialize(deserializer)?;
 
-            Ok(match i {
-                1 => Self::CardType,
-                2 => Self::Recent,
-                _ => Self::Name
-            })
+            Ok(CardSortType::from(i))
        }
 }
 
@@ -258,26 +265,11 @@ pub enum CardVote {
     Downvote = -1,
 }
 
-impl<'de> Deserialize<'de> for CardVote {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-       where D: serde::Deserializer<'de> {
-            let i = i32::deserialize(deserializer)?;
-
-            Ok(if i == 0 {
-                Self::Neutral
-            } else if i < 0 {
-                Self::Downvote
-            } else {
-                Self::Upvote
-            })
-       }
-}
-
-impl CardVote {
-    pub fn from_db(vote: i32) -> Self {
-        if vote == 0 {
+impl From<i32> for CardVote {
+    fn from(value: i32) -> Self {
+        if value == 0 {
             Self::Neutral
-        } else if vote < 0 {
+        } else if value < 0 {
             Self::Downvote
         } else {
             Self::Upvote
@@ -285,3 +277,11 @@ impl CardVote {
     }
 }
 
+impl<'de> Deserialize<'de> for CardVote {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+       where D: serde::Deserializer<'de> {
+            let i = i32::deserialize(deserializer)?;
+
+            Ok(CardVote::from(i))
+       }
+}
