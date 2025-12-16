@@ -5,8 +5,6 @@ use crate::shared::Id;
 
 //TODO: dont pass config
 pub async fn trade_cards(sql: &Sql, user_id: &Id, trade_id: &Id, config: &Config) -> Result<Vec<UnlockedCard>, sqlx::Error> {
-    let mut con = sql.get_con().await?;
-
     let cards_db: Vec<UnlockedCardDb> = sqlx::query_as(
         "SELECT
          cardunlocks.cuid AS id,
@@ -34,7 +32,7 @@ pub async fn trade_cards(sql: &Sql, user_id: &Id, trade_id: &Id, config: &Config
          tradecards.tid=? AND cardunlocks.uid=?;")
          .bind(trade_id)
          .bind(user_id)
-         .fetch_all(&mut con)
+         .fetch_all(sql.pool())
          .await?;
 
     let cards = cards_db.into_iter().map(|card_db| { UnlockedCard::from_card_db(card_db, config) }).collect();
@@ -44,8 +42,6 @@ pub async fn trade_cards(sql: &Sql, user_id: &Id, trade_id: &Id, config: &Config
 
 //TODO: dont pass config
 pub async fn trade_suggestions(sql: &Sql, user_id: &Id, trade_id: &Id, config: &Config) -> Result<Vec<UnlockedCard>, sqlx::Error> {
-    let mut con = sql.get_con().await?;
-
     let cards_db: Vec<UnlockedCardDb> = sqlx::query_as(
         "SELECT
          cardunlocks.cuid AS id,
@@ -73,7 +69,7 @@ pub async fn trade_suggestions(sql: &Sql, user_id: &Id, trade_id: &Id, config: &
          tradesuggestions.tid=? AND cardunlocks.uid<>?;")
          .bind(trade_id)
          .bind(user_id)
-         .fetch_all(&mut con)
+         .fetch_all(sql.pool())
          .await?;
 
     let cards = cards_db.into_iter().map(|card_db| { UnlockedCard::from_card_db(card_db, config) }).collect();

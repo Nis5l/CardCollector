@@ -3,8 +3,6 @@ use crate::shared::{util, Id};
 use crate::shared::card::data::{CardType, CardState};
 
 pub async fn get_card_types(sql: &Sql, collector_id: &Id, mut name: String, amount: u32, offset: u32, state: Option<CardState>) -> Result<Vec<CardType>, sqlx::Error> {
-    let mut con = sql.get_con().await?;
-
     name = util::escape_for_like(name);
 
     let query = format!(
@@ -33,14 +31,12 @@ pub async fn get_card_types(sql: &Sql, collector_id: &Id, mut name: String, amou
 
     stmt = stmt.bind(amount).bind(offset);
 
-    let card_types: Vec<CardType> = stmt.fetch_all(&mut con).await?;
+    let card_types: Vec<CardType> = stmt.fetch_all(sql.pool()).await?;
 
     Ok(card_types)
 }
 
 pub async fn get_card_type_count(sql: &Sql, collector_id: &Id, mut name: String, state: Option<CardState>) -> Result<u32, sqlx::Error> {
-    let mut con = sql.get_con().await?;
-
     name = util::escape_for_like(name);
 
     let query = format!(
@@ -62,7 +58,7 @@ pub async fn get_card_type_count(sql: &Sql, collector_id: &Id, mut name: String,
         stmt = stmt.bind(state as i32);
     }
 
-    let (count, ): (i64, ) = stmt.fetch_one(&mut con).await?;
+    let (count, ): (i64, ) = stmt.fetch_one(sql.pool()).await?;
 
     Ok(count as u32)
 }

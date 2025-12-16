@@ -2,8 +2,6 @@ use crate::shared::Id;
 use crate::sql::Sql;
 
 pub async fn get_trade_uuids(sql: &Sql, user_id: &Id, friend_id: &Id, suggestions: bool) -> Result<Vec<Id>, sqlx::Error> {
-    let mut con = sql.get_con().await?;
-
     let query = format!(
         "SELECT cuid
          FROM tradecards
@@ -27,7 +25,7 @@ pub async fn get_trade_uuids(sql: &Sql, user_id: &Id, friend_id: &Id, suggestion
         .bind(user_id);
     }
 
-    let ids: Vec<(Id, )> = stmt.fetch_all(&mut con).await?;
+    let ids: Vec<(Id, )> = stmt.fetch_all(sql.pool()).await?;
 
     Ok(ids.iter().map(|i| { i.0.clone() }).collect())
 }

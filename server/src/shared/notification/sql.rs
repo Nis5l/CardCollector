@@ -3,7 +3,6 @@ use crate::sql::Sql;
 use crate::shared::Id;
 
 pub async fn add_notification(sql: &Sql, user_id: &Id, collector_id: Option<&Id>, notification_create: &NotificationCreateData) -> Result<(), sqlx::Error> {
-    let mut con = sql.get_con().await?;
     //TODO: if already exists
 
     sqlx::query(
@@ -17,7 +16,7 @@ pub async fn add_notification(sql: &Sql, user_id: &Id, collector_id: Option<&Id>
         .bind(&notification_create.message)
         .bind(&notification_create.url)
         .bind(&notification_create.time)
-        .execute(&mut con)
+        .execute(sql.pool())
         .await?;
 
     Ok(())

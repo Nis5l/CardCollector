@@ -1,5 +1,5 @@
 use jwt::{SignWithKey, VerifyWithKey};
-use hmac::{Hmac, NewMac};
+use hmac::{Hmac, Mac};
 use sha2::Sha256;
 use std::collections::BTreeMap;
 use rocket::request::{self, FromRequest, Request};
@@ -72,7 +72,7 @@ impl<'r> FromRequest<'r> for JwtToken {
 }
 
 pub fn jwt_sign_token(username: &str, user_id: &Id, secret: &str) -> Result<String, jwt::Error> {
-    let key: Hmac<Sha256> = Hmac::new_from_slice(&bincode::serialize(secret).expect("Serializing jwt secret failed!"))?;
+    let key: Hmac<Sha256> = Hmac::new_from_slice(&bincode::encode_to_vec(secret, bincode::config::standard()).expect("Serializing jwt secret failed!"))?;
     let mut btree = BTreeMap::new();
     let user_id_str = user_id.to_string();
     let now_str = Utc::now().to_rfc3339();
@@ -83,7 +83,7 @@ pub fn jwt_sign_token(username: &str, user_id: &Id, secret: &str) -> Result<Stri
 }
 
 pub fn jwt_verify_token(token: &str, secret: &str, jwt_duration: &Duration) -> Result<JwtToken, JwtTokenError> {
-    let key: Hmac<Sha256> = Hmac::new_from_slice(&bincode::serialize(secret).expect("Serializing jwt secret failed!")).expect("HMAC failed");
+    let key: Hmac<Sha256> = Hmac::new_from_slice(&bincode::encode_to_vec(secret, bincode::config::standard()).expect("Serializing jwt secret failed!")).expect("HMAC failed");
 
     let btree: BTreeMap<String, String> = match token.verify_with_key(&key) {
         Ok(btree) => btree,

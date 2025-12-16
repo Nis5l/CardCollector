@@ -1,19 +1,17 @@
-use sqlx::{Pool, MySql, pool::PoolConnection, Error};
-use core::future::Future;
+use sqlx::{Pool, MySql};
 use std::fs;
 
 #[derive(Debug, Clone)]
 pub struct Sql(pub Pool<MySql>);
 
 impl Sql {
-    pub fn get_con(&self) -> impl Future<Output = Result<PoolConnection<MySql>, Error>> + 'static {
-        self.0.acquire()
+    pub fn pool(&self) -> &Pool<MySql> {
+        &self.0
     }
 }
 
 //TODO: find a better solution
 pub async fn setup_db(sql: &Sql, file: &str) -> Result<(), sqlx::Error> {
-    let mut con = sql.get_con().await?;
 
     let file_sql = fs::read_to_string(file)
         .expect("Failed reading file");
@@ -25,7 +23,7 @@ pub async fn setup_db(sql: &Sql, file: &str) -> Result<(), sqlx::Error> {
         if prepared_query.len() == 1 { continue; }
 
         let result = sqlx::query(&prepared_query)
-            .execute(&mut con)
+            .execute(sql.pool())
             .await;
 
         if result.is_ok() {

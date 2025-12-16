@@ -3,8 +3,6 @@ use crate::shared::{util, Id};
 use crate::shared::card::data::CardState;
 
 pub async fn get_card_count(sql: &Sql, collector_id: &Id, mut name: String, state: Option<CardState>) -> Result<u32, sqlx::Error> {
-    let mut con = sql.get_con().await?;
-
     name = util::escape_for_like(name);
 
     let query = format!(
@@ -29,7 +27,7 @@ pub async fn get_card_count(sql: &Sql, collector_id: &Id, mut name: String, stat
         stmt = stmt.bind(state as i32);
     }
 
-    let (count, ): (i64, ) = stmt.fetch_one(&mut con).await?;
+    let (count, ): (i64, ) = stmt.fetch_one(sql.pool()).await?;
 
     Ok(count as u32)
 }

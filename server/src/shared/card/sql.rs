@@ -6,22 +6,18 @@ use super::data::{UnlockedCardCreateData, UnlockedCard, UnlockedCardDb, CardDb, 
 use crate::shared::{Id, util};
 
 pub async fn get_card_type_collector_id(sql: &Sql, card_type_id: &Id) -> Result<Id, sqlx::Error> {
-    let mut con = sql.get_con().await?;
-
     let (id, ): (Id, ) = sqlx::query_as(
         "SELECT coid
          FROM cardtypes
          WHERE ctid=?;")
         .bind(card_type_id)
-        .fetch_one(&mut con)
+        .fetch_one(sql.pool())
         .await?;
 
     Ok(id)
 }
 
 pub async fn card_type_exists_created(sql: &Sql, card_type_id: &Id) -> Result<bool, sqlx::Error> {
-    let mut con = sql.get_con().await?;
-
     let (count, ): (i64, ) = sqlx::query_as(
         "SELECT COUNT(*)
          FROM cardtypes
@@ -29,36 +25,32 @@ pub async fn card_type_exists_created(sql: &Sql, card_type_id: &Id) -> Result<bo
          AND ctstate=?;")
         .bind(card_type_id)
         .bind(CardState::Created as i64)
-        .fetch_one(&mut con)
+        .fetch_one(sql.pool())
         .await?;
 
     Ok(count != 0)
 }
 
 pub async fn get_card_collector_id(sql: &Sql, card_id: &Id) -> Result<Id, sqlx::Error> {
-    let mut con = sql.get_con().await?;
-
     let (id, ): (Id, ) = sqlx::query_as(
         "SELECT cardtypes.coid
          FROM cards, cardtypes
          WHERE cards.ctid = cardtypes.ctid
          AND cards.cid = ?;")
         .bind(card_id)
-        .fetch_one(&mut con)
+        .fetch_one(sql.pool())
         .await?;
 
     Ok(id)
 }
 
 pub async fn card_exists(sql: &Sql, card_id: &Id) -> Result<bool, sqlx::Error> {
-    let mut con = sql.get_con().await?;
-
     let (count, ): (i64, ) = sqlx::query_as(
         "SELECT COUNT(*)
          FROM cards
          WHERE cid=?;")
         .bind(card_id)
-        .fetch_one(&mut con)
+        .fetch_one(sql.pool())
         .await?;
 
     Ok(count != 0)
@@ -66,8 +58,6 @@ pub async fn card_exists(sql: &Sql, card_id: &Id) -> Result<bool, sqlx::Error> {
 
 //TODO: Think if should also safe collector_id
 pub async fn add_card(sql: &Sql, user_id: &Id, card_unlocked_id: &Id, _collector_id: &Id, card: &UnlockedCardCreateData) -> Result<(), sqlx::Error> {
-    let mut con = sql.get_con().await?;
-
     sqlx::query(
         "INSERT INTO cardunlocks
          (cuid, uid, cid, cuquality, culevel, cfid)
@@ -79,7 +69,7 @@ pub async fn add_card(sql: &Sql, user_id: &Id, card_unlocked_id: &Id, _collector
         .bind(card.quality)
         .bind(card.level)
         .bind(card.frame_id)
-        .execute(&mut con)
+        .execute(sql.pool())
         .await?;
     Ok(())
 }
@@ -99,8 +89,6 @@ pub async fn get_unlocked_card(sql: &Sql, card_unlocked_id: &Id, user_id: Option
 
 pub async fn get_unlocked_cards(sql: &Sql, card_unlocked_ids: Vec<Id>, user_id: Option<&Id>, config: &Config) -> Result<Vec<UnlockedCard>, sqlx::Error> {
     if card_unlocked_ids.is_empty() { return Ok(Vec::new()); }
-
-    let mut con = sql.get_con().await?;
 
     let mut in_statement = String::from("");
 
@@ -155,27 +143,23 @@ pub async fn get_unlocked_cards(sql: &Sql, card_unlocked_ids: Vec<Id>, user_id: 
         stmt = stmt.bind(id);
     }
 
-    let cards_db: Vec<UnlockedCardDb> = stmt.fetch_all(&mut con).await?;
+    let cards_db: Vec<UnlockedCardDb> = stmt.fetch_all(sql.pool()).await?;
 
     Ok(cards_db.into_iter().map(|card_db| { UnlockedCard::from_card_db(card_db, config) }).collect())
 }
 
 pub async fn delete_card(sql: &Sql, card_unlocked_id: &Id) -> Result<u64, sqlx::Error> {
-    let mut con = sql.get_con().await?;
-
     let result: MySqlQueryResult = sqlx::query(
         "DELETE FROM cardunlocks
          WHERE cuid=?;")
         .bind(card_unlocked_id)
-        .execute(&mut con)
+        .execute(sql.pool())
         .await?;
 
     Ok(result.rows_affected())
 }
 
 pub async fn user_owns_card(sql: &Sql, user_id: &Id, card_unlocked_id: &Id, collector_id: Option<&Id>) -> Result<bool, sqlx::Error> {
-    let mut con = sql.get_con().await?;
-
     let query = match collector_id {
         None =>
             "SELECT COUNT(*)
@@ -201,15 +185,13 @@ pub async fn user_owns_card(sql: &Sql, user_id: &Id, card_unlocked_id: &Id, coll
         Some(_) => { stmt = stmt.bind(collector_id); }
     }
 
-    let (count, ): (i64, ) = stmt.fetch_one(&mut con).await?;
+    let (count, ): (i64, ) = stmt.fetch_one(sql.pool()).await?;
 
     Ok(count != 0)
 }
 
 //TODO: not sure if config should be passed
 pub async fn get_inventory(sql: &Sql, config: &Config, options: &InventoryOptions) -> Result<Vec<UnlockedCard>, sqlx::Error> {
-    let mut con = sql.get_con().await?;
-
     let search = util::escape_for_like(options.search.clone());
 
     let order_by = match options.sort_type {
@@ -280,7 +262,7 @@ pub async fn get_inventory(sql: &Sql, config: &Config, options: &InventoryOption
         .bind(&search)
         .bind(options.count)
         .bind(options.offset)
-        .fetch_all(&mut con)
+        .fetch_all(sql.pool())
         .await?;
 
     Ok(cards_db.into_iter().map(|card_db| { UnlockedCard::from_card_db(card_db, config) }).collect())
@@ -289,8 +271,6 @@ pub async fn get_inventory(sql: &Sql, config: &Config, options: &InventoryOption
 //TODO: not sure if config should be passed
 //TODO: maybe replace InventoryOptions since page data is not used
 pub async fn get_inventory_count(sql: &Sql, config: &Config, options: &InventoryOptions) -> Result<u32, sqlx::Error> {
-    let mut con = sql.get_con().await?;
-
     let search = util::escape_for_like(options.search.clone());
 
     let order_by = match options.sort_type {
@@ -343,15 +323,13 @@ pub async fn get_inventory_count(sql: &Sql, config: &Config, options: &Inventory
         .bind(&options.user_id)
         .bind(&search)
         .bind(&search)
-        .fetch_one(&mut con)
+        .fetch_one(sql.pool())
         .await?;
 
     Ok(count as u32)
 }
 
 pub async fn get_cards(sql: &Sql, config: &Config, collector_id: &Id, mut name: String, amount: u32, offset: u32, state: Option<CardState>) -> Result<Vec<Card>, sqlx::Error> {
-    let mut con = sql.get_con().await?;
-
     name = util::escape_for_like(name);
 
     let query = format!(
@@ -390,7 +368,7 @@ pub async fn get_cards(sql: &Sql, config: &Config, collector_id: &Id, mut name: 
 
     stmt = stmt.bind(amount).bind(offset);
 
-    let cards_db: Vec<CardDb> = stmt.fetch_all(&mut con).await?;
+    let cards_db: Vec<CardDb> = stmt.fetch_all(sql.pool()).await?;
 
     let cards = cards_db.into_iter().map(|card_db| { Card::from_card_db(card_db, config) }).collect();
 

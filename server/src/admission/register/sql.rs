@@ -3,16 +3,13 @@ use crate::shared::Id;
 use crate::shared::user::data::{UserVerifiedDb, UserRanking};
 
 pub async fn user_exists(sql: &Sql, username: &str) -> Result<bool, sqlx::Error> {
-
-    let mut con = sql.get_con().await?;
-
     //TODO: is it case sensitive?;
     let (count,): (i64,) = sqlx::query_as(
         "SELECT COUNT(*)
          FROM users
          WHERE LOWER(uusername) = LOWER(?);")
         .bind(username)
-        .fetch_one(&mut con)
+        .fetch_one(sql.pool())
         .await?;
 
 
@@ -20,9 +17,6 @@ pub async fn user_exists(sql: &Sql, username: &str) -> Result<bool, sqlx::Error>
 }
 
 pub async fn register(sql: &Sql, id: &Id, username: &str, password_hash: &str, email: &str) -> Result<(), sqlx::Error> {
-
-    let mut con = sql.get_con().await?;
-
     sqlx::query(
         "INSERT INTO users
          (uid, uusername, upassword, uemail, uranking, uverified)
@@ -34,7 +28,7 @@ pub async fn register(sql: &Sql, id: &Id, username: &str, password_hash: &str, e
         .bind(email)
         .bind(UserVerifiedDb::No as i32)
         .bind(UserRanking::Standard as i32)
-        .execute(&mut con)
+        .execute(sql.pool())
         .await?;
 
     Ok(())

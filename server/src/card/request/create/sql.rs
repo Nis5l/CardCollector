@@ -3,8 +3,6 @@ use crate::shared::Id;
 use crate::shared::card::data::CardState;
 
 pub async fn card_exists(sql: &Sql, name: &str, card_type: &Id, user_id: &Id) -> Result<bool, sqlx::Error> {
-    let mut con = sql.get_con().await?;
-
     let (count, ): (i32, ) = sqlx::query_as(
         "SELECT COUNT(*)
          FROM cards
@@ -15,15 +13,13 @@ pub async fn card_exists(sql: &Sql, name: &str, card_type: &Id, user_id: &Id) ->
         .bind(card_type)
         .bind(user_id)
         .bind(CardState::Created as i32)
-        .fetch_one(&mut con)
+        .fetch_one(sql.pool())
         .await?;
 
     Ok(count != 0)
 }
 
 pub async fn create_card_request(sql: &Sql, card_id: &Id, name: &str, card_type: &Id, user_id: &Id) -> Result<(), sqlx::Error> {
-    let mut con = sql.get_con().await?;
-
     sqlx::query("INSERT INTO cards
                  (cid, cname, ctid, uid, cstate)
                  VALUES (?, ?, ?, ?, ?);")
@@ -32,7 +28,7 @@ pub async fn create_card_request(sql: &Sql, card_id: &Id, name: &str, card_type:
         .bind(card_type)
         .bind(user_id)
         .bind(CardState::Requested as i32)
-        .execute(&mut con)
+        .execute(sql.pool())
         .await?;
 
     Ok(())

@@ -3,15 +3,13 @@ use crate::sql::Sql;
 use crate::shared::Id;
 
 pub async fn used_friend_slots(sql: &Sql, user_id: &Id) -> Result<i64, sqlx::Error> {
-    let mut con = sql.get_con().await?;
-
     let (count, ): (i64, ) = sqlx::query_as(
         "SELECT COUNT(*)
          FROM friends
          WHERE uidtwo=? AND frstatus=1 OR uidone=?;")
         .bind(user_id)
         .bind(user_id)
-        .fetch_one(&mut con)
+        .fetch_one(sql.pool())
         .await?;
 
     Ok(count)
@@ -19,8 +17,6 @@ pub async fn used_friend_slots(sql: &Sql, user_id: &Id) -> Result<i64, sqlx::Err
 
 
 pub async fn user_friends_username(sql: &Sql, user_id: &Id) -> Result<Vec<FriendUsernameDb>, sqlx::Error> {
-    let mut con = sql.get_con().await?;
-
     let friends: Vec<FriendUsernameDb> = sqlx::query_as(
             "SELECT
              users.uusername AS username,
@@ -43,7 +39,7 @@ pub async fn user_friends_username(sql: &Sql, user_id: &Id) -> Result<Vec<Friend
              WHERE friends.uidtwo=? AND users.uid=friends.uidone;")
         .bind(user_id)
         .bind(user_id)
-        .fetch_all(&mut con)
+        .fetch_all(sql.pool())
         .await?;
 
     Ok(friends)
@@ -51,8 +47,6 @@ pub async fn user_friends_username(sql: &Sql, user_id: &Id) -> Result<Vec<Friend
 
 //TODO: return Friend not frienddb
 pub async fn user_friend(sql: &Sql, user_id: &Id, user_friend_id: &Id) -> Result<Option<FriendDb>, sqlx::Error> {
-    let mut con = sql.get_con().await?;
-
     let friends: Result<FriendDb, sqlx::Error> = sqlx::query_as(
             "SELECT
              friends.uidone AS userone,
@@ -67,7 +61,7 @@ pub async fn user_friend(sql: &Sql, user_id: &Id, user_friend_id: &Id) -> Result
         .bind(user_friend_id)
         .bind(user_id)
         .bind(user_friend_id)
-        .fetch_one(&mut con)
+        .fetch_one(sql.pool())
         .await;
 
     if let Err(sqlx::Error::RowNotFound) = friends {
@@ -78,8 +72,6 @@ pub async fn user_friend(sql: &Sql, user_id: &Id, user_friend_id: &Id) -> Result
 }
 
 pub async fn user_has_friend(sql: &Sql, user_id: &Id, user_friend_id: &Id) -> Result<bool, sqlx::Error> {
-    let mut con = sql.get_con().await?;
-
     let (count, ): (i64, ) = sqlx::query_as(
             "SELECT
              COUNT(*)
@@ -92,7 +84,7 @@ pub async fn user_has_friend(sql: &Sql, user_id: &Id, user_friend_id: &Id) -> Re
         .bind(user_friend_id)
         .bind(user_id)
         .bind(user_friend_id)
-        .fetch_one(&mut con)
+        .fetch_one(sql.pool())
         .await?;
 
     Ok(count != 0)

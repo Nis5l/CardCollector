@@ -3,9 +3,6 @@ use crate::sql::Sql;
 use crate::shared::Id;
 
 pub async fn get_notifications(sql: &Sql, user_id: &Id, collector_id: &Option<Id>) -> Result<Vec<Notification>, sqlx::Error> {
-
-    let mut con = sql.get_con().await?;
-
     let query = format!(
         "SELECT nid AS id, uid AS userId, ntitle AS title, nmessage AS message, nurl AS url, ntime AS time
          FROM notifications
@@ -25,7 +22,7 @@ pub async fn get_notifications(sql: &Sql, user_id: &Id, collector_id: &Option<Id
     }
 
     let notifications: Vec<Notification> = stmt
-        .fetch_all(&mut con)
+        .fetch_all(sql.pool())
         .await?;
 
     Ok(notifications)

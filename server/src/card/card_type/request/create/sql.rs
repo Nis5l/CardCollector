@@ -3,8 +3,6 @@ use crate::shared::Id;
 use crate::shared::card::data::CardState;
 
 pub async fn collector_type_request_create(sql: &Sql, card_type_id: &Id, collector_id: &Id, user_id: &Id, name: &str) -> Result<(), sqlx::Error> {
-    let mut con = sql.get_con().await?;
-
     sqlx::query("INSERT INTO cardtypes
                  (ctid, coid, uid, ctname, ctstate)
                  VALUES
@@ -14,15 +12,13 @@ pub async fn collector_type_request_create(sql: &Sql, card_type_id: &Id, collect
         .bind(user_id)
         .bind(name)
         .bind(CardState::Requested as i32)
-        .execute(&mut con)
+        .execute(sql.pool())
         .await?;
 
     Ok(())
 }
 
 pub async fn collector_type_exists(sql: &Sql, collector_id: &Id, user_id: &Id, name: &str) -> Result<bool, sqlx::Error> {
-    let mut con = sql.get_con().await?;
-
     let (count, ): (i64, ) = sqlx::query_as(
         "SELECT COUNT(*)
          FROM cardtypes
@@ -33,7 +29,7 @@ pub async fn collector_type_exists(sql: &Sql, collector_id: &Id, user_id: &Id, n
         .bind(name)
         .bind(CardState::Created as i32)
         .bind(user_id)
-        .fetch_one(&mut con)
+        .fetch_one(sql.pool())
         .await?;
 
 
