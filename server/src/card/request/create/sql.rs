@@ -19,6 +19,20 @@ pub async fn card_exists(sql: &Sql, name: &str, card_type: &Id, user_id: &Id) ->
     Ok(count != 0)
 }
 
+pub async fn card_requests_user_count(sql: &Sql, user_id: &Id) -> Result<i32, sqlx::Error> {
+    let (count, ): (i32, ) = sqlx::query_as(
+        "SELECT COUNT(*)
+         FROM cards
+         WHERE uid=?
+         AND cstate=?;")
+        .bind(user_id)
+        .bind(CardState::Requested as i32)
+        .fetch_one(sql.pool())
+        .await?;
+
+    Ok(count)
+}
+
 pub async fn create_card_request(sql: &Sql, card_id: &Id, name: &str, card_type: &Id, user_id: &Id) -> Result<(), sqlx::Error> {
     sqlx::query("INSERT INTO cards
                  (cid, cname, ctid, uid, cstate)

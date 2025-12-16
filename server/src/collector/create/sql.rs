@@ -1,6 +1,18 @@
 use crate::sql::Sql;
 use crate::shared::Id;
 
+pub async fn collector_count_user(sql: &Sql, user_id: &Id) -> Result<i32, sqlx::Error> {
+    let (count, ): (i32, ) = sqlx::query_as(
+        "SELECT COUNT(*)
+         FROM collectors
+         WHERE uid=?;")
+        .bind(user_id)
+        .fetch_one(sql.pool())
+        .await?;
+
+    Ok(count)
+}
+
 pub async fn collector_exists(sql: &Sql, collector_name: &str) -> Result<bool, sqlx::Error> {
     let (count, ): (i32, ) = sqlx::query_as(
         "SELECT COUNT(*)

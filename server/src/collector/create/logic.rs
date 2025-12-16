@@ -17,6 +17,10 @@ pub async fn create_collector_route(data: CollectorCreateRequest, token: JwtToke
     let collector_name = data.name;
     let collector_description = data.description;
 
+    if rjtry!(sql::collector_count_user(sql, &user_id).await) >= config.collector_create_limit as i32 {
+        return ApiResponseErr::api_err(Status::Conflict, format!("Collector limit of {} reached", config.collector_create_limit));
+    }
+
     if rjtry!(sql::collector_exists(&sql, &collector_name).await) {
         return ApiResponseErr::api_err(Status::Conflict, format!("Collector with the name {} alread exists", &collector_name));
     }

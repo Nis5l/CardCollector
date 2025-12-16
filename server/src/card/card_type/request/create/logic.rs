@@ -16,6 +16,10 @@ pub async fn card_type_request_create_route(collector_id: Id, config: &State<Con
     verify_collector!(sql, &collector_id);
     verify_user!(sql, user_id, true);
 
+    if rjtry!(sql::card_type_requests_user_count(sql, user_id).await) >= config.collector_card_type_request_limit as i32 {
+        return ApiResponseErr::api_err(Status::Conflict, format!("Card type request limit of {} reached", config.collector_card_type_request_limit))
+    }
+
     if rjtry!(sql::collector_type_exists(sql, &collector_id, user_id, &data.name).await) {
         return ApiResponseErr::api_err(Status::Conflict, String::from("Card-Type already exists"))
     }

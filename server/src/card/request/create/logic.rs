@@ -16,6 +16,10 @@ pub async fn card_request_create_route(data: CardRequestRequest, token: JwtToken
     let user_id = &token.id;
     verify_user!(sql, user_id, true);
 
+    if rjtry!(sql::card_requests_user_count(sql, user_id).await) >= config.collector_card_request_limit as i32 {
+        return ApiResponseErr::api_err(Status::Conflict, format!("Card request limit of {} reached", config.collector_card_request_limit))
+    }
+
     if rjtry!(sql::card_exists(sql, &data.name, &data.card_type, user_id).await) {
         return ApiResponseErr::api_err(Status::Conflict, String::from("Card already exists"))
     }
