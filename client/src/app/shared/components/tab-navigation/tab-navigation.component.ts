@@ -46,7 +46,6 @@ export class TabNavigationComponent implements AfterViewInit, OnDestroy {
     for (let i = 0; i < children.length; i++) {
       const child = children[i] as HTMLElement;
       if (availableWidth < (child.offsetLeft + child.offsetWidth)) {
-        console.log("hiddenID", this.hiddenId);
         this.hiddenId = i;
         break;
       }

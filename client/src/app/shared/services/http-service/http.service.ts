@@ -95,8 +95,6 @@ export class HttpService {
 	private getHeaders(): Headers {
 		const accessToken = this.authService.getAccessToken();
 
-    console.log("accessToken", accessToken);
-
 		let headers = { ...this.headers};
 		if(accessToken != null) headers = { ...headers, Authorization: `Bearer ${accessToken}` };
 

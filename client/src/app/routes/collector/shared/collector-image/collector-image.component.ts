@@ -59,10 +59,7 @@ export class CollectorImageComponent extends SubscriptionManagerComponent {
 	public uploadImage(file: File) {
 		this.registerSubscription(
 			this.loadingService.waitFor(this.collectorImageService.uploadImage(this.collector.id, file)).subscribe(
-				() => {
-					console.log(this.collectorImageService.getImageUrl(this.collector.id));
-					return this.collectorImageUrlSubject.next(`${this.collectorImageService.getImageUrl(this.collector.id)}?${new Date().getTime()}`)
-				}
+				() => this.collectorImageUrlSubject.next(`${this.collectorImageService.getImageUrl(this.collector.id)}?${new Date().getTime()}`)
 			)
 		);
 	}

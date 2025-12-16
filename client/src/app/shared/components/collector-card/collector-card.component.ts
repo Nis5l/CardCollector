@@ -38,8 +38,6 @@ export class CollectorCardComponent {
 	}
 
   public onDescriptionChange(el: HTMLElement) {
-    console.log(el.offsetHeight);
-
     this.descriptionOverflows = el.offsetHeight > 63;
   }
 }

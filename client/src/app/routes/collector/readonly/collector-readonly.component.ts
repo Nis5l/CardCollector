@@ -88,8 +88,6 @@ export class CollectorReadonlyComponent extends SubscriptionManagerComponent {
 	}
 
   public onDescriptionChange(el: HTMLElement) {
-    console.log(el.offsetHeight);
-
     this.showToggle = el.scrollHeight > 100;
 
     if (!this.showToggle) {
