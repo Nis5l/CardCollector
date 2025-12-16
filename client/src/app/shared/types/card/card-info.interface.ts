@@ -4,4 +4,5 @@ export interface CardInfo {
     id: Id,
 	userId: Id,
     name: string,
+    time: string,
 }

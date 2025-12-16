@@ -62,6 +62,10 @@ export class InventoryComponent extends SubscriptionManagerComponent {
       value: SortType.Name,
     },
     {
+      text: "Card Type",
+      value: SortType.CardType,
+    },
+    {
       text: "Level",
       value: SortType.Level,
     },
@@ -80,7 +84,7 @@ export class InventoryComponent extends SubscriptionManagerComponent {
 
     const searchFormControl = new FormControl("", { nonNullable: true });
 
-    const sortTypeDefaultValue: SortType = this.sortTypes[0].value
+    const sortTypeDefaultValue: SortType = this.sortTypes[0].value;
     const sortTypeFormControl = new FormControl(sortTypeDefaultValue, { nonNullable: true });
 
     this.formGroup = new FormGroup({
@@ -89,7 +93,7 @@ export class InventoryComponent extends SubscriptionManagerComponent {
     });
 
     const loadingInventoryResponse: InventoryResponse = { cards: [], cardCount: 0, page: 0, pageSize: 0 };
-    this.inventoryResponseSubject = new BehaviorSubject(loadingInventoryResponse)
+    this.inventoryResponseSubject = new BehaviorSubject(loadingInventoryResponse);
     this.inventoryResponse$ = this.inventoryResponseSubject.asObservable();
 
      this.registerSubscription(observableCombineLatest([userId$, collectorId$, this.pageSubject.asObservable(), searchFormControl.valueChanges.pipe(

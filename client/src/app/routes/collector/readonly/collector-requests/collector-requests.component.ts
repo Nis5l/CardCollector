@@ -8,8 +8,8 @@ import { CollectorService } from '../../collector.service';
 import { CollectorRequestsService } from './collector-requests.service';
 import { CollectorAddDialogComponent } from '../collector-add-dialog';
 
-import type { Collector, Id } from '../../../../shared/types';
-import type { CardTypeIndexResponse, CardIndexResponse } from '../types';
+import type { Collector, Id, CardIndexResponse } from '../../../../shared/types';
+import type { CardTypeIndexResponse } from '../types';
 import type { PageEvent } from '@angular/material/paginator';
 
 @Component({

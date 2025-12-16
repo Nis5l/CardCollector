@@ -1,3 +1,4 @@
+use chrono::{DateTime, Utc};
 use serde::{Serialize, Deserialize};
 use sqlx::FromRow;
 use rocket::form::FromFormField;
@@ -14,6 +15,7 @@ pub struct CardInfo {
     pub user_id: Id,
     #[sqlx(rename="cardName")]
     pub name: String,
+    pub time: DateTime<Utc>,
 }
 
 #[derive(Debug, Serialize)]
@@ -52,6 +54,7 @@ pub struct UnlockedCard {
     pub user_id: Id,
     pub level: i32,
     pub quality: i32,
+    pub time: DateTime<Utc>,
 
     pub card_frame: Option<CardFrame>,
     pub card_effect: Option<CardEffect>,
@@ -66,6 +69,7 @@ impl UnlockedCard {
             user_id: card.user_id,
             level: card.level,
             quality: card.quality,
+            time: card.time,
             card_frame: match (card.frame_id, card.frame_name) {
                 (Some(id), Some(name)) => Some(CardFrame { id, name }),
                 _ => None
@@ -80,6 +84,7 @@ impl UnlockedCard {
                 collector_id: card.collector_id,
                 card_name: card.card_name,
                 card_user_id: card.card_user_id,
+                card_time: card.card_time,
 
                 type_id: card.type_id,
                 type_name: card.type_name,
@@ -96,6 +101,7 @@ impl Card {
                 id: card.card_id,
                 user_id: card.card_user_id,
                 name: card.card_name,
+                time: card.card_time
             },
             card_type: CardType {
                 id: card.type_id,
@@ -115,11 +121,13 @@ pub struct UnlockedCardDb {
     pub collector_id: Id,
     pub level: i32,
     pub quality: i32,
+    pub time: DateTime<Utc>,
 
     pub card_type_user_id: Id,
     pub card_id: Id,
     pub card_user_id: Id,
     pub card_name: String,
+    pub card_time: DateTime<Utc>,
 
     pub type_id: Id,
     pub type_name: String,
@@ -140,6 +148,7 @@ pub struct CardDb {
     pub card_user_id: Id,
     pub collector_id: Id,
     pub card_name: String,
+    pub card_time: DateTime<Utc>,
 
     pub type_id: Id,
     pub type_name: String,
@@ -173,11 +182,13 @@ impl<'de> Deserialize<'de> for CardState {
        }
 }
 
-#[derive(Debug)]
+#[derive(Debug, FromFormField, Serialize_repr)]
+#[repr(i32)]
 pub enum SortType {
     Name = 0,
     Level = 1,
-    Recent = 2
+    Recent = 2,
+    CardType = 3
 }
 
 impl Default for SortType {
@@ -193,6 +204,34 @@ impl<'de> Deserialize<'de> for SortType {
 
             Ok(match i {
                 1 => Self::Level,
+                2 => Self::Recent,
+                3 => Self::CardType,
+                _ => Self::Name
+            })
+       }
+}
+
+#[derive(Debug, FromFormField, Serialize_repr)]
+#[repr(i32)]
+pub enum CardSortType {
+    Name = 0,
+    CardType = 1,
+    Recent = 2
+}
+
+impl Default for CardSortType {
+    fn default() -> Self {
+        Self::Name
+    }
+}
+
+impl<'de> Deserialize<'de> for CardSortType {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+       where D: serde::Deserializer<'de> {
+            let i = i32::deserialize(deserializer)?;
+
+            Ok(match i {
+                1 => Self::CardType,
                 2 => Self::Recent,
                 _ => Self::Name
             })

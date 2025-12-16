@@ -24,6 +24,7 @@ import { CollectorAddDialogModule } from './collector-add-dialog';
 import { CollectorDashboardModule } from './collector-dashboard';
 import { CollectorRequestsModule } from './collector-requests';
 import { CollectorInventoryModule } from './collector-inventory';
+import { CollectorCatalogModule } from './collector-catalog';
 
 import { UserModule } from '../../../shared/components';
 
@@ -56,6 +57,7 @@ const MATERIAL_MODULES = [
     CollectorRequestsModule,
     TabNavigationModule,
     CollectorInventoryModule,
+    CollectorCatalogModule,
 
     UserModule,
 	],

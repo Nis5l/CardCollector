@@ -1,4 +1,4 @@
-import type { Card } from '../../../../shared/types';
+import type { Card } from './card.interface';
 
 export interface CardIndexResponse {
     pageSize: number,

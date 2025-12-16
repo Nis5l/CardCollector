@@ -93,6 +93,7 @@ export class AppModule {
       'arrow_upward',
       'arrow_downward',
       'border_circle',
+      'book',
     ].forEach(icon => {
       iconRegistry.addSvgIcon(
         icon,

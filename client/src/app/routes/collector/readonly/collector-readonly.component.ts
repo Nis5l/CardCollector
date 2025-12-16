@@ -8,21 +8,21 @@ import { CollectorService } from '../collector.service';
 import { CollectorReadonlyService } from './collector-readonly.service';
 import { LoadingService, AuthService } from '../../../shared/services';
 import { SubscriptionManagerComponent } from '../../../shared/abstract';
-import type { Collector, Id } from '../../../shared/types';
+import type { Collector } from '../../../shared/types';
 import type { CardTypeIndexResponse } from './types';
 import { type NavigationItem } from '../../../shared/components';
-
-import { CollectorAddDialogComponent } from './collector-add-dialog';
 
 import { CollectorDashboardComponent } from './collector-dashboard';
 import { CollectorRequestsComponent } from './collector-requests';
 import { CollectorInventoryComponent } from './collector-inventory';
+import { CollectorCatalogComponent } from './collector-catalog';
 
 const ROUTES: Route[] = [
   { path: "", pathMatch: "full", redirectTo: "dashboard" },
   { path: "dashboard", component: CollectorDashboardComponent },
   { path: "requests", component: CollectorRequestsComponent },
   { path: ":userId/inventory", component: CollectorInventoryComponent },
+  { path: "catalog", component: CollectorCatalogComponent },
 ];
 
 @Component({
@@ -45,6 +45,7 @@ export class CollectorReadonlyComponent extends SubscriptionManagerComponent {
     { name: "Dashboard", link: "./dashboard", icon: "home" },
     { name: "Requests", link: "./requests", icon: "list_alt" },
     { name: "Inventory", link: () => `./${this.authService.getUserId()}/inventory`, icon: "backpack" },
+    { name: "Catalog", link: "./catalog", icon: "book" },
   ];
 
   public showToggle = false;

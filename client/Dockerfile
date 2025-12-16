@@ -17,7 +17,7 @@ RUN apk add --no-cache brotli gzip && \
 #      find . -type f \( -name "*.js" -o -name "*.css" -o -name "*.html" \) -exec gzip -k -9 {} \;
 
 
-FROM fholzer/nginx-brotli:latest
+FROM fholzer/nginx-brotli:latest AS client
 #FROM nginx:alpine
 
 COPY --from=builder /app/dist/CardCollector/browser /usr/share/nginx/html

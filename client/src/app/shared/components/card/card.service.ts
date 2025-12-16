@@ -1,19 +1,27 @@
 import { Injectable } from '@angular/core';
+import { HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-import type { UnlockedCard, Card, Id, IdInt } from '../../types';
+import type { UnlockedCard, Card, Id, IdInt, CardIndexResponse } from '../../types';
+import { CardState, CardSortType } from '../../types';
 import { HttpService } from '../../services';
 
 @Injectable()
 export class CardService {
 	constructor(private readonly httpService: HttpService) {}
 
-	public getUnlockedCard(id: string): Observable<UnlockedCard> {
+	public getUnlockedCard(id: Id): Observable<UnlockedCard> {
 		return this.httpService.get<UnlockedCard>(`/card/unlocked/${id}`);
 	}
 
-	public getCard(id: string): Observable<Card> {
+	public getCard(id: Id): Observable<Card> {
 		return this.httpService.get<Card>(`/card/${id}`);
+	}
+
+	public getCards(collector_id: string, search: string, page: number, state: CardState | null, sort_type: CardSortType): Observable<CardIndexResponse> {
+		let params = new HttpParams().set('search', search).set('page', page).set('sort_type', sort_type);
+    if (state != null) params.set('state', state)
+		return this.httpService.get<CardIndexResponse>(`/${collector_id}/card`, params);
 	}
 
 	public getDefaultCardFrameFront(): string {

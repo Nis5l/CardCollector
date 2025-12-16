@@ -8,6 +8,7 @@ export interface UnlockedCard {
     userId: Id,
     level: number,
     quality: number,
+    time: string,
 
 	cardFrame: CardFrame | null | undefined,
 	cardEffect: CardEffect | null | undefined

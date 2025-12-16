@@ -31,7 +31,7 @@ export class CollectorOpenComponent extends SubscriptionManagerComponent impleme
 	@Input()
 	public radius: number = 46;
 
-	public progress: number = 1;
+	public progress: number = 0;
 
 	private maxTime: number = 0;
 	private packTime: Date | undefined = undefined;

@@ -1,23 +1,33 @@
-FROM rust:1.85 as builder
+FROM ubuntu:22.04 as builder
+# use ubuntu instead of rust to avoid opencv version mismatch between builder and runner
 
 ENV DEBIAN_FRONTEND=noninteractive
+
 RUN apt-get update && apt-get install -y \
 	llvm \
 	libclang-dev \
 	clang \
 	libopencv-dev \
 	pkg-config \
+	curl \
+	libssl-dev \
     && rm -rf /var/lib/apt/lists/*
+
+RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
+ENV PATH="/root/.cargo/bin:${PATH}"
 
 WORKDIR /server
 COPY ./Cargo.toml ./Cargo.toml
 COPY ./src/ ./src/
 RUN cargo build --release
 
-FROM ubuntu:22.04
+
+FROM ubuntu:22.04 as server
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y \
+    libssl-dev \
+    ca-certificates \
 	libopencv-dev \
     && rm -rf /var/lib/apt/lists/*
 

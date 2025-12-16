@@ -44,6 +44,7 @@ export class CollectorAddCardComponent extends SubscriptionManagerComponent {
 		level: 1,
 		quality: 1,
 		id: "id",
+    time: (new Date()).toISOString(),
 		userId: "userId",
 		card: {
       collectorId: "collectorId",
@@ -51,6 +52,7 @@ export class CollectorAddCardComponent extends SubscriptionManagerComponent {
 				id: "id",
 				userId: "userId",
 				name: "",
+        time: (new Date()).toISOString(),
 				//image: ,
 			},
 			cardType: this.cardTypeDefault

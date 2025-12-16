@@ -2,7 +2,7 @@ use sqlx::mysql::MySqlQueryResult;
 
 use crate::sql::Sql;
 use crate::config::Config;
-use super::data::{UnlockedCardCreateData, UnlockedCard, UnlockedCardDb, CardDb, SortType, Card, InventoryOptions, CardState};
+use super::data::{UnlockedCardCreateData, UnlockedCard, UnlockedCardDb, CardDb, SortType, Card, InventoryOptions, CardState, CardSortType};
 use crate::shared::{Id, util};
 
 pub async fn get_card_type_collector_id(sql: &Sql, card_type_id: &Id) -> Result<Id, sqlx::Error> {
@@ -60,9 +60,9 @@ pub async fn card_exists(sql: &Sql, card_id: &Id) -> Result<bool, sqlx::Error> {
 pub async fn add_card(sql: &Sql, user_id: &Id, card_unlocked_id: &Id, _collector_id: &Id, card: &UnlockedCardCreateData) -> Result<(), sqlx::Error> {
     sqlx::query(
         "INSERT INTO cardunlocks
-         (cuid, uid, cid, cuquality, culevel, cfid)
+         (cuid, uid, cid, cuquality, culevel, cfid, cutime)
          VALUES
-         (?, ?, ?, ?, ?, ?);")
+         (?, ?, ?, ?, ?, ?, NOW());")
         .bind(card_unlocked_id)
         .bind(user_id)
         .bind(&card.card_id)
@@ -111,9 +111,11 @@ pub async fn get_unlocked_cards(sql: &Sql, card_unlocked_ids: Vec<Id>, user_id: 
          cardunlocks.uid AS userId,
          cardunlocks.culevel AS level,
          cardunlocks.cuquality AS quality,
+         cardunlocks.cutime AS time,
          cards.cid AS cardId,
          cards.uid AS cardUserId,
          cards.cname AS cardName,
+         cards.ctime AS cardTime,
          cardtypes.ctid AS typeId,
          cardtypes.ctname AS typeName,
          cardtypes.uid AS cardTypeUserId,
@@ -190,24 +192,36 @@ pub async fn user_owns_card(sql: &Sql, user_id: &Id, card_unlocked_id: &Id, coll
     Ok(count != 0)
 }
 
-//TODO: not sure if config should be passed
-pub async fn get_inventory(sql: &Sql, config: &Config, options: &InventoryOptions) -> Result<Vec<UnlockedCard>, sqlx::Error> {
-    let search = util::escape_for_like(options.search.clone());
-
-    let order_by = match options.sort_type {
+fn order_by_string_from_sort_type(sort_type: &SortType) -> &str {
+    match sort_type {
         SortType::Name => 
             "cards.cname,
              cardtypes.ctname,
              cardunlocks.culevel DESC,
-             cardunlocks.cuquality DESC",
+             cardunlocks.cuquality DESC,
+             cardunlocks.cutime DESC",
+        SortType::CardType => 
+            "cardtypes.ctname,
+             cards.cname,
+             cardunlocks.culevel DESC,
+             cardunlocks.cuquality DESC,
+             cardunlocks.cutime DESC",
         SortType::Level => 
             "cardunlocks.culevel DESC,
              cardunlocks.cuquality DESC,
              cards.cname,
-             cardtypes.ctname",
+             cardtypes.ctname,
+             cardunlocks.cutime DESC",
         SortType::Recent => 
-            "cardunlocks.cuid DESC"
-    };
+            "cardunlocks.cutime DESC"
+    }
+}
+
+//TODO: not sure if config should be passed
+pub async fn get_inventory(sql: &Sql, config: &Config, options: &InventoryOptions) -> Result<Vec<UnlockedCard>, sqlx::Error> {
+    let search = util::escape_for_like(options.search.clone());
+
+    let order_by = order_by_string_from_sort_type(&options.sort_type);
 
     let mut extra_conditions = String::from("");
 
@@ -228,9 +242,11 @@ pub async fn get_inventory(sql: &Sql, config: &Config, options: &InventoryOption
          cardunlocks.uid AS userId,
          cardunlocks.culevel AS level,
          cardunlocks.cuquality AS quality,
+         cardunlocks.cutime AS time,
          cards.cid AS cardId,
          cards.uid AS cardUserId,
          cards.cname AS cardName,
+         cards.ctime AS cardTime,
          cardtypes.ctid AS typeId,
          cardtypes.ctname AS typeName,
          cardtypes.uid AS cardTypeUserId,
@@ -268,25 +284,11 @@ pub async fn get_inventory(sql: &Sql, config: &Config, options: &InventoryOption
     Ok(cards_db.into_iter().map(|card_db| { UnlockedCard::from_card_db(card_db, config) }).collect())
 }
 
-//TODO: not sure if config should be passed
 //TODO: maybe replace InventoryOptions since page data is not used
-pub async fn get_inventory_count(sql: &Sql, config: &Config, options: &InventoryOptions) -> Result<u32, sqlx::Error> {
+pub async fn get_inventory_count(sql: &Sql, options: &InventoryOptions) -> Result<u32, sqlx::Error> {
     let search = util::escape_for_like(options.search.clone());
 
-    let order_by = match options.sort_type {
-        SortType::Name => 
-            "cards.cname,
-             cardtypes.ctname,
-             cardunlocks.culevel DESC,
-             cardunlocks.cuquality DESC",
-        SortType::Level => 
-            "cardunlocks.culevel DESC,
-             cardunlocks.cuquality DESC,
-             cards.cname,
-             cardtypes.ctname",
-        SortType::Recent => 
-            "cardunlocks.cuid DESC"
-    };
+    let order_by = order_by_string_from_sort_type(&options.sort_type);
 
     let mut extra_conditions = String::from("");
 
@@ -329,14 +331,32 @@ pub async fn get_inventory_count(sql: &Sql, config: &Config, options: &Inventory
     Ok(count as u32)
 }
 
-pub async fn get_cards(sql: &Sql, config: &Config, collector_id: &Id, mut name: String, amount: u32, offset: u32, state: Option<CardState>) -> Result<Vec<Card>, sqlx::Error> {
+pub fn order_by_string_from_card_sort_type(sort_type: &CardSortType) -> &str {
+    match sort_type {
+        CardSortType::Name => 
+            "cards.cname,
+             cardtypes.ctname,
+             cards.ctime DESC",
+        CardSortType::CardType => 
+            "cardtypes.ctname,
+             cards.cname,
+             cards.ctime DESC",
+        CardSortType::Recent => 
+            "cards.ctime DESC"
+    }
+}
+
+pub async fn get_cards(sql: &Sql, config: &Config, collector_id: &Id, mut name: String, sort_type: &CardSortType, amount: u32, offset: u32, state: Option<CardState>) -> Result<Vec<Card>, sqlx::Error> {
     name = util::escape_for_like(name);
+
+    let order_by = order_by_string_from_card_sort_type(sort_type);
 
     let query = format!(
         "SELECT
          cards.cid AS cardId,
          cards.uid AS cardUserId,
          cards.cname AS cardName,
+         cards.ctime AS cardTime,
          cardtypes.ctid AS typeId,
          cardtypes.ctname AS typeName,
          cardtypes.coid AS collectorId,
@@ -348,13 +368,13 @@ pub async fn get_cards(sql: &Sql, config: &Config, collector_id: &Id, mut name: 
          AND cardtypes.coid = ?
          {}
          ORDER BY
-         cards.cname,
-         cardtypes.ctname
+         {}
          LIMIT ? OFFSET ?;",
          match state {
             Some(_) => "AND cards.cstate = ?",
             None => ""
-         }
+         },
+         order_by
     );
 
     let mut stmt = sqlx::query_as(&query)
