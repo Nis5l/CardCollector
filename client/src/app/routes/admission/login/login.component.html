@@ -1,14 +1,12 @@
 <div class="wrap">
-  <div class="login-wrapper" *ngIf="(formGroup$ | async) as formGroup">
-    <mat-card appearance="outlined" *ngIf="(config$ | async) as config">
-      <form class="login" [formGroup]="formGroup" (submit)="login(formGroup)">
+  <div class="login-wrapper">
+    <mat-card appearance="outlined">
+      <form class="login" [formGroup]="formGroup" (submit)="login()">
         <mat-form-field >
-          <input matInput type="text" formControlName="username" placeholder="Username" />
-          <mat-error>Username has to be {{config.username.minLength}}-{{config.username.maxLength}} characters</mat-error>
+          <input matInput type="text" formControlName="username" placeholder="Username/Email" />
         </mat-form-field>
         <mat-form-field>
           <input matInput type="password" formControlName="password" placeholder="Password" />
-          <mat-error>Password has to be {{config.password.minLength}}-{{config.password.maxLength}} characters</mat-error>
         </mat-form-field>
         <div *ngVar="(error$ | async) as error" class="error">
           @if (error != null) {

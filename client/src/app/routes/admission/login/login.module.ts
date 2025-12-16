@@ -12,7 +12,6 @@ import { LoginComponent } from './login.component';
 import { LoginService } from './login.service';
 import { HttpModule, AuthModule } from '../../../shared/services';
 import { NgVarModule } from '../../../shared/directives';
-import { AdmissionModule } from '../admission-service';
 
 const MATERIAL_MODULES = [
 	MatFormFieldModule,
@@ -32,8 +31,7 @@ const MATERIAL_MODULES = [
 		NgVarModule,
 		HttpModule,
 		AuthModule,
-		AdmissionModule,
-	],	
+	],
 	declarations: [ LoginComponent ],
 	providers: [
 		LoginService

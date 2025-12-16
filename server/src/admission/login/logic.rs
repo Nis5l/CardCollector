@@ -11,16 +11,15 @@ use super::sql;
 
 #[post("/login", data="<data>")]
 pub async fn login_route(cookies: &CookieJar<'_>, data: LoginRequest, sql: &State<Sql>, config: &rocket::State<Config>) -> ApiResponseErr<LoginResponse> {
-
-    let LoginDb { id: user_id, username, password: password_hash, role } = if let Some(login_db) = rjtry!(sql::get_user_password(&sql, data.username).await) {
+    let LoginDb { id: user_id, username, password: password_hash, role } = if let Some(login_db) = rjtry!(sql::get_user_password(&sql, &data.username).await) {
         login_db
     } else {
-        return ApiResponseErr::api_err(Status::Unauthorized, String::from("Wrong username or password"));
+        return ApiResponseErr::api_err(Status::Unauthorized, String::from("Wrong username/email or password"));
     };
 
     match bcrypt_verify(&data.password, &password_hash) {
         Err(_) => return ApiResponseErr::api_err(Status::InternalServerError, String::from("Internal server error")),
-        Ok(false) => return ApiResponseErr::api_err(Status::Unauthorized, String::from("Wrong username or password")),
+        Ok(false) => return ApiResponseErr::api_err(Status::Unauthorized, String::from("Wrong username/email or password")),
         Ok(_) => ()
     }
 
