@@ -5,6 +5,10 @@ export {
 	LogoutComponent,
 	RegisterModule,
 	RegisterComponent,
+  ForgotSendModule,
+  ForgotSendComponent,
+  ForgotResetModule,
+  ForgotResetComponent,
 } from './admission';
 export { CollectorsComponent, CollectorsModule } from './collectors';
 export { ProfileReadonlyModule, ProfileReadonlyComponent, ProfileEditModule, ProfileEditComponent, ProfileReadonlyTradeComponent, ProfileReadonlyTradeModule } from './profile';
@@ -12,4 +16,4 @@ export { HomeModule, HomeComponent } from './home';
 export { CollectorReadonlyModule, CollectorReadonlyComponent, CollectorEditModule, CollectorEditComponent } from './collector';
 export { CardViewModule, CardViewComponent, CardUpgradeComponent, CardUpgradeModule } from './card';
 export { UsersModule, UsersComponent } from './users';
-export { VerifyModule, VerifyComponent } from './verify';
+export { VerifySendModule, VerifySendComponent, VerifyCheckModule, VerifyCheckComponent } from './verify';

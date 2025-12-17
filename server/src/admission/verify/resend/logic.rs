@@ -20,27 +20,24 @@ pub async fn verify_resend_route(token: JwtToken, sql: &State<Sql>, config: &Sta
     //NOTE: user exists
     let verify_db = rjtry!(user::sql::get_verify_data(sql, &user_id).await).unwrap();
 
-    let verified = rjtry!(user::data::UserVerified::from_db(&verify_db.email, verify_db.verified));
+    let verified = rjtry!(user::data::UserVerified::from_db(verify_db.verified));
 
-    if !matches!(verified, user::data::UserVerified::NotVerified) {
-        return ApiResponseErr::api_err(Status::Conflict, String::from("Account already verified or email not set"));
+    if verified == user::data::UserVerified::Yes {
+        return ApiResponseErr::api_err(Status::Conflict, String::from("Account already verified"));
     }
 
     if let CanResendVerification::No(next_time) = can_resend_verification(rjtry!(sql::get_verification_key_created(sql, &user_id).await), config.verification_key_resend_cooldown) {
         return ApiResponseErr::api_err(Status::Conflict, format!("Wait until: {}", next_time));
     }
 
-    //NOTE: has to be set now because otherwise it would be UserVerified::MailNotSet
-    let email = verify_db.email.unwrap();
-
     let verification_key = generate_random_string(config.verification_key_length);
 
     rjtry!(user::sql::set_verification_key(sql, &user_id, &verification_key).await);
 
-    email::send_email_async(config.email.clone(), config.email_password.clone(), email.clone(), verification_key, config.domain.clone(), config.smtp_server.clone(), username);
+    email::send_verify_email_async(config.email.clone(), config.email_password.clone(), verify_db.email.clone(), verification_key, config.domain.clone(), config.smtp_server.clone(), username);
 
     ApiResponseErr::ok(Status::Ok, VerifyResendResponse {
-        message: format!("Verification will be sent to {} soon", &email)
+        message: format!("Verification will be sent to {} soon", &verify_db.email)
     })
 }
 

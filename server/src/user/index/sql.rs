@@ -1,7 +1,7 @@
 use crate::sql::Sql;
 use crate::shared::Id;
 use crate::shared::util;
-use crate::shared::user::data::UserVerifiedDb;
+use crate::shared::user::data::UserVerified;
 
 pub async fn get_users(sql: &Sql, mut username: String, amount: u32, offset: u32) -> Result<Vec<(String, Id)>, sqlx::Error> {
     username = util::escape_for_like(username);
@@ -13,7 +13,7 @@ pub async fn get_users(sql: &Sql, mut username: String, amount: u32, offset: u32
          AND uverified = ?
          LIMIT ? OFFSET ?;")
         .bind(username)
-        .bind(UserVerifiedDb::Yes as i32)
+        .bind(UserVerified::Yes as i32)
         .bind(amount)
         .bind(offset)
         .fetch_all(sql.pool())
@@ -31,7 +31,7 @@ pub async fn get_users_count(sql: &Sql, mut username: String) -> Result<u32, sql
          WHERE uusername LIKE CONCAT('%', ?, '%')
          AND uverified = ?;")
         .bind(username)
-        .bind(UserVerifiedDb::Yes as i32)
+        .bind(UserVerified::Yes as i32)
         .fetch_one(sql.pool())
         .await?;
 

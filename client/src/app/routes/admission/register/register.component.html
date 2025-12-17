@@ -25,19 +25,12 @@
         </mat-form-field>
         <mat-form-field *ngVar="formGroup.controls.passwordRepeat as passwordRepeatFormControl">
           <input matInput type="password" formControlName="passwordRepeat" placeholder="Repeat Password" />
-          @if (passwordRepeatFormControl.hasError('required') || passwordRepeatFormControl.hasError('minlength')) {
-            <mat-error>
-              Password has to be {{config.password.minLength}}-{{config.password.maxLength}} characters
-            </mat-error>
-          }
           @if (passwordRepeatFormControl.hasError('passwordNotSame')) {
             <mat-error>Passwords do not match</mat-error>
           }
         </mat-form-field>
-        <div *ngVar="(error$ | async) as error" class="error">
-          @if (error != null) {
-            <mat-error>{{error}}</mat-error>
-          }
+        <div *ngIf="(error$ | async) as error" class="error">
+          <mat-error>{{error}}</mat-error>
         </div>
         <button matButton="outlined" type="submit" [disabled]="!formGroup.valid">Register</button>
       </form>

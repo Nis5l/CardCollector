@@ -6,22 +6,6 @@ use crate::config::Config;
 use crate::shared::DbParseError;
 use crate::shared::Id;
 
-#[derive(Debug)]
-pub enum UserVerifiedDb {
-    No = 0,
-    Yes = 1
-}
-
-impl UserVerifiedDb {
-    pub fn from_db(verified: i32) -> Result<Self, DbParseError> {
-        match verified {
-            0 => Ok(Self::No),
-            1 => Ok(Self::Yes),
-            _ => Err(DbParseError)
-        }
-    }
-}
-
 pub enum UserRanking {
     Standard = 0,
     Admin = 1
@@ -37,24 +21,19 @@ impl UserRanking {
     }
 }
 
-#[derive(Debug, Serialize_repr)]
+#[derive(Debug, Serialize_repr, PartialEq)]
 #[repr(u8)]
 pub enum UserVerified {
-    Ok = 0,
-    NotVerified = 1,
-    MailNotSet = 2
+    No = 0,
+    Yes = 1
 }
 
 impl UserVerified {
-    pub fn from_db(email: &Option<String>, verified: i32) -> Result<Self, DbParseError> {
-        if email.is_none() {
-            Ok(Self::MailNotSet)
-        } else if verified == 0 {
-            Ok(Self::NotVerified)
-        } else if verified == 1 {
-            Ok(Self::Ok)
-        } else {
-            Err(DbParseError)
+    pub fn from_db(verified: i32) -> Result<Self, DbParseError> {
+        match verified {
+            0 => Ok(Self::No),
+            1 => Ok(Self::Yes),
+            _ => Err(DbParseError)
         }
     }
 }
@@ -69,11 +48,9 @@ macro_rules! verify_user {
                 None => return rocketjson::ApiResponseErr::api_err(rocket::http::Status::NotFound, format!("User with id {} not found", $user_id)),
                 Some(vd) => {
                     if ($is_verified) {
-                        match rocketjson::rjtry!(crate::shared::user::data::UserVerified::from_db(&vd.email, vd.verified)) {
-                            crate::shared::user::data::UserVerified::NotVerified => return rocketjson::ApiResponseErr::api_err(rocket::http::Status::Forbidden, format!("User {} not verified", $user_id)),
-                            //TODO: remove???
-                            crate::shared::user::data::UserVerified::MailNotSet => return rocketjson::ApiResponseErr::api_err(rocket::http::Status::Unauthorized, format!("Mail for {} not set", $user_id)),
-                            crate::shared::user::data::UserVerified::Ok => ()
+                        match rocketjson::rjtry!(crate::shared::user::data::UserVerified::from_db(vd.verified)) {
+                            crate::shared::user::data::UserVerified::No => return rocketjson::ApiResponseErr::api_err(rocket::http::Status::Forbidden, format!("User {} not verified", $user_id)),
+                            crate::shared::user::data::UserVerified::Yes => ()
                         }
                     }
                     vd.username
@@ -98,7 +75,7 @@ pub struct EmailVerifiedDb {
     #[sqlx(rename="uverified")]
     pub verified: i32,
     #[sqlx(rename="uemail")]
-    pub email: Option<String>
+    pub email: String
 }
 
 #[derive(Serialize)]

@@ -19,9 +19,7 @@ pub async fn notifications_delete_route(sql: &State<Sql>, notification_id: Id, t
         true => ApiResponseErr::ok(Status::Ok, NotificationDeleteReponse {
             message: String::from("Successfully deleted notification")
         }),
-        false => ApiResponseErr::ok(Status::NotFound, NotificationDeleteReponse {
-            message: format!("No notificaion with id {} found", &notification_id)
-        })
+        false => ApiResponseErr::api_err(Status::NotFound, format!("No notificaion with id {} found", &notification_id))
     }
 
 }

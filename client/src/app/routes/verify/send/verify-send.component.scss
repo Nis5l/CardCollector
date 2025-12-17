@@ -1,0 +1,35 @@
+@import "../../../../screen.scss";
+
+.verify-wrapper {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+	width: 100%;
+
+	margin-top: calc(50vh - (270px / 2) - 50px); //TODO: make less disgusting maybe
+
+	.verify {
+		display: flex;
+    align-items: center;
+		flex-direction: column;
+
+		width: 400px;
+
+		@media (max-width: $breakpoint-md) {
+      width: 300px;
+		}
+
+		@media (max-width: $breakpoint-sm) {
+      width: 250px;
+		}
+
+		gap: 30px;
+		padding: 30px;
+
+    p {
+      text-align: center;
+      margin-top: 0;
+    }
+	}
+}

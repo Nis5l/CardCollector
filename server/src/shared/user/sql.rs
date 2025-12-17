@@ -1,13 +1,13 @@
-use sqlx::Acquire;
-
 use crate::sql::Sql;
 use crate::shared::{Id, DbParseError};
-use super::data::{UserVerifiedDb, UserRanking, EmailVerifiedDb};
+use super::data::{UserVerified, UserRanking, EmailVerifiedDb};
 
 pub async fn user_id_from_username(sql: &Sql, username: &str) -> Result<Option<Id>, sqlx::Error> {
     let stmt: Result<(Id, ), sqlx::Error> = sqlx::query_as(
         "SELECT uid
-         FROM users WHERE uusername=?;") .bind(username)
+         FROM users
+         WHERE uusername=?;")
+        .bind(username)
         .fetch_one(sql.pool())
         .await;
 
@@ -47,7 +47,7 @@ pub async fn set_email(sql: &Sql, user_id: &Id, email: Option<&str>) -> Result<(
     Ok(())
 }
 
-pub async fn user_verified(sql: &Sql, user_id: &Id) -> Result<Result<UserVerifiedDb, DbParseError>, sqlx::Error> {
+pub async fn user_verified(sql: &Sql, user_id: &Id) -> Result<Result<UserVerified, DbParseError>, sqlx::Error> {
     let (verified, ): (i32, ) = sqlx::query_as(
         "SELECT uverified
          FROM users
@@ -56,7 +56,7 @@ pub async fn user_verified(sql: &Sql, user_id: &Id) -> Result<Result<UserVerifie
         .fetch_one(sql.pool())
         .await?;
 
-    Ok(UserVerifiedDb::from_db(verified))
+    Ok(UserVerified::from_db(verified))
 }
 
 pub async fn email_exists(sql: &Sql, email: &str) -> Result<bool, sqlx::Error> {

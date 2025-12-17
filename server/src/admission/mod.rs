@@ -6,3 +6,4 @@ pub mod passchange;
 pub mod refresh;
 pub mod logout;
 pub mod config;
+pub mod forgot;

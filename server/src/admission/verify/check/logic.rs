@@ -17,7 +17,7 @@ pub async fn verify_check_route(sql: &State<Sql>, token: JwtToken) -> ApiRespons
     //NOTE: user exists
     let verify_db = rjtry!(user::sql::get_verify_data(sql, &user_id).await).unwrap();
 
-    let verified = rjtry!(user::data::UserVerified::from_db(&verify_db.email, verify_db.verified));
+    let verified = rjtry!(user::data::UserVerified::from_db(verify_db.verified));
 
     ApiResponseErr::ok(Status::Ok, VerifiedResponse {
         verified,

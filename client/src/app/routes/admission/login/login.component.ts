@@ -53,6 +53,8 @@ export class LoginComponent extends SubscriptionManagerComponent {
 	}
 
 	public login(): void {
+		this.errorSubject.next(null);
+
 		this.registerSubscription(
 			this.loadingService.waitFor(this.loginService.login(this.formGroup.getRawValue())).subscribe({
 				next: () => {

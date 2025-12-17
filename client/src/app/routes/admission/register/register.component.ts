@@ -31,7 +31,7 @@ export class RegisterComponent extends SubscriptionManagerComponent {
 	private readonly errorSubject: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
 	public readonly error$: Observable<string | null>;
 
-	private readonly passwordValidator: ValidatorFn = (fg: AbstractControl): ValidationErrors | null => {
+	private readonly passwordRepeatValidator: ValidatorFn = (fg: AbstractControl): ValidationErrors | null => {
 		let password = fg.parent?.get("password")?.value;
 		let passwordRepeat = fg.value;
 		return password === passwordRepeat ? null : { passwordNotSame: true };
@@ -76,9 +76,7 @@ export class RegisterComponent extends SubscriptionManagerComponent {
           nonNullable: true,
           validators: [
             Validators.required,
-            Validators.minLength(config.password.minLength),
-            Validators.maxLength(config.password.maxLength),
-            this.passwordValidator
+            this.passwordRepeatValidator
           ]
         }),
       }))
@@ -88,11 +86,14 @@ export class RegisterComponent extends SubscriptionManagerComponent {
 	}
 
 	public register(formGroup: RegisterFormGroup): void {
+		this.errorSubject.next(null);
+
 		const { passwordRepeat , ...config} = formGroup.getRawValue();
 
 		this.registerSubscription(
 			this.loadingService.waitFor(this.registerService.register(config)).subscribe({
 				next: () => {
+          this.errorSubject.next(null);
 					this.router.navigate(["login"]);
 				},
 				error: (err: HttpErrorResponse) => {

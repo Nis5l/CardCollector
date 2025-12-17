@@ -1,0 +1,22 @@
+<div class="wrap" *ngIf="(config$ | async) as config">
+  <div class="forgot-wrapper" *ngIf="(key$ | async) as key">
+    <mat-card appearance="outlined" *ngIf="(formGroup$ | async) as formGroup">
+      <form class="forgot" [formGroup]="formGroup" (submit)="reset(key, formGroup)">
+        <mat-form-field>
+          <input matInput type="password" formControlName="password" placeholder="Password"/>
+          <mat-error>Password has to be {{config.password.minLength}}-{{config.password.maxLength}} characters</mat-error>
+        </mat-form-field>
+        <mat-form-field *ngVar="formGroup.controls.passwordRepeat as passwordRepeatFormControl">
+          <input matInput type="password" formControlName="passwordRepeat" placeholder="Repeat Password" />
+          @if (passwordRepeatFormControl.hasError('passwordNotSame')) {
+            <mat-error>Passwords do not match</mat-error>
+          }
+        </mat-form-field>
+        <div *ngIf="(error$ | async) as error" class="error">
+          <mat-error>{{error}}</mat-error>
+        </div>
+        <button matButton="outlined" type="submit" [disabled]="!formGroup.valid">Reset Password</button>
+      </form>
+    </mat-card>
+  </div>
+</div>

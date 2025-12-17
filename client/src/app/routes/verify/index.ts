@@ -1,2 +1,2 @@
-export { VerifyModule } from './verify.module';
-export { VerifyComponent } from './verify.component';
+export { VerifySendModule, VerifySendComponent } from './send';
+export { VerifyCheckModule, VerifyCheckComponent } from './check';

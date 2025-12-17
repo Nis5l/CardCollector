@@ -1,17 +1,15 @@
-@import "../../../screen.scss";
+@import "../../../../../screen.scss";
 
-.verify-wrapper {
+.forgot-wrapper {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 
 	width: 100%;
+	margin-top: calc(50vh - (240px / 2) - 50px); //TODO: make less disgusting maybe
 
-	margin-top: calc(50vh - (270px / 2) - 50px); //TODO: make less disgusting maybe
-
-	.verify {
+	.forgot {
 		display: flex;
-    align-items: center;
 		flex-direction: column;
 
 		width: 400px;
@@ -28,8 +26,8 @@
 		padding: 30px;
 
     p {
+      margin: 0;
       text-align: center;
-      margin-top: 0;
     }
 	}
 }

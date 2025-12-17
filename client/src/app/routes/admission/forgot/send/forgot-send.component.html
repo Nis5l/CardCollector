@@ -1,0 +1,13 @@
+<div class="wrap">
+  <div class="forgot-wrapper">
+    <mat-card appearance="outlined">
+      <form class="forgot" [formGroup]="formGroup" (submit)="forgot()">
+        <mat-form-field>
+          <input matInput type="text" formControlName="usernameOrEmail" placeholder="Username/Email" />
+        </mat-form-field>
+        <button matButton="outlined" type="submit" [disabled]="!formGroup.valid">Send Email</button>
+        <p *ngIf="(message$ | async) as message">{{message}}</p>
+      </form>
+    </mat-card>
+  </div>
+</div>

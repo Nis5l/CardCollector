@@ -1,0 +1,37 @@
+@import "../../../../../screen.scss";
+
+.forgot-wrapper {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+	width: 100%;
+	margin-top: calc(50vh - (340px / 2) - 50px); //TODO: make less disgusting maybe
+
+	.forgot {
+		display: flex;
+		flex-direction: column;
+
+		width: 400px;
+
+		@media (max-width: $breakpoint-md) {
+      width: 300px;
+		}
+
+		@media (max-width: $breakpoint-sm) {
+      width: 250px;
+		}
+
+		gap: 30px;
+		padding: 30px;
+	}
+}
+
+.forgot-success-wrapper {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+	width: 100%;
+	margin-top: calc(50vh - (340px / 2) - 50px); //TODO: make less disgusting maybe
+}

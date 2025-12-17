@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 
-import { VerifyComponent } from './verify.component';
-import { VerifyService } from './verify.service';
+import { VerifySendComponent } from './verify-send.component';
+import { VerifySendService } from './verify-send.service';
 
 @NgModule({
 	imports: [
@@ -12,8 +12,8 @@ import { VerifyService } from './verify.service';
     MatButtonModule,
     MatCardModule
   ],
-	declarations: [ VerifyComponent ],
-  providers: [ VerifyService ],
-	exports: [ VerifyComponent ],
+	declarations: [ VerifySendComponent ],
+  providers: [ VerifySendService ],
+	exports: [ VerifySendComponent ],
 })
-export class VerifyModule {}
+export class VerifySendModule {}

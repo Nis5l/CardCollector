@@ -8,10 +8,9 @@
         <mat-form-field>
           <input matInput type="password" formControlName="password" placeholder="Password" />
         </mat-form-field>
-        <div *ngVar="(error$ | async) as error" class="error">
-          @if (error != null) {
-            <mat-error>{{error}}</mat-error>
-          }
+        <a class="forgot-link" routerLink="/forgot">Forgot password?</a>
+        <div *ngIf="(error$ | async) as error" class="error">
+          <mat-error>{{error}}</mat-error>
         </div>
         <button matButton="outlined" type="submit" [disabled]="!formGroup.valid">Login</button>
       </form>

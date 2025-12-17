@@ -1,6 +1,6 @@
 use crate::sql::Sql;
 use crate::shared::Id;
-use crate::shared::user::data::{UserVerifiedDb, UserRanking};
+use crate::shared::user::data::{UserVerified, UserRanking};
 
 pub async fn user_exists(sql: &Sql, username: &str) -> Result<bool, sqlx::Error> {
     //TODO: is it case sensitive?;
@@ -26,7 +26,7 @@ pub async fn register(sql: &Sql, id: &Id, username: &str, password_hash: &str, e
         .bind(username)
         .bind(password_hash)
         .bind(email)
-        .bind(UserVerifiedDb::No as i32)
+        .bind(UserVerified::No as i32)
         .bind(UserRanking::Standard as i32)
         .execute(sql.pool())
         .await?;

@@ -25,6 +25,18 @@
 		gap: 30px;
 		padding: 30px;
 
+    .forgot-link {
+      margin-top: -35px;
+      font-size: 15px;
+      text-decoration: none;
+      color: var(--mat-sys-color-primary);
+      font-weight: 500;
+    }
+
+    .forgot-link:hover {
+      text-decoration: underline;
+    }
+
 		.error {
 			display: flex;
 			flex-direction: column;

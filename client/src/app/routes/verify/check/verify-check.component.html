@@ -1,0 +1,21 @@
+<div class="wrap">
+  <div class="verify-wrapper">
+    <div class="verify" *ngIf="(verified$ | async) as verified">
+      <svg viewBox="0 0 100 100" class="circle">
+        <circle
+          cx="50"
+          cy="50"
+          r="46"
+          fill="none"
+          stroke="var(--mat-sys-color-secondary)"
+          stroke-width="2%"
+        ></circle>
+      </svg>
+
+      <div class="center-content">
+        <p>Verified</p>
+        <mat-icon color="accent" svgIcon="check"></mat-icon>
+      </div>
+    </div>
+  </div>
+</div>

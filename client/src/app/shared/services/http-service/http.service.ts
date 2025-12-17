@@ -83,7 +83,7 @@ export class HttpService {
 						switchMap(() => req())
 					);
 				}
-				if(error.status === 403) {
+				if(error.status === 403 && !this.router.url.startsWith("/verify")) {
           this.router.navigate(["verify"]);
           return observableThrowError(() => error);
 				}

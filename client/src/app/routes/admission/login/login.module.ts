@@ -11,7 +11,6 @@ import { MatCardModule } from '@angular/material/card';
 import { LoginComponent } from './login.component';
 import { LoginService } from './login.service';
 import { HttpModule, AuthModule } from '../../../shared/services';
-import { NgVarModule } from '../../../shared/directives';
 
 const MATERIAL_MODULES = [
 	MatFormFieldModule,
@@ -28,9 +27,8 @@ const MATERIAL_MODULES = [
 
 		...MATERIAL_MODULES,
 
-		NgVarModule,
 		HttpModule,
-		AuthModule,
+    AuthModule,
 	],
 	declarations: [ LoginComponent ],
 	providers: [

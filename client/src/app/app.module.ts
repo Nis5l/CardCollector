@@ -23,7 +23,10 @@ import {
   CardUpgradeModule,
   UsersModule,
   ProfileReadonlyTradeModule,
-  VerifyModule,
+  VerifySendModule,
+  VerifyCheckModule,
+  ForgotSendModule,
+  ForgotResetModule,
 } from './routes';
 
 const MODULES = [
@@ -33,7 +36,10 @@ const MODULES = [
 	LoginModule,
 	LogoutModule,
 	RegisterModule,
-  VerifyModule,
+  VerifySendModule,
+  VerifyCheckModule,
+  ForgotSendModule,
+  ForgotResetModule,
 
 	CollectorsModule,
 	CollectorReadonlyModule,
