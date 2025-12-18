@@ -19,8 +19,9 @@ import {
   ForgotSendComponent,
   ForgotResetComponent,
 } from './routes';
-import { canActivateAuth, canActivateCollectorAdmin } from './shared/guards';
+import { canActivateAuth, canActivateCollectorOwnerModerator } from './shared/guards';
 
+//TODO: rethink guards
 const routes: Routes = [
 	{ path: "login", component: LoginComponent },
 	{ path: "logout", component: LogoutComponent}, //, canActivate: [ canActivateAuth ] },
@@ -31,7 +32,7 @@ const routes: Routes = [
 	{ path: "forgot/:key", component: ForgotResetComponent },
 
 	{ path: "collectors", component: CollectorsComponent },
-	{ path: "collector/:collectorId/edit", component: CollectorEditComponent, canActivate: [ canActivateAuth, canActivateCollectorAdmin ] },
+	{ path: "collector/:collectorId/edit", component: CollectorEditComponent, canActivate: [ canActivateAuth, canActivateCollectorOwnerModerator ] },
 	{ path: "collector/:collectorId", component: CollectorReadonlyComponent, children: CollectorReadonlyComponent.getRoutes() },
 
 	{ path: "user/:userId/edit", component: ProfileEditComponent, canActivate: [ canActivateAuth ] },

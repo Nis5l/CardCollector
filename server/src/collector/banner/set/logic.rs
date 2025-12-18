@@ -9,7 +9,7 @@ use crate::sql::Sql;
 use crate::config::Config;
 use crate::shared::Id;
 use crate::shared::crypto::JwtToken;
-use crate::{verify_user, verify_collector, verify_collector_admin};
+use crate::{verify_user, verify_collector, verify_collector_owner_moderator};
 use super::data::{CollectorBannerSetRequest, CollectorBannerSetResponse};
 use crate::scripts::resize_image_banner;
 
@@ -22,7 +22,7 @@ pub async fn collector_banner_set_route(collector_id: Id,
     let user_id = token.id;
     verify_user!(sql, &user_id, true);
     verify_collector!(sql, &collector_id);
-    verify_collector_admin!(sql, &collector_id, &user_id);
+    verify_collector_owner_moderator!(sql, &collector_id, &user_id);
 
     let path = Path::new(&config.collector_fs_base).join(collector_id.to_string());
     if let Err(_) = fs::create_dir_all(&path) {

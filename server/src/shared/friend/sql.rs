@@ -1,4 +1,4 @@
-use super::data::{FriendDb, FriendUsernameDb};
+use super::data::{FriendDb, FriendUserDb};
 use crate::sql::Sql;
 use crate::shared::Id;
 
@@ -16,23 +16,27 @@ pub async fn used_friend_slots(sql: &Sql, user_id: &Id) -> Result<i64, sqlx::Err
 }
 
 
-pub async fn user_friends_username(sql: &Sql, user_id: &Id) -> Result<Vec<FriendUsernameDb>, sqlx::Error> {
-    let friends: Vec<FriendUsernameDb> = sqlx::query_as(
+pub async fn user_friends_username(sql: &Sql, user_id: &Id) -> Result<Vec<FriendUserDb>, sqlx::Error> {
+    let friends: Vec<FriendUserDb> = sqlx::query_as(
             "SELECT
-             users.uusername AS username,
-             friends.uidone AS userone,
-             friends.uidtwo AS usertwo,
-             friends.frstatus AS friendStatus
+             users.uusername AS uusername,
+             users.uranking AS uranking,
+             users.utime AS utime,
+             friends.uidone AS uidone,
+             friends.uidtwo AS uidtwo,
+             friends.frstatus AS frstatus
              FROM
              friends,
              users
              WHERE friends.uidone=? AND users.uid=friends.uidtwo
              UNION
              SELECT
-             users.uusername AS username,
-             friends.uidone AS userone,
-             friends.uidtwo AS usertwo,
-             friends.frstatus AS friendStatus
+             users.uusername AS uusername,
+             users.uranking AS uranking,
+             users.utime AS utime,
+             friends.uidone AS uidone,
+             friends.uidtwo AS uidtwo,
+             friends.frstatus AS frstatus
              FROM
              friends,
              users
@@ -49,9 +53,9 @@ pub async fn user_friends_username(sql: &Sql, user_id: &Id) -> Result<Vec<Friend
 pub async fn user_friend(sql: &Sql, user_id: &Id, user_friend_id: &Id) -> Result<Option<FriendDb>, sqlx::Error> {
     let friends: Result<FriendDb, sqlx::Error> = sqlx::query_as(
             "SELECT
-             friends.uidone AS userone,
-             friends.uidtwo AS usertwo,
-             friends.frstatus AS friendStatus
+             friends.uidone AS uidone,
+             friends.uidtwo AS uidtwo,
+             friends.frstatus AS frstatus
              FROM
              friends
              WHERE

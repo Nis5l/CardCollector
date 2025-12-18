@@ -7,3 +7,4 @@ export { LoadingModule } from './loading';
 export { CollectorCardModule } from './collector-card';
 export { TabNavigationModule, type NavigationItem } from './tab-navigation';
 export { InventoryModule, InventoryComponent } from './inventory';
+export { UserCardModule } from './user-card';

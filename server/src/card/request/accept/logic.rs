@@ -7,7 +7,7 @@ use super::data::CardRequestAcceptResponse;
 use crate::shared::Id;
 use crate::shared::card;
 use crate::sql::Sql;
-use crate::{verify_collector_admin, verify_user};
+use crate::{verify_collector_owner_moderator, verify_user};
 use crate::shared::crypto::JwtToken;
 
 #[post("/card/request/<card_id>/accept")]
@@ -16,7 +16,7 @@ pub async fn card_request_accept_route(card_id: Id, sql: &State<Sql>, token: Jwt
 
     verify_user!(sql, user_id, true);
     let collector_id = rjtry!(card::sql::get_card_collector_id(sql, &card_id).await);
-    verify_collector_admin!(sql, &collector_id, user_id);
+    verify_collector_owner_moderator!(sql, &collector_id, user_id);
 
     rjtry!(sql::card_remove_duplicates(sql, &collector_id, &card_id).await);
     rjtry!(sql::card_request_accept(sql, &card_id).await);

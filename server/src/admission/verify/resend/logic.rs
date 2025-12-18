@@ -20,7 +20,7 @@ pub async fn verify_resend_route(token: JwtToken, sql: &State<Sql>, config: &Sta
     //NOTE: user exists
     let verify_db = rjtry!(user::sql::get_verify_data(sql, &user_id).await).unwrap();
 
-    let verified = rjtry!(user::data::UserVerified::from_db(verify_db.verified));
+    let verified = user::data::UserVerified::from(verify_db.verified);
 
     if verified == user::data::UserVerified::Yes {
         return ApiResponseErr::api_err(Status::Conflict, String::from("Account already verified"));

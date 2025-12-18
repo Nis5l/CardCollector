@@ -1,7 +1,7 @@
-import type { UserResponse } from './user-response.interface';
+import type { User } from '../../../shared/types/user';
 
 export interface UsersResponse {
-    users: UserResponse[],
+    users: User[],
     pageSize: number,
     page: number,
     userCount: number,

@@ -1,13 +1,12 @@
 use crate::sql::Sql;
-use crate::shared::Id;
 use crate::shared::util;
-use crate::shared::user::data::UserVerified;
+use crate::shared::user::data::{UserVerified, UserDb, User};
 
-pub async fn get_users(sql: &Sql, mut username: String, amount: u32, offset: u32) -> Result<Vec<(String, Id)>, sqlx::Error> {
+pub async fn get_users(sql: &Sql, mut username: String, amount: u32, offset: u32) -> Result<Vec<User>, sqlx::Error> {
     username = util::escape_for_like(username);
 
-    let users: Vec<(String, Id)> = sqlx::query_as(
-        "SELECT uusername, uid
+    let users_db: Vec<UserDb> = sqlx::query_as(
+        "SELECT uid, uusername, uranking, utime
          FROM users
          WHERE uusername LIKE CONCAT('%', ?, '%')
          AND uverified = ?
@@ -18,6 +17,8 @@ pub async fn get_users(sql: &Sql, mut username: String, amount: u32, offset: u32
         .bind(offset)
         .fetch_all(sql.pool())
         .await?;
+
+    let users: Vec<User> = users_db.into_iter().map(User::from).collect();
 
     Ok(users)
 }

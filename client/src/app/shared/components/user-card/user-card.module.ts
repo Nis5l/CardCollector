@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 
-import { UserComponent } from './user.component';
-import { ProfileImageModule } from '../../../shared/components';
+import { UserCardComponent } from './user-card.component';
+import { ProfileImageModule } from '../profile-image';
 
 const MATERIAL_MODULES = [
 	MatCardModule
@@ -19,7 +19,7 @@ const MATERIAL_MODULES = [
 
     ProfileImageModule,
   ],
-  declarations: [ UserComponent ],
-  exports: [ UserComponent ],
+  declarations: [ UserCardComponent ],
+  exports: [ UserCardComponent ],
 })
-export class UserModule {}
+export class UserCardModule {}

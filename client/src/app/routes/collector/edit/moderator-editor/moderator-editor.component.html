@@ -1,0 +1,27 @@
+<div class="moderator-editor-wrapper" *ngIf="(collectorId$ | async) as collectorId">
+  <div class="header">
+    <p>Moderators</p>
+    @if (isOwner$ | async) {
+      <button mat-icon-button matTooltip="Add Moderator" (click)="addModerator(collectorId)">
+        <mat-icon color="accent" svgIcon="person_add"></mat-icon>
+      </button>
+    }
+  </div>
+  <cc-loading [observable]="moderators$"></cc-loading>
+  @if (moderators$ | async; as moderators) {
+    @if (moderators.length > 0) {
+      <div class="list">
+        @for (mod of moderators; track mod.id) {
+          <cc-user-card [user]="mod"></cc-user-card>
+        }
+      </div>
+    } @else {
+      <div class="empty">
+        <div class="empty-content">
+          <mat-icon color="accent" svgIcon="group_off"></mat-icon>
+          <p>No moderators yet</p>
+        </div>
+      </div>
+    }
+  }
+</div>

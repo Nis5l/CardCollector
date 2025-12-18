@@ -1,16 +1,14 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 
 import { CollectorFriendCardComponent } from './collector-friend-card.component';
-import { ProfileImageModule } from 'src/app/shared/components';
 import { NgVarModule } from '../../../../../shared/directives';
+import { UserCardModule } from '../../../../../shared/components';
 
 const MATERIAL_MODULES = [
-	MatCardModule,
   MatIconModule,
   MatButtonModule,
 ];
@@ -22,7 +20,7 @@ const MATERIAL_MODULES = [
     ...MATERIAL_MODULES,
 
     NgVarModule,
-    ProfileImageModule,
+    UserCardModule,
   ],
   declarations: [ CollectorFriendCardComponent ],
   exports: [ CollectorFriendCardComponent ]

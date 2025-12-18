@@ -2,32 +2,37 @@
   <div *ngIf="(config$ | async) as config">
     <div *ngIf="(formGroup$ | async) as formGroup">
       <cc-collector-banner [editable]="true" [collector]="collector"></cc-collector-banner>
-      <div class="head">
+      <div class="wrap head">
         <div class="collector-image">
           <cc-collector-image [editable]="true" [collector]="collector"></cc-collector-image>
         </div>
-        <div class="info" [formGroup]="formGroup">
-          <mat-form-field appearance="outline" class="name-wrapper">
-            <mat-label>Name</mat-label>
-            <input matInput formControlName="name" />
-            <mat-error>Name has to be {{config.name.minLength}}-{{config.name.maxLength}} characters</mat-error>
-          </mat-form-field>
+        <mat-card appearance="outlined" class="info-card">
+          <div class="info" [formGroup]="formGroup">
+            <mat-form-field appearance="outline" class="name-wrapper">
+              <mat-label>Name</mat-label>
+              <input matInput formControlName="name" />
+              <mat-error>Name has to be {{config.name.minLength}}-{{config.name.maxLength}} characters</mat-error>
+            </mat-form-field>
 
-          <mat-form-field appearance="outline" class="desc-wrapper">
-            <mat-label>Description</mat-label>
-            <textarea matInput rows="4" formControlName="description"></textarea>
-            <mat-error>Description has to be {{config.description.minLength}}-{{config.description.maxLength}} characters</mat-error>
-          </mat-form-field>
+            <mat-form-field appearance="outline" class="desc-wrapper">
+              <mat-label>Description</mat-label>
+              <textarea matInput rows="4" formControlName="description"></textarea>
+              <mat-error>Description has to be {{config.description.minLength}}-{{config.description.maxLength}} characters</mat-error>
+            </mat-form-field>
 
-          <button
-            mat-raised-button
-            color="primary"
-            [disabled]="!hasChanges(formGroup)"
-            (click)="saveChanges(collector.id, formGroup)"
-          >
-            Save
-          </button>
-        </div>
+            <button
+              matButton="outlined"
+              color="primary"
+              [disabled]="!hasChanges(formGroup)"
+              (click)="saveChanges(collector.id, formGroup)"
+            >
+              Save
+            </button>
+          </div>
+        </mat-card>
+        <mat-card appearance="outlined" class="moderator-card">
+        <cc-collector-moderator-editor [collectorId]="collector.id"></cc-collector-moderator-editor>
+        </mat-card>
       </div>
       <button class="floating-button-br" mat-fab aria-label="Profile" (click)="navigateCollector(collector.id)">
         <mat-icon color="primary" svgIcon="close"></mat-icon>

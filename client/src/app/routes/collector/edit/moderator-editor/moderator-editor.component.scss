@@ -1,0 +1,82 @@
+@import "../../../../../screen.scss";
+
+.moderator-editor-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  width: 100%;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    width: calc(100% - 20px);
+
+    height: 50px;
+    @media (max-width: $breakpoint-md) {
+      width: calc(100% - 5px);
+      height: 35px;
+    }
+
+    p {
+      font-size: 25px;
+      margin: 0;
+
+      @media (max-width: $breakpoint-md) {
+        font-size: 20px;
+        //line-height: 15px;
+      }
+    }
+
+    button {
+      //color: var(--mat-sys-color-secondary);
+      transform: scale(1.5);
+
+      @media (max-width: $breakpoint-md) {
+        transform: scale(1.2);
+      }
+    }
+  }
+
+  .empty {
+    height: 300px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    @media (max-width: $breakpoint-md) {
+      height: 220px;
+    }
+
+    .empty-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      opacity: 0.6;
+
+      p {
+        font-size: 25px;
+        margin: 0;
+
+        @media (max-width: $breakpoint-md) {
+          font-size: 20px;
+          //line-height: 15px;
+        }
+      }
+
+      mat-icon {
+        transform: scale(1.5);
+
+        @media (max-width: $breakpoint-md) {
+          transform: scale(1.2);
+        }
+      }
+    }
+  }
+}

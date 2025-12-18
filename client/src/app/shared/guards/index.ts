@@ -1,2 +1,2 @@
 export { canActivateAuth } from "./auth-guard.guard";
-export { canActivateCollectorAdmin } from "./collector-admin.guard";
+export { canActivateCollectorOwnerModerator } from "./collector-owner-moderator.guard";

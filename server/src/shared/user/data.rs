@@ -1,22 +1,54 @@
 use serde_repr::Serialize_repr;
 use sqlx::FromRow;
 use serde::Serialize;
+use chrono::{DateTime, Utc};
+use std::convert::From;
 
 use crate::config::Config;
-use crate::shared::DbParseError;
 use crate::shared::Id;
 
+#[derive(Debug, Serialize)]
+#[serde(rename_all="camelCase")]
+pub struct User {
+    pub id: Id,
+    pub username: String,
+    pub badges: Vec<Badge>,
+    pub ranking: UserRanking,
+    pub time: DateTime<Utc>
+}
+
+impl From<UserDb> for User {
+    fn from(db: UserDb) -> Self {
+        User {
+            badges: get_badges(&db.uid),
+            id: db.uid,
+            username: db.uusername,
+            ranking: UserRanking::from(db.uranking),
+            time: db.utime
+        }
+    }
+}
+
+#[derive(Debug, Serialize, FromRow)]
+pub struct UserDb {
+    pub uid: Id,
+    pub uusername: String,
+    pub uranking: i32,
+	pub utime: DateTime<Utc>,
+}
+
+#[derive(Debug, Serialize_repr, PartialEq)]
+#[repr(u8)]
 pub enum UserRanking {
     Standard = 0,
     Admin = 1
 }
 
-impl UserRanking {
-    pub fn from_db(ranking: i32) -> Result<Self, DbParseError> {
+impl From<i32> for UserRanking {
+    fn from(ranking: i32) -> Self {
         match ranking {
-            0 => Ok(Self::Standard),
-            1 => Ok(Self::Admin),
-            _ => Err(DbParseError)
+            1 => Self::Admin,
+            _ => Self::Standard,
         }
     }
 }
@@ -28,12 +60,11 @@ pub enum UserVerified {
     Yes = 1
 }
 
-impl UserVerified {
-    pub fn from_db(verified: i32) -> Result<Self, DbParseError> {
+impl From<i32> for UserVerified {
+    fn from(verified: i32) -> Self {
         match verified {
-            0 => Ok(Self::No),
-            1 => Ok(Self::Yes),
-            _ => Err(DbParseError)
+            1 => Self::Yes,
+            _ => Self::No,
         }
     }
 }
@@ -48,7 +79,7 @@ macro_rules! verify_user {
                 None => return rocketjson::ApiResponseErr::api_err(rocket::http::Status::NotFound, format!("User with id {} not found", $user_id)),
                 Some(vd) => {
                     if ($is_verified) {
-                        match rocketjson::rjtry!(crate::shared::user::data::UserVerified::from_db(vd.verified)) {
+                        match crate::shared::user::data::UserVerified::from(vd.verified) {
                             crate::shared::user::data::UserVerified::No => return rocketjson::ApiResponseErr::api_err(rocket::http::Status::Forbidden, format!("User {} not verified", $user_id)),
                             crate::shared::user::data::UserVerified::Yes => ()
                         }
@@ -78,7 +109,7 @@ pub struct EmailVerifiedDb {
     pub email: String
 }
 
-#[derive(Serialize)]
+#[derive(Debug, Serialize)]
 pub struct Badge {
     pub name: &'static str,
     pub asset: &'static str

@@ -6,11 +6,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatCardModule } from '@angular/material/card';
 
 
 import { CollectorEditComponent } from './collector-edit.component';
 import { CollectorService } from '../collector.service';
-import { HttpModule, AuthModule } from '../../../shared/services';
+import { HttpModule } from '../../../shared/services';
 import { NgVarModule } from '../../../shared/directives';
 import {
 	CollectorImageModule,
@@ -18,12 +19,14 @@ import {
 	CollectorBannerModule,
 	CollectorOpenModule
 } from '../shared';
+import { ModeratorEditorModule } from './moderator-editor';
 
 const MATERIAL_MODULES = [
   MatFormFieldModule,
   MatInputModule,
 	MatButtonModule,
 	MatIconModule,
+  MatCardModule,
 ];
 
 @NgModule({
@@ -35,13 +38,14 @@ const MATERIAL_MODULES = [
 
 		...MATERIAL_MODULES,
 
-		AuthModule,
 		NgVarModule,
 
 		CollectorImageModule,
 		CollectorFavoriteModule,
 		CollectorBannerModule,
 		CollectorOpenModule,
+
+    ModeratorEditorModule,
 	],
 	providers: [ CollectorService ],
 	declarations: [ CollectorEditComponent ],

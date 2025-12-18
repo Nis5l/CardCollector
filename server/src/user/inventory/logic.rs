@@ -31,7 +31,7 @@ pub async fn inventory_route(user_id: Id, collector_id: Id, mut data: InventoryR
         offset: config.inventory_page_amount * data.page,
     };
 
-    let cards = rjtry!(card::sql::get_inventory(sql, config, &inventory_options).await);
+    let cards = rjtry!(card::sql::get_inventory(sql, &inventory_options).await);
 
     let card_count = rjtry!(card::sql::get_inventory_count(sql, &inventory_options).await);
 

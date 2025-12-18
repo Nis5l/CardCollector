@@ -1,21 +1,13 @@
 <ng-container *ngVar="(isSelf$ | async) as isSelf">
   @if ((friendResponse$ | async); as friendResponse) {
     @if (friendResponse.status === FriendStatus.Friend || isSelf) {
-      <mat-card appearance="outlined" (click)="userClick(friendResponse.userId)" class="user">
-        <div class="user-image">
-          <cc-profile-image [userId]="friendResponse.userId" [editable]="false"></cc-profile-image>
-        </div>
-        <div class="info">
-          <mat-card-title>{{friendResponse.username}}</mat-card-title>
-          <!--<mat-card-subtitle>...description...</mat-card-subtitle>
-          <mat-card-subtitle>...stats...</mat-card-subtitle>-->
-        </div>
+      <cc-user-card [user]="friendResponse.user">
         @if (friendResponse.status === FriendStatus.Pending && isSelf) {
           <div class="friend-status">
-            <button color="primary" mat-icon-button (click)="acceptFriend($event, friendResponse.userId)">
+            <button color="primary" mat-icon-button (click)="acceptFriend($event, friendResponse.user.id)">
               <mat-icon color="accent" svgIcon="check"></mat-icon>
             </button>
-            <button color="error" mat-icon-button matTooltip="Confirm" aria-label="Confirm" (click)="declineFriend($event, friendResponse.userId)">
+            <button color="error" mat-icon-button matTooltip="Confirm" aria-label="Confirm" (click)="declineFriend($event, friendResponse.user.id)">
               <mat-icon color="accent" svgIcon="close"></mat-icon>
             </button>
           </div>
@@ -25,7 +17,7 @@
             <mat-icon class="sent" color="accent" svgIcon="hourglass_empty"></mat-icon>
           </div>
         }
-      </mat-card>
+      </cc-user-card>
     }
   }
 </ng-container>

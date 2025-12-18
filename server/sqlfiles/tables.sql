@@ -270,3 +270,12 @@ CREATE TABLE IF NOT EXISTS cardtypevotes (
         FOREIGN KEY (ctid) REFERENCES cardtypes(ctid)
 		ON DELETE CASCADE
 ) ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS collectormoderators (
+	coid VARCHAR(13) NOT NULL,
+	uid VARCHAR(13) NOT NULL,
+	cmprivilege INT NOT NULL,
+    cmcreated DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY (uid, coid),
+	FOREIGN KEY (uid) REFERENCES users (uid)
+) ENGINE = InnoDB;

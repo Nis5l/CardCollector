@@ -14,7 +14,7 @@ use crate::shared::user;
 pub async fn admin_log_route(sql: &State<Sql>, config: &State<Config>, token: JwtToken) -> ApiResponseErr<AdminLogResponse> {
     let user_id = token.id;
 
-    if !matches!(rjtry!(user::sql::get_user_rank(sql, &user_id).await), Ok(user::data::UserRanking::Admin)) {
+    if rjtry!(user::sql::get_user_rank(sql, &user_id).await) != user::data::UserRanking::Admin {
         return ApiResponseErr::api_err(Status::Forbidden, String::from("Missing admin permissions"))
     }
 

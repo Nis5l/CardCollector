@@ -25,7 +25,7 @@ export class RequestCardComponent extends SubscriptionManagerComponent {
 
   public readonly CardVote: typeof CardVote = CardVote;
 
-	public readonly isAdmin$: Observable<boolean>;
+	public readonly isOwnerModerator$: Observable<boolean>;
 	public readonly userId$: Observable<Id>;
 	public readonly collectorId$: Observable<Id>;
 	public readonly votes$: Observable<number>;
@@ -91,8 +91,8 @@ export class RequestCardComponent extends SubscriptionManagerComponent {
 		this.userId$ = this.userIdSubject.asObservable().pipe(filter((userId): userId is Id => userId != null));
 		this.collectorId$ = this.collectorIdSubject.asObservable().pipe(filter((collectorId): collectorId is Id => collectorId != null));
 
-		this.isAdmin$ = this.collectorId$.pipe(
-			switchMap(collectorId => this.userService.isCollectorAdmin(collectorId))
+		this.isOwnerModerator$ = this.collectorId$.pipe(
+			switchMap(collectorId => this.userService.isCollectorOwnerModerator(collectorId))
 		);
 
 		this.votes$ = this.votesSubject.asObservable().pipe(filter((votes): votes is number => votes != null));

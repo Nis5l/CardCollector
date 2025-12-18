@@ -1,12 +1,11 @@
 use serde::Serialize;
 
 use crate::shared::friend::data::FriendStatus;
-use crate::shared::Id;
+use crate::shared::user::data::User;
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct FriendResponse {
-    pub user_id: Id,
-    pub username: String,
+    pub user: User,
     pub status: FriendStatus
 }

@@ -19,7 +19,7 @@ pub async fn card_index_route(collector_id: Id, sql: &State<Sql>, search: Option
         CardSortType::default()
     };
 
-    let cards = rjtry!(card::sql::get_cards(&sql, &config, &collector_id, search.clone(), &sort_type, config.card_type_page_amount, page * config.card_type_page_amount, state.clone()).await);
+    let cards = rjtry!(card::sql::get_cards(&sql, &collector_id, search.clone(), &sort_type, config.card_type_page_amount, page * config.card_type_page_amount, state.clone()).await);
     let card_count = rjtry!(sql::get_card_count(&sql, &collector_id, search, state).await);
 
     ApiResponseErr::ok(Status::Ok, CardIndexResponse {

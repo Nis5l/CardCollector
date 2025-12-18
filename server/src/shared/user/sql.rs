@@ -47,7 +47,7 @@ pub async fn set_email(sql: &Sql, user_id: &Id, email: Option<&str>) -> Result<(
     Ok(())
 }
 
-pub async fn user_verified(sql: &Sql, user_id: &Id) -> Result<Result<UserVerified, DbParseError>, sqlx::Error> {
+pub async fn user_verified(sql: &Sql, user_id: &Id) -> Result<UserVerified, sqlx::Error> {
     let (verified, ): (i32, ) = sqlx::query_as(
         "SELECT uverified
          FROM users
@@ -56,7 +56,7 @@ pub async fn user_verified(sql: &Sql, user_id: &Id) -> Result<Result<UserVerifie
         .fetch_one(sql.pool())
         .await?;
 
-    Ok(UserVerified::from_db(verified))
+    Ok(UserVerified::from(verified))
 }
 
 pub async fn email_exists(sql: &Sql, email: &str) -> Result<bool, sqlx::Error> {
@@ -96,7 +96,7 @@ pub async fn set_verification_key(sql: &Sql, user_id: &Id, key: &str) -> Result<
     Ok(())
 }
 
-pub async fn get_user_rank(sql: &Sql, user_id: &Id) -> Result<Result<UserRanking, DbParseError>, sqlx::Error> {
+pub async fn get_user_rank(sql: &Sql, user_id: &Id) -> Result<UserRanking, sqlx::Error> {
     let (ranking, ): (i32, ) = sqlx::query_as(
         "SELECT uranking
          FROM users
@@ -105,7 +105,7 @@ pub async fn get_user_rank(sql: &Sql, user_id: &Id) -> Result<Result<UserRanking
         .fetch_one(sql.pool())
         .await?;
 
-    Ok(UserRanking::from_db(ranking))
+    Ok(UserRanking::from(ranking))
 }
 
 pub async fn get_verify_data(sql: &Sql, user_id: &Id) -> Result<Option<EmailVerifiedDb>, sqlx::Error> {

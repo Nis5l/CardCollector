@@ -9,8 +9,7 @@ import { UsersComponent } from './users.component';
 import { UsersService } from './users.service';
 import { HttpModule } from '../../shared/services';
 import { NgVarModule } from '../../shared/directives';
-import { LoadingModule } from '../../shared/components';
-import { UserModule } from './user';
+import { LoadingModule, UserCardModule } from '../../shared/components';
 
 const MATERIAL_MODULES = [
 	MatFormFieldModule,
@@ -26,7 +25,7 @@ const MATERIAL_MODULES = [
 
     ...MATERIAL_MODULES,
 
-    UserModule,
+    UserCardModule,
     NgVarModule,
     HttpModule,
     LoadingModule,

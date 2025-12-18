@@ -13,9 +13,8 @@ pub async fn email_delete_route(sql: &State<Sql>, token: JwtToken) -> ApiRespons
     let user_id = token.id;
 
     match rjtry!(user::sql::user_verified(sql, &user_id).await) {
-        Ok(user::data::UserVerified::Yes) => return ApiResponseErr::api_err(Status::Conflict, String::from("Already verified")),
-        Err(_) => return ApiResponseErr::api_err(Status::InternalServerError, String::from("Internal server error")),
-        Ok(user::data::UserVerified::No) => ()
+        user::data::UserVerified::Yes => return ApiResponseErr::api_err(Status::Conflict, String::from("Already verified")),
+        user::data::UserVerified::No => ()
     }
 
     rjtry!(user::sql::set_email(sql, &user_id, None).await);

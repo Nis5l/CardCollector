@@ -7,8 +7,8 @@
   <cc-loading [observable]="loading$" [boolObservable]="true" class="loading"></cc-loading>
   @if (usersResponse != null) {
     <div class="user-wrap">
-      @for (userResponse of usersResponse.users; track userResponse) {
-        <cc-user [userResponse]="userResponse"></cc-user>
+      @for (user of usersResponse.users; track user) {
+        <cc-user-card [user]="user"></cc-user-card>
       }
       <mat-paginator [length]="usersResponse.userCount" [pageSize]="usersResponse.pageSize" (page)="changePage($event)"></mat-paginator>
     </div>

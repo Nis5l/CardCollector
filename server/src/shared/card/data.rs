@@ -5,7 +5,6 @@ use rocket::form::FromFormField;
 use serde_repr::Serialize_repr;
 use std::convert::From;
 
-use crate::config::Config;
 use crate::shared::{Id, IdInt};
 
 #[derive(Debug, Serialize, FromRow)]
@@ -63,8 +62,8 @@ pub struct UnlockedCard {
     pub card: Card,
 }
 
-impl UnlockedCard {
-    pub fn from_card_db(card: UnlockedCardDb, config: &Config) -> Self {
+impl From<UnlockedCardDb> for UnlockedCard {
+    fn from(card: UnlockedCardDb) -> Self {
         UnlockedCard {
             id: card.id,
             user_id: card.user_id,
@@ -79,7 +78,7 @@ impl UnlockedCard {
                 (Some(id), Some(opacity)) => Some(CardEffect { id, opacity }),
                 _ => None
             },
-            card: Card::from_card_db(CardDb {
+            card: Card::from(CardDb {
                 card_type_user_id: card.card_type_user_id,
                 card_id: card.card_id,
                 collector_id: card.collector_id,
@@ -89,13 +88,13 @@ impl UnlockedCard {
 
                 type_id: card.type_id,
                 type_name: card.type_name,
-            }, config)
+            })
         }
     }
 }
 
-impl Card {
-    pub fn from_card_db(card: CardDb, config: &Config) -> Self {
+impl From<CardDb> for Card {
+    fn from(card: CardDb) -> Self {
         Card {
             collector_id: card.collector_id,
             card_info: CardInfo {
@@ -267,12 +266,10 @@ pub enum CardVote {
 
 impl From<i32> for CardVote {
     fn from(value: i32) -> Self {
-        if value == 0 {
-            Self::Neutral
-        } else if value < 0 {
-            Self::Downvote
-        } else {
-            Self::Upvote
+        match value {
+            0 => Self::Neutral,
+            n if n < 0 => Self::Downvote,
+            _ => Self::Upvote,
         }
     }
 }

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, of as observableOf, map } from 'rxjs';
 
-import type { UsernameResponse, CollectorIsAdminResponse } from './types';
+import type { UsernameResponse, CollectorIsOwnerModeratorResponse, CollectorIsOwnerResponse } from './types';
 import { HttpService } from '../http-service';
 import { AuthService  } from '../auth-service';
 import type { Id } from '../../types';
@@ -27,11 +27,19 @@ export class UserService {
 		);
 	}
 
-	public isCollectorAdmin(collectorId: Id): Observable<boolean> {
+	public isCollectorOwnerModerator(collectorId: Id): Observable<boolean> {
 		const userId = this.authService.getUserId();
 		if(userId == null) return observableOf(false);
-		return this.httpService.get<CollectorIsAdminResponse>(`/user/${userId}/${collectorId}/is-admin`).pipe(
-			map((res: CollectorIsAdminResponse): boolean => res.isAdmin)
+		return this.httpService.get<CollectorIsOwnerModeratorResponse>(`/user/${userId}/${collectorId}/is-owner-moderator`).pipe(
+			map((res: CollectorIsOwnerModeratorResponse): boolean => res.isOwnerModerator)
+		);
+	}
+
+	public isCollectorOwner(collectorId: Id): Observable<boolean> {
+		const userId = this.authService.getUserId();
+		if(userId == null) return observableOf(false);
+		return this.httpService.get<CollectorIsOwnerResponse>(`/user/${userId}/${collectorId}/is-owner`).pipe(
+			map((res: CollectorIsOwnerResponse): boolean => res.isOwner)
 		);
 	}
 

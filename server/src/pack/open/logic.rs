@@ -2,7 +2,7 @@ use rocketjson::{ApiResponseErr, rjtry, error::ApiErrorsCreate};
 use rocket::http::Status;
 use rocket::State;
 use chrono::{DateTime, Utc, Duration};
-use rand::{thread_rng, Rng};
+use rand::Rng;
 use std::ops::RangeInclusive;
 
 use super::data::{PackOpenResponse, CanOpenPack};
@@ -45,7 +45,7 @@ pub async fn pack_open_route(collector_id: Id, sql: &State<Sql>, token: JwtToken
 
     rjtry!(sql::set_pack_time(&sql, &user_id, &collector_id, Utc::now()).await);
 
-    let cards = rjtry!(card::sql::get_unlocked_cards(&sql, inserted_cards_uuids, None, config).await);
+    let cards = rjtry!(card::sql::get_unlocked_cards(&sql, inserted_cards_uuids, None).await);
 
     rjtry!(add_pack_stats(sql, &user_id, &collector_id, pack_amount as i32, &Utc::now()).await);
 
@@ -75,16 +75,16 @@ async fn get_random_cards(sql: &Sql, amount: u32, quality_range: RangeInclusive<
 	//NOTE: maybe this could be smth for the future:
     // (highest-level)^3 * 0.5
 
-    let mut rng = thread_rng();
+    let mut rng = rand::rng();
 
     let mut cards_create_data = Vec::new();
 
     for card in new_cards_create.iter() {
-        let quality: i32 = rng.gen_range(quality_range.clone());
+        let quality: i32 = rng.random_range(quality_range.clone());
 
         //TODO: improve the way to pick level (not algorythm but code)
         let mut level = 0;
-        let level_random: i32 = rng.gen_range(0..=1000);
+        let level_random: i32 = rng.random_range(0..=1000);
         if level_random <= 50 {
             level = 1;
             if level_random <= 5 {

@@ -1,10 +1,8 @@
 use crate::sql::Sql;
 use crate::shared::card::data::{UnlockedCardDb, UnlockedCard};
-use crate::config::Config;
 use crate::shared::Id;
 
-//TODO: dont pass config
-pub async fn trade_cards(sql: &Sql, user_id: &Id, trade_id: &Id, config: &Config) -> Result<Vec<UnlockedCard>, sqlx::Error> {
+pub async fn trade_cards(sql: &Sql, user_id: &Id, trade_id: &Id) -> Result<Vec<UnlockedCard>, sqlx::Error> {
     let cards_db: Vec<UnlockedCardDb> = sqlx::query_as(
         "SELECT
          cardunlocks.cuid AS id,
@@ -37,13 +35,12 @@ pub async fn trade_cards(sql: &Sql, user_id: &Id, trade_id: &Id, config: &Config
          .fetch_all(sql.pool())
          .await?;
 
-    let cards = cards_db.into_iter().map(|card_db| { UnlockedCard::from_card_db(card_db, config) }).collect();
+    let cards = cards_db.into_iter().map(UnlockedCard::from).collect();
 
     Ok(cards)
 }
 
-//TODO: dont pass config
-pub async fn trade_suggestions(sql: &Sql, user_id: &Id, trade_id: &Id, config: &Config) -> Result<Vec<UnlockedCard>, sqlx::Error> {
+pub async fn trade_suggestions(sql: &Sql, user_id: &Id, trade_id: &Id) -> Result<Vec<UnlockedCard>, sqlx::Error> {
     let cards_db: Vec<UnlockedCardDb> = sqlx::query_as(
         "SELECT
          cardunlocks.cuid AS id,
@@ -76,7 +73,7 @@ pub async fn trade_suggestions(sql: &Sql, user_id: &Id, trade_id: &Id, config: &
          .fetch_all(sql.pool())
          .await?;
 
-    let cards = cards_db.into_iter().map(|card_db| { UnlockedCard::from_card_db(card_db, config) }).collect();
+    let cards = cards_db.into_iter().map(UnlockedCard::from).collect();
 
     Ok(cards)
 }

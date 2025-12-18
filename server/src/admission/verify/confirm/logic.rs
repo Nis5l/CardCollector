@@ -14,7 +14,7 @@ pub async fn verify_confirm_route(key: String, sql: &State<Sql>) -> ApiResponseE
         None => return ApiResponseErr::api_err(Status::BadRequest, String::from("Verification key invalid"))
     };
 
-    if let user::data::UserVerified::Yes = rjtry!(user::data::UserVerified::from_db(rjtry!(sql::user_verified(sql, &user_id).await))) {
+    if let user::data::UserVerified::Yes = user::data::UserVerified::from(rjtry!(sql::user_verified(sql, &user_id).await)) {
         return ApiResponseErr::api_err(Status::Conflict, String::from("Already verified"));
     };
 

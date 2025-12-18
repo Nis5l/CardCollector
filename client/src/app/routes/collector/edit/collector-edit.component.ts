@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { switchMap, combineLatest as observableCombineLatest, map, filter, Observable, shareReplay } from 'rxjs';
+import { switchMap, combineLatest as observableCombineLatest, map, Observable, shareReplay } from 'rxjs';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { CollectorService } from '../collector.service';
 import type { CollectorConfig } from '../types';
-import { LoadingService, AuthService } from '../../../shared/services';
+import { LoadingService } from '../../../shared/services';
 import { SubscriptionManagerComponent } from '../../../shared/abstract';
 import type { Collector, Id } from '../../../shared/types';
 
@@ -28,7 +28,6 @@ export class CollectorEditComponent extends SubscriptionManagerComponent {
 
 	constructor(
 		private readonly collectorService: CollectorService,
-		private readonly authService: AuthService,
 		private readonly router: Router,
 		activatedRoute: ActivatedRoute,
 		loadingService: LoadingService
@@ -62,10 +61,6 @@ export class CollectorEditComponent extends SubscriptionManagerComponent {
         })
        ),
     );
-
-		this.registerSubscription(observableCombineLatest([this.collector$, this.authService.authData()]).pipe(
-			filter(([collector, authData]) => !AuthService.userIdEqual(collector?.userId, authData?.userId))
-		).subscribe(([collector]) => this.navigateCollector(collector?.id)));
 	}
 
 	public navigateCollector(collectorId: Id | undefined): void {

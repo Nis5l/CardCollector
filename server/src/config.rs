@@ -30,6 +30,7 @@ pub struct Config {
     pub collector_create_limit: u32,
     pub collector_card_request_limit: u32,
     pub collector_card_type_request_limit: u32,
+    pub collector_moderator_limit: u32,
 
     pub card_type_len_min: u32,
     pub card_type_len_max: u32,
@@ -117,6 +118,7 @@ impl Default for Config {
             collector_create_limit: 10,
             collector_card_request_limit: 30,
             collector_card_type_request_limit: 30,
+            collector_moderator_limit: 10,
 
             card_type_len_min: 4,
             card_type_len_max: 20,

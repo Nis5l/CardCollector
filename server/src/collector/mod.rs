@@ -6,3 +6,4 @@ pub mod collector_image;
 pub mod get;
 pub mod banner;
 pub mod update;
+pub mod moderator;

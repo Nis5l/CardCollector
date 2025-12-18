@@ -1,0 +1,16 @@
+use rocketjson::JsonBody;
+use validator::Validate;
+use serde::{Serialize, Deserialize};
+
+use crate::shared::Id;
+
+#[derive(Debug, Deserialize, Validate, JsonBody)]
+pub struct CollectorAddModeratorRequest {
+    pub user_id: Id,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct CollectorAddModeratorResponse {
+    pub message: String
+}

@@ -1,8 +1,7 @@
-import type { Id } from '../../../../../shared/types';
+import type { User } from '../../../../../shared/types/user';
 import { FriendStatus } from '../../../shared/types';
 
 export interface FriendResponse {
-    userId: Id,
-    username: String,
-    status: FriendStatus
+  user: User,
+  status: FriendStatus
 }

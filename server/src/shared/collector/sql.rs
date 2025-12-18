@@ -14,12 +14,42 @@ pub async fn collector_exists(sql: &Sql, collector_id: &Id) -> Result<bool, sqlx
     Ok(count != 0)
 }
 
-pub async fn collecor_is_admin(sql: &Sql, collector_id: &Id, user_id: &Id) -> Result<bool, sqlx::Error> {
+pub async fn collector_is_owner_or_moderator(sql: &Sql, collector_id: &Id, user_id: &Id) -> Result<bool, sqlx::Error> {
+    let (count, ): (i32, ) = sqlx::query_as(
+        "SELECT
+            (SELECT COUNT(*) FROM collectors WHERE coid = ? AND uid = ?) +
+            (SELECT COUNT(*) FROM collectormoderators WHERE coid = ? AND uid = ?)
+        AS count;")
+        .bind(collector_id)
+        .bind(user_id)
+        .bind(collector_id)
+        .bind(user_id)
+        .fetch_one(sql.pool())
+        .await?;
+
+    Ok(count != 0)
+}
+
+pub async fn collector_is_owner(sql: &Sql, collector_id: &Id, user_id: &Id) -> Result<bool, sqlx::Error> {
     let (count, ): (i32, ) = sqlx::query_as(
         "SELECT COUNT(*)
          FROM collectors
-         WHERE coid=?
-         AND uid=?;")
+         WHERE coid = ?
+         AND uid = ?;")
+        .bind(collector_id)
+        .bind(user_id)
+        .fetch_one(sql.pool())
+        .await?;
+
+    Ok(count != 0)
+}
+
+pub async fn collector_is_moderator(sql: &Sql, collector_id: &Id, user_id: &Id) -> Result<bool, sqlx::Error> {
+    let (count, ): (i32, ) = sqlx::query_as(
+        "SELECT COUNT(*)
+         FROM collectormoderators
+         WHERE coid = ?
+         AND uid = ?;")
         .bind(collector_id)
         .bind(user_id)
         .fetch_one(sql.pool())

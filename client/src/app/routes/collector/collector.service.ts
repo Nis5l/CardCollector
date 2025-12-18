@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import type { CollectorUpdateRequest, CollectorConfig } from './types';
+import type { CollectorUpdateRequest, CollectorConfig, CollectorModeratorIndexResponse } from './types';
 import type { Collector, Id } from '../../shared/types';
 import { HttpService } from '../../shared/services';
 
@@ -21,4 +21,8 @@ export class CollectorService {
 	public updateCollector(collectorUpdateRequest: CollectorUpdateRequest): Observable<unknown> {
 		return this.httpService.post<CollectorUpdateRequest, unknown>(`/collector/update`, collectorUpdateRequest);
 	}
+
+  public getModerators(collectorId: Id): Observable<CollectorModeratorIndexResponse> {
+		return this.httpService.get<CollectorModeratorIndexResponse>(`/collector/${collectorId}/moderator`);
+  }
 }

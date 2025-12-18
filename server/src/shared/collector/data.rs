@@ -24,11 +24,22 @@ macro_rules! verify_collector {
 }
 
 #[macro_export]
-macro_rules! verify_collector_admin {
+macro_rules! verify_collector_owner {
     ( $sql:expr, $collector_id:expr, $user_id:expr ) => {
-        match crate::shared::collector::sql::collecor_is_admin($sql, $collector_id, $user_id).await {
+        match crate::shared::collector::sql::collector_is_owner($sql, $collector_id, $user_id).await {
             Ok(true) => (),
-            Ok(false) => return ApiResponseErr::api_err(Status::Unauthorized, String::from("Admin priviliges for collector Required")),
+            Ok(false) => return ApiResponseErr::api_err(Status::Unauthorized, String::from("Owner priviliges for collector Required")),
+            Err(_) => return ApiResponseErr::api_err(Status::InternalServerError, String::from("Database Error"))
+        }
+    };
+}
+
+#[macro_export]
+macro_rules! verify_collector_owner_moderator {
+    ( $sql:expr, $collector_id:expr, $user_id:expr ) => {
+        match crate::shared::collector::sql::collector_is_owner_or_moderator($sql, $collector_id, $user_id).await {
+            Ok(true) => (),
+            Ok(false) => return ApiResponseErr::api_err(Status::Unauthorized, String::from("Moderator priviliges for collector Required")),
             Err(_) => return ApiResponseErr::api_err(Status::InternalServerError, String::from("Database Error"))
         }
     };

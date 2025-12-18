@@ -1,6 +1,7 @@
 use serde_repr::Serialize_repr;
 use serde::Serialize;
 use sqlx::FromRow;
+use chrono::{DateTime, Utc};
 
 use crate::shared::Id;
 
@@ -29,38 +30,38 @@ pub trait FriendStatusParam {
 }
 
 #[derive(Debug, Serialize, FromRow)]
-pub struct FriendUsernameDb {
-    pub username: String,
-    pub userone: Id,
-    pub usertwo: Id,
-    #[sqlx(rename="friendStatus")]
-    pub friend_status: i32
+pub struct FriendUserDb {
+    pub uusername: String,
+    pub uranking: i32,
+	pub utime: DateTime<Utc>,
+    pub uidone: Id,
+    pub uidtwo: Id,
+    pub frstatus: i32
 }
 
-impl FriendStatusParam for FriendUsernameDb {
+impl FriendStatusParam for FriendUserDb {
     fn is_sent(&self, user_id: &Id) -> bool {
-        &self.userone == user_id
+        &self.uidone == user_id
    }
 
     fn get_status(&self) -> i32 {
-        self.friend_status
+        self.frstatus
    }
 }
 
 #[derive(Debug, Serialize, FromRow)]
 pub struct FriendDb {
-    pub userone: Id,
-    pub usertwo: Id,
-    #[sqlx(rename="friendStatus")]
-    pub friend_status: i32
+    pub uidone: Id,
+    pub uidtwo: Id,
+    pub frstatus: i32
 }
 
 impl FriendStatusParam for FriendDb {
     fn is_sent(&self, user_id: &Id) -> bool {
-        &self.userone == user_id
+        &self.uidone == user_id
    }
 
     fn get_status(&self) -> i32 {
-        self.friend_status
+        self.frstatus
    }
 }

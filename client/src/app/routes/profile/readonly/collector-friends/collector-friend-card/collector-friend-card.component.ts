@@ -61,11 +61,13 @@ export class CollectorFriendCardComponent {
     this.router.navigate(["user", userId]);
   }
 
+  //TODO: confirm dialog maybe
   public declineFriend(event: Event, userId: Id): void {
     event.stopPropagation();
     this.onFriendDecline.emit(userId);
   }
 
+  //TODO: confirm dialog maybe
   public acceptFriend(event: Event, userId: Id): void {
     event.stopPropagation();
     this.onFriendAccept.emit(userId);

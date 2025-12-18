@@ -1,9 +1,11 @@
 use serde::Serialize;
 
 #[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct CollectorConfigResponse {
     pub name: FieldRange,
-    pub description: FieldRange
+    pub description: FieldRange,
+    pub moderator_limit: u32
 }
 
 #[derive(Debug, Serialize)]

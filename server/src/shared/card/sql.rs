@@ -1,7 +1,6 @@
 use sqlx::mysql::MySqlQueryResult;
 
 use crate::sql::Sql;
-use crate::config::Config;
 use super::data::{UnlockedCardCreateData, UnlockedCard, UnlockedCardDb, CardDb, SortType, Card, InventoryOptions, CardState, CardSortType};
 use crate::shared::{Id, util};
 
@@ -74,8 +73,8 @@ pub async fn add_card(sql: &Sql, user_id: &Id, card_unlocked_id: &Id, _collector
     Ok(())
 }
 
-pub async fn get_unlocked_card(sql: &Sql, card_unlocked_id: &Id, user_id: Option<&Id>, config: &Config) -> Result<Option<UnlockedCard>, sqlx::Error> {
-    let mut cards = get_unlocked_cards(sql, vec![card_unlocked_id.clone()], user_id, config).await?;
+pub async fn get_unlocked_card(sql: &Sql, card_unlocked_id: &Id, user_id: Option<&Id>) -> Result<Option<UnlockedCard>, sqlx::Error> {
+    let mut cards = get_unlocked_cards(sql, vec![card_unlocked_id.clone()], user_id).await?;
 
     if cards.is_empty() {
         return Ok(None);
@@ -84,10 +83,7 @@ pub async fn get_unlocked_card(sql: &Sql, card_unlocked_id: &Id, user_id: Option
     Ok(Some(cards.remove(0)))
 }
 
-//TODO: passing the config to sql doesnt feel right, maybe add another step where the CardDbs are
-//transformed to Cards
-
-pub async fn get_unlocked_cards(sql: &Sql, card_unlocked_ids: Vec<Id>, user_id: Option<&Id>, config: &Config) -> Result<Vec<UnlockedCard>, sqlx::Error> {
+pub async fn get_unlocked_cards(sql: &Sql, card_unlocked_ids: Vec<Id>, user_id: Option<&Id>) -> Result<Vec<UnlockedCard>, sqlx::Error> {
     if card_unlocked_ids.is_empty() { return Ok(Vec::new()); }
 
     let mut in_statement = String::from("");
@@ -147,7 +143,7 @@ pub async fn get_unlocked_cards(sql: &Sql, card_unlocked_ids: Vec<Id>, user_id: 
 
     let cards_db: Vec<UnlockedCardDb> = stmt.fetch_all(sql.pool()).await?;
 
-    Ok(cards_db.into_iter().map(|card_db| { UnlockedCard::from_card_db(card_db, config) }).collect())
+    Ok(cards_db.into_iter().map(UnlockedCard::from).collect())
 }
 
 pub async fn delete_card(sql: &Sql, card_unlocked_id: &Id) -> Result<u64, sqlx::Error> {
@@ -217,8 +213,7 @@ fn order_by_string_from_sort_type(sort_type: &SortType) -> &str {
     }
 }
 
-//TODO: not sure if config should be passed
-pub async fn get_inventory(sql: &Sql, config: &Config, options: &InventoryOptions) -> Result<Vec<UnlockedCard>, sqlx::Error> {
+pub async fn get_inventory(sql: &Sql, options: &InventoryOptions) -> Result<Vec<UnlockedCard>, sqlx::Error> {
     let search = util::escape_for_like(options.search.clone());
 
     let order_by = order_by_string_from_sort_type(&options.sort_type);
@@ -281,7 +276,7 @@ pub async fn get_inventory(sql: &Sql, config: &Config, options: &InventoryOption
         .fetch_all(sql.pool())
         .await?;
 
-    Ok(cards_db.into_iter().map(|card_db| { UnlockedCard::from_card_db(card_db, config) }).collect())
+    Ok(cards_db.into_iter().map(UnlockedCard::from).collect())
 }
 
 //TODO: maybe replace InventoryOptions since page data is not used
@@ -346,7 +341,7 @@ pub fn order_by_string_from_card_sort_type(sort_type: &CardSortType) -> &str {
     }
 }
 
-pub async fn get_cards(sql: &Sql, config: &Config, collector_id: &Id, mut name: String, sort_type: &CardSortType, amount: u32, offset: u32, state: Option<CardState>) -> Result<Vec<Card>, sqlx::Error> {
+pub async fn get_cards(sql: &Sql, collector_id: &Id, mut name: String, sort_type: &CardSortType, amount: u32, offset: u32, state: Option<CardState>) -> Result<Vec<Card>, sqlx::Error> {
     name = util::escape_for_like(name);
 
     let order_by = order_by_string_from_card_sort_type(sort_type);
@@ -390,7 +385,7 @@ pub async fn get_cards(sql: &Sql, config: &Config, collector_id: &Id, mut name: 
 
     let cards_db: Vec<CardDb> = stmt.fetch_all(sql.pool()).await?;
 
-    let cards = cards_db.into_iter().map(|card_db| { Card::from_card_db(card_db, config) }).collect();
+    let cards = cards_db.into_iter().map(Card::from).collect();
 
     Ok(cards)
 }

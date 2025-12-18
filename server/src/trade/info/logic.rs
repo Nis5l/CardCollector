@@ -25,11 +25,11 @@ pub async fn trade_route(user_friend_id: Id, collector_id: Id, sql: &State<Sql>,
     }
     let trade_id = rjtry!(trade::sql::create_trade(sql, &Id::new(config.id_length), &user_id, &user_friend_id, &collector_id).await);
 
-    let self_cards = rjtry!(sql::trade_cards(sql, &user_id, &trade_id, config).await);
-    let friend_cards = rjtry!(sql::trade_cards(sql, &user_friend_id, &trade_id, config).await);
+    let self_cards = rjtry!(sql::trade_cards(sql, &user_id, &trade_id).await);
+    let friend_cards = rjtry!(sql::trade_cards(sql, &user_friend_id, &trade_id).await);
 
-    let self_card_suggestions = rjtry!(sql::trade_suggestions(sql, &user_id, &trade_id, config).await);
-    let friend_card_suggestions = rjtry!(sql::trade_suggestions(sql, &user_friend_id, &trade_id, config).await);
+    let self_card_suggestions = rjtry!(sql::trade_suggestions(sql, &user_id, &trade_id).await);
+    let friend_card_suggestions = rjtry!(sql::trade_suggestions(sql, &user_friend_id, &trade_id).await);
 
     let trade_db = rjtry!(trade::sql::get_trade(sql, &user_id, &trade_id).await);
 

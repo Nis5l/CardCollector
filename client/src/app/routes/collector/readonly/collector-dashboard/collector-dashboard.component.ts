@@ -39,7 +39,7 @@ export class CollectorDashboardComponent extends SubscriptionManagerComponent {
     );
 
 		this.isAdmin$ = this.collector$.pipe(
-			switchMap(({ id: collectorId }) => this.userService.isCollectorAdmin(collectorId))
+			switchMap(({ id: collectorId }) => this.userService.isCollectorOwnerModerator(collectorId))
 		);
   }
 

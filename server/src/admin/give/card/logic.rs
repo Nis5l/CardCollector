@@ -17,7 +17,7 @@ pub async fn give_card_route(collector_id: Id, data: GiveCardRequest, sql: &Stat
     verify_user!(sql, &data.user_id, false);
     verify_collector!(sql, &collector_id);
 
-    if !matches!(rjtry!(user::sql::get_user_rank(sql, &user_id).await), Ok(user::data::UserRanking::Admin)) {
+    if rjtry!(user::sql::get_user_rank(sql, &user_id).await) != user::data::UserRanking::Admin {
         return ApiResponseErr::api_err(Status::Forbidden, String::from("Missing admin permissions"))
     }
 

@@ -104,7 +104,8 @@ async fn rocket() -> _ {
             user::flex::flex_route,
             user::profile_image::profile_image_set_route,
             user::profile_image::profile_image_get_route,
-            user::collector_is_admin::user_collector_is_admin_route,
+            user::collector_is_owner_moderator::user_collector_is_owner_moderator_route,
+            user::collector_is_owner::user_collector_is_owner_route,
 
             notifications::notifications_route,
             notifications::notifications_delete_route,
@@ -167,6 +168,9 @@ async fn rocket() -> _ {
             collector::collector_image::collector_image_set_route,
             collector::banner::collector_banner_get_route,
             collector::banner::collector_banner_set_route,
+            collector::moderator::index::collector_moderator_index_route,
+            collector::moderator::add::collector_moderator_add_route,
+            collector::moderator::remove::collector_moderator_remove_route,
         ])
         .mount(format!("/{}", &config.card_image_base), FileServer::from(relative!("static/card")))
         .mount(format!("/{}", &config.frame_image_base), FileServer::from(relative!("static/frame")))

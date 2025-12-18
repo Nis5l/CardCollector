@@ -1,10 +1,11 @@
 export interface CollectorConfig {
   name: {
-    minLength: 0,
-    maxLength: 0
+    minLength: number,
+    maxLength: number
   },
   description: {
-    minLength: 0,
-    maxLength: 0
-  }
+    minLength: number,
+    maxLength: number
+  },
+  moderatorLimit: number
 };

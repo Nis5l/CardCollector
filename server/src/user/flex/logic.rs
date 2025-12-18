@@ -13,7 +13,7 @@ pub async fn flex_route(user_id: Id, collector_id: Id, sql: &State<Sql>, config:
     verify_user!(sql, &user_id, false);
     verify_collector!(sql, &collector_id);
 
-    let cards = rjtry!(card::sql::get_inventory(sql, config, &card::data::InventoryOptions {
+    let cards = rjtry!(card::sql::get_inventory(sql, &card::data::InventoryOptions {
         user_id,
         collector_id,
         count: config.flex_cards_amount,

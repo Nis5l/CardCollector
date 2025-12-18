@@ -1,0 +1,13 @@
+<ng-container *ngIf="(user$ | async) as user">
+  <mat-card appearance="outlined" class="user" (click)="userClick(user)">
+    <div class="user-image">
+      <cc-profile-image [userId]="user.id" [editable]="false"></cc-profile-image>
+    </div>
+    <div class="info">
+      <mat-card-title>{{user.username}}</mat-card-title>
+      <!--<mat-card-subtitle>...description...</mat-card-subtitle>
+      <mat-card-subtitle>...stats...</mat-card-subtitle>-->
+    </div>
+    <ng-content></ng-content>
+  </mat-card>
+</ng-container>

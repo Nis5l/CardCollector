@@ -1,7 +1,7 @@
 use rocketjson::{ApiResponseErr, rjtry, error::ApiErrorsCreate};
 use rocket::http::Status;
 use rocket::State;
-use rand::{thread_rng, Rng};
+use rand::Rng;
 
 use super::data::{UpgradeResponse, UpgradeRequest, UpgradeCardsResult};
 use crate::shared::crypto::JwtToken;
@@ -17,12 +17,12 @@ pub async fn upgrade_route(sql: &State<Sql>, token: JwtToken, data: UpgradeReque
     
     verify_user!(sql, &user_id, true);
 
-    let card_one: UnlockedCard = match rjtry!(card::sql::get_unlocked_card(sql, &data.card_one, Some(&user_id), config).await) {
+    let card_one: UnlockedCard = match rjtry!(card::sql::get_unlocked_card(sql, &data.card_one, Some(&user_id)).await) {
         None => return ApiResponseErr::api_err(Status::NotFound, format!("Card not found: {}", data.card_one)),
         Some(card) => card
     };
 
-    let card_two: UnlockedCard = match rjtry!(card::sql::get_unlocked_card(sql, &data.card_two, Some(&user_id), config).await) {
+    let card_two: UnlockedCard = match rjtry!(card::sql::get_unlocked_card(sql, &data.card_two, Some(&user_id)).await) {
         None => return ApiResponseErr::api_err(Status::NotFound, format!("Card not found: {}", data.card_two)),
         Some(card) => card
     };
@@ -62,9 +62,9 @@ pub async fn upgrade_route(sql: &State<Sql>, token: JwtToken, data: UpgradeReque
 fn upgrade_cards(card_one: &UnlockedCard, card_two: &UnlockedCard, config: &Config) -> UpgradeCardsResult {
     let upgrade_chance = ((card_one.quality + card_two.quality) * 10) as f32;
 
-    let mut rng = thread_rng();
+    let mut rng = rand::rng();
 
-    let success = rng.gen_range(0f32..=100f32) <= upgrade_chance;
+    let success = rng.random_range(0f32..=100f32) <= upgrade_chance;
 
     //TODO: log success
 
@@ -74,7 +74,7 @@ fn upgrade_cards(card_one: &UnlockedCard, card_two: &UnlockedCard, config: &Conf
     match success {
          true => {
             new_level = card_one.level + 1;
-			new_quality = rng.gen_range(config.pack_quality_min..=config.pack_quality_max);
+			new_quality = rng.random_range(config.pack_quality_min..=config.pack_quality_max);
          },
          false => {
             new_level = card_one.level;

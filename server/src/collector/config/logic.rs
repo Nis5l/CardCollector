@@ -15,6 +15,7 @@ pub async fn get_collector_config_route(config: &State<Config>) -> ApiResponseEr
         description: FieldRange {
             min_length: config.collector_desciption_len_min,
             max_length: config.collector_desciption_len_max,
-        }
+        },
+        moderator_limit: config.collector_moderator_limit
     })
 }
