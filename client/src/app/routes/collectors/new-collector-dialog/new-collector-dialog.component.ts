@@ -32,7 +32,7 @@ export class NewCollectorDialogComponent extends SubscriptionManagerComponent {
 	constructor(
 		public readonly newCollectorDialogService: NewCollectorDialogService,
 		private readonly collectorService: CollectorService,
-		private readonly dialogRef: MatDialogRef<NewCollectorDialogComponent>,
+		public readonly dialogRef: MatDialogRef<NewCollectorDialogComponent>,
 		private readonly router: Router,
 	) {
 		super();
@@ -58,10 +58,7 @@ export class NewCollectorDialogComponent extends SubscriptionManagerComponent {
 
 	public static open(matDialog: MatDialog): Observable<undefined> {
 		return matDialog.open<NewCollectorDialogComponent, undefined, undefined>(NewCollectorDialogComponent, {
-      minWidth: "250px",
-      width: "50vw",
-	    maxWidth: "800px",
-      height: "auto"
+      panelClass: "responsive-dialog"
     }).afterClosed();
 	}
 

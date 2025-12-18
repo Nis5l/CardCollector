@@ -1,10 +1,16 @@
 <div class="yes-no-cancel-dialog">
-	<p>{{message}}</p>
-	<div class="actions">
-    <div class="yes-no">
+  <mat-toolbar class="header">
+    <button mat-icon-button (click)="cancel()">
+      <mat-icon color="accent" svgIcon="close"></mat-icon>
+    </button>
+  </mat-toolbar>
+  <div class="content">
+    <div class="text">
+      <p>{{message}}</p>
+    </div>
+    <div class="actions">
       <button matButton="outlined" (click)="yes()">Yes</button>
       <button matButton="outlined" (click)="no()">No</button>
     </div>
-    <button matButton="outlined" (click)="cancel()">Cancel</button>
-	</div>
+  </div>
 </div>

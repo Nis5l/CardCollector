@@ -1,16 +1,3 @@
-<div *ngVar="(usersResponse$ | async) as usersResponse" class="wrap">
-  <form [formGroup]="formGroup" class="search">
-    <mat-form-field class="search-field">
-      <input matInput type="text" formControlName="search" placeholder="Search" />
-    </mat-form-field>
-  </form>
-  <cc-loading [observable]="loading$" [boolObservable]="true" class="loading"></cc-loading>
-  @if (usersResponse != null) {
-    <div class="user-wrap">
-      @for (user of usersResponse.users; track user) {
-        <cc-user-card [user]="user"></cc-user-card>
-      }
-      <mat-paginator [length]="usersResponse.userCount" [pageSize]="usersResponse.pageSize" (page)="changePage($event)"></mat-paginator>
-    </div>
-  }
+<div class="wrap">
+  <cc-user-list click="navigate"></cc-user-list>
 </div>

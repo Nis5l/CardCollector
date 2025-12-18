@@ -2,7 +2,9 @@
 
 .card-add-container {
 	margin: 10px;
-	height: 520px;
+  height: 100%;
+  overflow: scroll;
+	//height: 520px;
 	width: auto;
 	display: flex;
 	gap: 50px;

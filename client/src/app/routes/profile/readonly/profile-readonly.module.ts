@@ -8,7 +8,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { HttpModule, AuthModule } from '../../../shared/services';
 import { ProfileImageModule, TabNavigationModule } from '../../../shared/components';
-import { ConfirmationDialogModule } from '../../../shared/dialogs';
+import { YesNoCancelDialogModule } from '../../../shared/dialogs';
 import { NgVarModule } from '../../../shared/directives';
 import { ProfileReadonlyComponent } from './profile-readonly.component';
 import { ProfileService } from '../profile.service';
@@ -29,7 +29,7 @@ const MATERIAL_MODULES = [
 
 		...MATERIAL_MODULES,
 
-    ConfirmationDialogModule,
+    YesNoCancelDialogModule,
 		HttpModule,
 		AuthModule,
 		NgVarModule,

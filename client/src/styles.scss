@@ -1,3 +1,5 @@
+@import "./screen.scss";
+
 /* You can add global styles to this file, and also import other style files */
 
 html, body { height: 100%; }
@@ -27,4 +29,39 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   margin: 0 auto;
   margin-top: 10px;
   box-sizing: border-box;
+}
+
+.responsive-dialog {
+  min-width: 600px !important;
+  width: 50vw !important;
+  max-width: 800px !important;
+  height: auto !important;
+
+  .header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0;
+    margin: 0;
+
+    p {
+      font-size: 25px;
+    }
+
+    button {
+      transform: scale(1.4);
+    }
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .responsive-dialog {
+    min-width: 0px !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+    border-radius: 0 !important;
+    margin: 0;
+  }
 }

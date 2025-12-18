@@ -2,15 +2,17 @@ import { Injectable } from '@angular/core';
 import { HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-import { HttpService } from '../../shared/services';
+import { HttpService } from '../../services';
+import type { Id } from '../../types';
 import type { UsersResponse } from './types';
 
 @Injectable()
-export class UsersService {
+export class UserListService {
   constructor(private readonly httpService: HttpService) {}
 
-  public getUsers(username: string, page: number): Observable<UsersResponse> {
+  public getUsers(username: string, page: number, excludeIds: Id[]): Observable<UsersResponse> {
     const params = new HttpParams().set("username", username).set("page", page);
+    excludeIds.forEach(id => params.append('excludeIds', id));
     return this.httpService.get<UsersResponse>("/user", params);
   }
 }

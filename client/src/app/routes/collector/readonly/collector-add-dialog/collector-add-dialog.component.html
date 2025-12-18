@@ -1,4 +1,10 @@
 <div class="collector-add">
+  <mat-toolbar class="header">
+    <p>Create Request</p>
+    <button mat-icon-button (click)="cancel()">
+      <mat-icon color="accent" svgIcon="close"></mat-icon>
+    </button>
+  </mat-toolbar>
 	<mat-tab-group mat-stretch-tabs>
 		<mat-tab label="Card">
 			<cc-collector-add-card [collectorId]="collectorId" (onClose)="close()"></cc-collector-add-card>

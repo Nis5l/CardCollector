@@ -10,7 +10,7 @@ import { CardUpgradeService } from './card-upgrade.service';
 import { HttpModule } from '../../../shared/services';
 import { CardModule, LoadingModule } from '../../../shared/components';
 import { NgVarModule } from '../../../shared/directives';
-import { ConfirmationDialogModule } from '../../../shared/dialogs';
+import { YesNoCancelDialogModule } from '../../../shared/dialogs';
 
 const MATERIAL_MODULES = [
   MatPaginatorModule,
@@ -30,7 +30,7 @@ const MATERIAL_MODULES = [
     NgVarModule,
     HttpModule,
     CardModule,
-    ConfirmationDialogModule,
+    YesNoCancelDialogModule,
     LoadingModule,
   ]
 })

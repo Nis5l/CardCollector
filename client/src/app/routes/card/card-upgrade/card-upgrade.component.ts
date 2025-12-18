@@ -8,7 +8,7 @@ import { CardUpgradeService } from './card-upgrade.service';
 import type { UnlockedCard, InventoryResponse } from '../../../shared/types';
 import { CardService } from '../../../shared/components';
 import { SubscriptionManagerComponent } from '../../../shared/abstract';
-import { ConfirmationDialogComponent } from '../../../shared/dialogs';
+import { YesNoCancelDialogComponent } from '../../../shared/dialogs';
 
 @Component({
     selector: "cc-card-upgrade",
@@ -48,7 +48,7 @@ export class CardUpgradeComponent extends SubscriptionManagerComponent {
 	}
 
   public onClick(cardOne: UnlockedCard, cardTwo: UnlockedCard): void {
-    this.registerSubscription(ConfirmationDialogComponent.open(this.matDialog, "Attempt Card Upgrade?").pipe(
+    this.registerSubscription(YesNoCancelDialogComponent.open(this.matDialog, "Attempt Card Upgrade?").pipe(
       filter(confirm => confirm === true),
       switchMap(() => this.cardUpgradeService.upgrade(cardOne.id, cardTwo.id))
     ).subscribe(({ card }) => {

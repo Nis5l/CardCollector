@@ -1,7 +1,7 @@
 <ng-container *ngVar="(isSelf$ | async) as isSelf">
   @if ((friendResponse$ | async); as friendResponse) {
     @if (friendResponse.status === FriendStatus.Friend || isSelf) {
-      <cc-user-card [user]="friendResponse.user">
+      <cc-user-card click="navigate" [user]="friendResponse.user">
         @if (friendResponse.status === FriendStatus.Pending && isSelf) {
           <div class="friend-status">
             <button color="primary" mat-icon-button (click)="acceptFriend($event, friendResponse.user.id)">

@@ -7,7 +7,9 @@
       </button>
     }
   </div>
-  <cc-loading [observable]="moderators$"></cc-loading>
+  <div class="loading" *ngIf="!(moderators$ | async)">
+    <cc-loading [observable]="moderators$"></cc-loading>
+  </div>
   @if (moderators$ | async; as moderators) {
     @if (moderators.length > 0) {
       <div class="list">

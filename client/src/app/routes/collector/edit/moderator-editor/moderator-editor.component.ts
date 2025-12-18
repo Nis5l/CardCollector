@@ -1,8 +1,10 @@
 import { Component, Input } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Observable, BehaviorSubject, filter, switchMap, map, shareReplay } from 'rxjs';
 
 import { SubscriptionManagerComponent } from '../../../../shared/abstract';
-import { UserService } from '../../../../shared/services';
+import { UserService, AuthService } from '../../../../shared/services';
+import { SelectUserDialogComponent } from '../../../../shared/dialogs';
 import type { Id } from '../../../../shared/types';
 import type { User } from '../../../../shared/types/user';
 import { ModeratorEditorService } from './moderator-editor.service';
@@ -51,7 +53,9 @@ export class ModeratorEditorComponent extends SubscriptionManagerComponent {
   constructor(
     private readonly moderatorEditorService: ModeratorEditorService,
     private readonly collectorService: CollectorService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly authService: AuthService,
+    private readonly matDialog: MatDialog,
   ) {
     super();
 
@@ -76,6 +80,8 @@ export class ModeratorEditorComponent extends SubscriptionManagerComponent {
   }
 
   public addModerator(collector_id: Id): void {
-
+    const userId = this.authService.getUserId();
+    if(userId == null) throw new Error("userId not set");
+    SelectUserDialogComponent.open(this.matDialog, { excludeUserIds: [ userId ] });
   }
 }

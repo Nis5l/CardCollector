@@ -1,2 +1,2 @@
-export { ConfirmationDialogModule, ConfirmationDialogComponent } from './confirmation-dialog';
-export { YesNoCancelDialogComponent, YesNoCancelDialogModule } from './yes-no-cancel-dialog';
+export { YesNoCancelDialogModule, YesNoCancelDialogComponent } from './yes-no-cancel-dialog';
+export { SelectUserDialogModule, SelectUserDialogComponent } from './select-user-dialog';

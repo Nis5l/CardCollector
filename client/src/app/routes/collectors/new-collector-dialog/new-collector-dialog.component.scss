@@ -1,5 +1,11 @@
+@import "../../../../screen.scss";
+
 .new-collector-wrapper {
+  height: 100%;
+  //width: 100%;
+
   margin: 30px;
+  margin-top: 30px;
 
 	display: flex;
 	flex-direction: column;
@@ -7,10 +13,17 @@
 	gap: 30px;
 
 	form {
-		width: 250px;
+		width: 100%;
+    height: 100%;
 		display: flex;
 		flex-direction: column;
+    justify-content: center;
 		gap: 20px;
+
+		@media (max-width: $breakpoint-md) {
+      gap: 30px;
+      margin-bottom: 80px;
+    }
 
 		.error {
 			display: flex;
@@ -19,5 +32,9 @@
 
 			width: 100%;
 		}
+
+    button {
+      height: 50px;
+    }
 	}
 }

@@ -7,7 +7,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { LoadingModule, CardModule } from '../../../../../../shared/components';
-import { ConfirmationDialogModule, YesNoCancelDialogModule } from '../../../../../../shared/dialogs';
+import { YesNoCancelDialogModule } from '../../../../../../shared/dialogs';
 import { NgVarModule } from '../../../../../../shared/directives';
 import { HttpModule } from '../../../../../../shared/services';
 import { TradeSelfTradeComponent } from './trade-self-trade.component';
@@ -31,7 +31,6 @@ const MATERIAL_MODULES = [
     LoadingModule,
     CardModule,
     NgVarModule,
-    ConfirmationDialogModule,
     YesNoCancelDialogModule,
   ],
   providers: [ TradeService ],

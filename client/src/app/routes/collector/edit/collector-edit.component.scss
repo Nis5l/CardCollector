@@ -12,9 +12,13 @@
 	flex-direction: column;
 	flex-wrap: wrap;
 	align-items: flex-start;
-	gap: 20px;
+	gap: 40px;
 	margin-top: 20px;
   margin-bottom: 20px;
+
+  @media (max-width: $breakpoint-md) {
+	  gap: 20px;
+  }
 
 	cc-collector-favorite {
 		//NOTE: not center otherwise
@@ -34,7 +38,7 @@
 
   .info-card {
     width: 100%;
-    margin-top: 20px;
+    //margin-top: 20px;
     padding: 20px;
 
     .info {
@@ -53,8 +57,8 @@
 
   .moderator-card {
     width: 100%;
-    margin-top: 20px;
     padding: 20px;
+
     cc-collector-moderator-editor {
       width: 100%;
     }

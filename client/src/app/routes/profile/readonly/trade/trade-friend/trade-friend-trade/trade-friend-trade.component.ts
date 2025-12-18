@@ -6,7 +6,7 @@ import { Observable, map, switchMap, share, combineLatest as observableCombineLa
 import { TradeService } from '../../trade.service';
 import type { TradeInfoResponse } from '../../types';
 import type { Id, UnlockedCard } from '../../../../../../shared/types';
-import { ConfirmationDialogComponent } from '../../../../../../shared/dialogs';
+import { YesNoCancelDialogComponent } from '../../../../../../shared/dialogs';
 import { LoadingService } from '../../../../../../shared/services';
 import { TradeStatus } from '../../types/trade-status.enum';
 
@@ -65,7 +65,7 @@ export class TradeFriendTradeComponent {
   }
 
   public removeCard({ id: cardId }: UnlockedCard): void {
-    ConfirmationDialogComponent.open(this.matDialog, "Remove Card?").pipe(
+    YesNoCancelDialogComponent.open(this.matDialog, "Remove Card?").pipe(
       filter(confirm => confirm === true),
       tap(() => this.loadingService.setLoading(true)),
       switchMap(() => observableCombineLatest([this.userId$, this.collectorId$])),
@@ -77,7 +77,7 @@ export class TradeFriendTradeComponent {
   }
 
   public declineSuggestion({ id: cardId }: UnlockedCard): void {
-    ConfirmationDialogComponent.open(this.matDialog, "Remove Suggestion?").pipe(
+    YesNoCancelDialogComponent.open(this.matDialog, "Remove Suggestion?").pipe(
       filter(confirm => confirm === true),
       tap(() => this.loadingService.setLoading(true)),
       switchMap(() => observableCombineLatest([this.userId$, this.collectorId$])),

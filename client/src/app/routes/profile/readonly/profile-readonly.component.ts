@@ -7,7 +7,7 @@ import { LoadingService, AuthService } from '../../../shared/services';
 import type { Id } from '../../../shared/types';
 import type { NavigationItem } from '../../../shared/components';
 import { SubscriptionManagerComponent } from '../../../shared/abstract';
-import { ConfirmationDialogComponent } from '../../../shared/dialogs';
+import { YesNoCancelDialogComponent } from '../../../shared/dialogs';
 import { ProfileService } from '../profile.service';
 import { FriendStatus, Profile } from '../shared';
 import { CollectorFavoritesComponent } from './collector-favorites';
@@ -99,7 +99,7 @@ export class ProfileReadonlyComponent extends SubscriptionManagerComponent {
   }
 
   public removeFriend(userId: Id, confirmationDialog: boolean): void {
-    const dialog$: Observable<boolean | undefined> = confirmationDialog ? ConfirmationDialogComponent.open(this.matDialog, "Remove as Friend?") : observableOf(true);
+    const dialog$: Observable<boolean | undefined> = confirmationDialog ? YesNoCancelDialogComponent.open(this.matDialog, "Remove as Friend?") : observableOf(true);
 
     this.registerSubscription(dialog$.pipe(
       filter(confirm => confirm === true),

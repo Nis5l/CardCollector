@@ -19,13 +19,15 @@ export class CollectorAddDialogComponent {
 	public static open(matDialog: MatDialog, collectorId: Id): Observable<"refresh" | undefined> {
 		return matDialog.open<CollectorAddDialogComponent, Id, undefined>(CollectorAddDialogComponent, {
       data: collectorId,
-      minWidth: "250px",
-      width: "70vw",
-      maxWidth: "800px",
+      panelClass: "responsive-dialog"
     }).afterClosed();
 	}
 
   public close(): void {
     this.dialogRef.close("refresh");
+  }
+
+  public cancel(): void {
+    this.dialogRef.close();
   }
 }

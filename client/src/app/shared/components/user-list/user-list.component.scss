@@ -1,0 +1,27 @@
+@import "../../../../screen.scss";
+
+.user-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.search {
+  width: min(100%, 400px);
+
+  @media (max-width: $breakpoint-sm) {
+    width: 100%;
+  }
+
+  mat-form-field {
+    width: 100%;
+  }
+}
+
+.loading {
+  height: 300px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

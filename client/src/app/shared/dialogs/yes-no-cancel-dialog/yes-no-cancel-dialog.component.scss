@@ -1,40 +1,51 @@
+@import "../../../../screen.scss";
+
 .yes-no-cancel-dialog {
-	//width: 50vw;
-  margin: 20px;
+  margin: 30px;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+  height: 100%;
 
-	p {
-		display: flex;
-    color: var(--mat-sys-color-on-surface);
-		justify-content: center;
-		align-items: center;
-		margin-top: 10px;
-		margin-bottom: 15px;
-		min-height: 50px;
-	}
+  .header {
+    justify-content: flex-end;
+  }
 
-	.actions {
-    width: 80%;
+  .content {
+    height: 100%;
+    width: 100%;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
-    gap: 15px;
-    margin-bottom: 10px;
-    margin-top: 10px;
 
-    button {
-      width: 100%;
-      flex: 1;
-      min-height: 40px;
+		@media (max-width: $breakpoint-md) {
+      margin-bottom: 80px;
     }
 
-    .yes-no {
+    .text {
+      min-height: 100px;
+      margin-bottom: 50px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      p {
+        color: var(--mat-sys-color-on-surface);
+        font-size: 25px;
+      }
+    }
+
+    .actions {
       width: 100%;
       display: flex;
-      gap: 30px;
       justify-content: space-around;
+
+      button {
+        width: 40%;
+        //flex: 1;
+        min-height: 45px;
+        font-size: 17px;
+      }
     }
-	}
+  }
 }

@@ -6,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule } from '@angular/material/dialog';
 
 import { LoadingModule, CardModule } from '../../../../../../shared/components';
-import { ConfirmationDialogModule } from '../../../../../../shared/dialogs';
+import { YesNoCancelDialogModule } from '../../../../../../shared/dialogs';
 import { NgVarModule } from '../../../../../../shared/directives';
 import { HttpModule } from '../../../../../../shared/services';
 import { TradeFriendTradeComponent } from './trade-friend-trade.component';
@@ -28,7 +28,7 @@ const MATERIAL_MODULES = [
     LoadingModule,
     CardModule,
     NgVarModule,
-    ConfirmationDialogModule,
+    YesNoCancelDialogModule,
   ],
   providers: [ ],
   declarations: [ TradeFriendTradeComponent ]

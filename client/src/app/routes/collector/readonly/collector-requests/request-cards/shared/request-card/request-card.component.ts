@@ -4,7 +4,7 @@ import { Observable, BehaviorSubject, filter, switchMap } from 'rxjs';
 
 import type { Id } from '../../../../../../../shared/types';
 import { UserService } from '../../../../../../../shared/services';
-import { ConfirmationDialogComponent } from '../../../../../../../shared/dialogs';
+import { YesNoCancelDialogComponent } from '../../../../../../../shared/dialogs';
 import { SubscriptionManagerComponent } from '../../../../../../../shared/abstract';
 import { CardVote } from '../types';
 
@@ -100,7 +100,7 @@ export class RequestCardComponent extends SubscriptionManagerComponent {
 	}
 
 	public accept(): void {
-		this.registerSubscription(ConfirmationDialogComponent.open(this.matDialog, "Accept request?").pipe(
+		this.registerSubscription(YesNoCancelDialogComponent.open(this.matDialog, "Accept request?").pipe(
 			filter(confirm => confirm === true),
 		).subscribe(() => {
 			this.onAccept.next();
@@ -108,7 +108,7 @@ export class RequestCardComponent extends SubscriptionManagerComponent {
 	}
 
 	public decline(): void {
-		this.registerSubscription(ConfirmationDialogComponent.open(this.matDialog, "Decline request?").pipe(
+		this.registerSubscription(YesNoCancelDialogComponent.open(this.matDialog, "Decline request?").pipe(
 			filter(confirm => confirm === true),
 		).subscribe(() => {
 			this.onDecline.next();

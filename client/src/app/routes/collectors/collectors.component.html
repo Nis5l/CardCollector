@@ -5,7 +5,9 @@
     </mat-form-field>
     <button class="new-collector" matButton="outlined" (click)="newCollector()">New</button>
   </form>
-  <cc-loading [observable]="loading$" [boolObservable]="true"></cc-loading>
+  <div class="loading" *ngIf="loading$ | async">
+    <cc-loading [observable]="loading$" [boolObservable]="true"></cc-loading>
+  </div>
   <ng-container *ngVar="(collectorIndexResponse$ | async) as res">
     @if (res != null) {
       <div class="collectors">

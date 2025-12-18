@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, filter } from 'rxjs';
 
@@ -11,6 +11,12 @@ import type { User } from '../../types/user';
     standalone: false
 })
 export class UserCardComponent {
+  @Input()
+  public click: "none" | "navigate" | "event" = "none";
+
+  @Output()
+  public readonly onClick: EventEmitter<User> = new EventEmitter<User>();
+
   private readonly userSubject: BehaviorSubject<User | null> = new BehaviorSubject<User | null>(null);
   public readonly user$: Observable<User>;
 
@@ -32,6 +38,18 @@ export class UserCardComponent {
   }
 
   public userClick(user: User): void {
-    this.router.navigate(["user", user.id]);
+    switch (this.click) {
+      case "none": {
+        return
+      };
+      case "navigate": {
+        this.router.navigate(["user", user.id]);
+        return
+      };
+      case "event": {
+        this.onClick.emit();
+        return
+      };
+    }
   }
 }

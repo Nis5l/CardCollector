@@ -6,7 +6,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 
 import { HttpModule, AuthModule } from '../../../../../../shared/services';
 import { InventoryModule } from '../../../../../../shared/components/inventory';
-import { ConfirmationDialogModule } from '../../../../../../shared/dialogs';
+import { YesNoCancelDialogModule } from '../../../../../../shared/dialogs';
 import { TradeSelfInventoryComponent } from './trade-self-inventory.component';
 import { TradeService } from '../../trade.service';
 
@@ -25,7 +25,7 @@ const MATERIAL_MODULES = [
     HttpModule,
     AuthModule,
     InventoryModule,
-    ConfirmationDialogModule,
+    YesNoCancelDialogModule,
   ],
   providers: [ TradeService ],
   declarations: [ TradeSelfInventoryComponent ]

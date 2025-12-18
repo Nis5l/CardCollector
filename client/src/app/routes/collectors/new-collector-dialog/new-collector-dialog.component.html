@@ -2,6 +2,12 @@
 <ng-container *ngIf="(formGroup$ | async) as formGroup">
   <ng-container *ngIf="(config$ | async) as config">
     <div class="new-collector-wrapper">
+      <mat-toolbar class="header">
+        <p>Create Collector</p>
+        <button mat-icon-button (click)="dialogRef.close()">
+          <mat-icon color="accent" svgIcon="close"></mat-icon>
+        </button>
+      </mat-toolbar>
       <form [formGroup]="formGroup" (submit)="onCreate(formGroup)">
         <mat-form-field appearance="outline">
           <input matInput type="text" formControlName="name" placeholder="Name" />
@@ -13,7 +19,7 @@
           <mat-error>Description has to be {{config.description.minLength}}-{{config.description.maxLength}} characters</mat-error>
         </mat-form-field>
 
-        <div *ngVar="(error$ | async) as error" class="error">
+        <div *ngIf="(error$ | async) as error" class="error">
           @if (error != null) {
             <mat-error>{{error}}</mat-error>
           }

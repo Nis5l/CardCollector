@@ -5,7 +5,7 @@ import { Observable, map, tap, filter, switchMap, combineLatest as observableCom
 
 import type { Id } from '../../../../../../shared/types';
 import { AuthService, LoadingService } from '../../../../../../shared/services';
-import { ConfirmationDialogComponent } from '../../../../../../shared/dialogs';
+import { YesNoCancelDialogComponent } from '../../../../../../shared/dialogs';
 import { SubscriptionManagerComponent } from '../../../../../../shared/abstract';
 import { TradeService } from '../../trade.service';
 import type { TradeInfoResponse } from '../../types';
@@ -68,7 +68,7 @@ export class TradeSelfInventoryComponent extends SubscriptionManagerComponent {
   }
 
   public addCard(cardId: Id): void {
-    this.registerSubscription(ConfirmationDialogComponent.open(this.matDialog, "Add Card?").pipe(
+    this.registerSubscription(YesNoCancelDialogComponent.open(this.matDialog, "Add Card?").pipe(
       filter(confirm => confirm === true),
       tap(() => this.loadingService.setLoading(true)),
       switchMap(() => observableCombineLatest([this.userId$, this.collectorId$])),
