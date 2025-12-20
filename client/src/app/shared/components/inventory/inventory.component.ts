@@ -56,12 +56,20 @@ export class InventoryComponent extends SubscriptionManagerComponent {
 
   public readonly levelSubject: BehaviorSubject<number | null> = new BehaviorSubject<number | null>(null);
   @Input()
-  public set level(number: number | null | undefined) {
-    if(number == null) return;
-    this.levelSubject.next(number);
+  public set level(level: number | null | undefined) {
+    this.levelSubject.next(level ?? null);
   }
   public get level(): number | null | undefined {
     return this.levelSubject.getValue();
+  }
+
+  public readonly cardIdSubject: BehaviorSubject<Id | null> = new BehaviorSubject<Id | null>(null);
+  @Input()
+  public set cardId(cardId: Id | null | undefined) {
+    this.cardIdSubject.next(cardId ?? null);
+  }
+  public get cardId(): Id | null {
+    return this.cardIdSubject.getValue();
   }
 
   public readonly inventoryResponseSubject: BehaviorSubject<InventoryResponse>;
@@ -124,13 +132,14 @@ export class InventoryComponent extends SubscriptionManagerComponent {
       ),
       sortTypeFormControl.valueChanges.pipe(startWith(sortTypeDefaultValue)),
       this.excludeUuidsSubject.asObservable(),
-      this.levelSubject.asObservable()
+      this.levelSubject.asObservable(),
+      this.cardIdSubject.asObservable()
     ]).pipe(
       tap(() => {
         this.loadingSubject.next(true);
         this.inventoryResponseSubject.next(loadingInventoryResponse);
       }),
-      switchMap(([userId, collectorId, page, search, sortType, excludeUuids, level]) => this.inventoryService.getInventory(userId, collectorId, page, search, sortType, excludeUuids, level).pipe(
+      switchMap(([userId, collectorId, page, search, sortType, excludeUuids, level, cardId]) => this.inventoryService.getInventory(userId, collectorId, page, search, sortType, excludeUuids, level, cardId).pipe(
         catchError(() => observableOf(loadingInventoryResponse)),
         share()
       ))

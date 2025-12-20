@@ -28,6 +28,7 @@
           [userId]="unlockedCard?.userId ?? 'xxx'"
           [excludeUuids]="unlockedCard?.id != null ? [unlockedCard?.id] : []"
           [level]="unlockedCard?.level"
+          [cardId]="unlockedCard?.card?.cardInfo?.id"
           click="event"
           (clickEvent)="onClick(unlockedCard, $event)"
         ></cc-inventory>

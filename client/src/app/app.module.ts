@@ -104,6 +104,7 @@ export class AppModule {
       'book',
       'group_off',
       'credit_card_off',
+      'arrow_top_left',
     ].forEach(icon => {
       iconRegistry.addSvgIcon(
         icon,

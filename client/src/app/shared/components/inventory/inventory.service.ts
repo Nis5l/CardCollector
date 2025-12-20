@@ -9,7 +9,7 @@ import { SortType } from './types';
 export class InventoryService {
   constructor(private readonly httpService: HttpService) {}
 
-  public getInventory(userId: Id, collectorId: Id, page: number, search: string, sortType: SortType, excludeUuids: Id[], level: number | null | undefined): Observable<InventoryResponse> {
-    return this.httpService.post(`/user/${userId}/${collectorId}/inventory`, { page, search, sortType, excludeUuids, level });
+  public getInventory(userId: Id, collectorId: Id, page: number, search: string, sortType: SortType, excludeUuids: Id[], level: number | null | undefined, cardId: Id | null | undefined): Observable<InventoryResponse> {
+    return this.httpService.post(`/user/${userId}/${collectorId}/inventory`, { page, search, sortType, excludeUuids, level, cardId });
   }
 }
