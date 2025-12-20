@@ -1,4 +1,4 @@
-<ng-container *ngIf="(user$ | async) as user">
+@if (user$ | async; as user) {
   <mat-card appearance="outlined" class="user" [style.cursor]="click === 'none' ? 'default' : 'pointer'" (click)="userClick(user)">
     <div class="user-image">
       <cc-profile-image [userId]="user.id" [editable]="false"></cc-profile-image>
@@ -10,4 +10,4 @@
     </div>
     <ng-content></ng-content>
   </mat-card>
-</ng-container>
+}

@@ -1,5 +1,5 @@
-<div *ngIf="(collector$ | async) as collector">
-  <div *ngIf="(config$ | async) as config">
+@if (collector$ | async; as collector) {
+  @if (config$ | async; as config) {
     <div *ngIf="(formGroup$ | async) as formGroup">
       <cc-collector-banner [editable]="true" [collector]="collector"></cc-collector-banner>
       <div class="wrap head">
@@ -38,5 +38,5 @@
         <mat-icon color="primary" svgIcon="close"></mat-icon>
       </button>
     </div>
-  </div>
-</div>
+  }
+}

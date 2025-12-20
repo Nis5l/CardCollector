@@ -1,6 +1,6 @@
 <!-- <cc-loading-spinner *ngIf="loading$ | async"></cc-loading-spinner> TODO-->
-<ng-container *ngIf="(formGroup$ | async) as formGroup">
-  <ng-container *ngIf="(config$ | async) as config">
+@if (formGroup$ | async; as formGroup) {
+  @if (config$ | async; as config) {
     <div class="new-collector-wrapper">
       <mat-toolbar class="header">
         <p>Create Collector</p>
@@ -27,5 +27,5 @@
         <button matButton="outlined" type="submit" [disabled]="!formGroup.valid">Create</button>
       </form>
     </div>
-  </ng-container>
-</ng-container>
+  }
+}

@@ -1,7 +1,7 @@
-<ng-container *ngIf="(voteResponse$ | async) as voteResponse">
+@if (voteResponse$ | async; as voteResponse) {
   <cc-request-card title="Card" [userId]="card.cardInfo.userId" [collectorId]="collectorId" [vote]="voteResponse.vote" [votes]="voteResponse.count" (onAccept)="accept()" (onDecline)="decline()" (onVote)="vote(card.cardInfo.id, $event)">
     <div class="request-card-card">
       <cc-card [card]="card"></cc-card>
     </div>
   </cc-request-card>
-</ng-container>
+}
