@@ -80,10 +80,10 @@ export class ModeratorEditorComponent extends SubscriptionManagerComponent {
     );
   }
 
-  public addModerator(collectorId: Id): void {
+  public addModerator(collectorId: Id, moderators: User[]): void {
     const userId = this.authService.getUserId();
     if(userId == null) throw new Error("userId not set");
-    this.registerSubscription(SelectUserDialogComponent.open(this.matDialog, { excludeUserIds: [ userId ], title: "Add Moderator" }).pipe(
+    this.registerSubscription(SelectUserDialogComponent.open(this.matDialog, { excludeUserIds: [ userId, ...moderators.map(({id}) => id) ], title: "Add Moderator" }).pipe(
       filter((user): user is User => user != null),
       switchMap(user => YesNoCancelDialogComponent.open(this.matDialog, `Add ${user.username} as moderator?`).pipe(
         filter(res => res === true),

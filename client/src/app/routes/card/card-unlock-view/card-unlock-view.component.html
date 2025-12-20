@@ -1,0 +1,7 @@
+<div class="card-view">
+  @if (unlockedCard$ | async; as unlockedCard) {
+    <cc-card [card]="unlockedCard"></cc-card>
+  } @else {
+
+  }
+</div>

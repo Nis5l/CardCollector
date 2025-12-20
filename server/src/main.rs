@@ -142,6 +142,7 @@ async fn rocket() -> _ {
             card::index::card_index_route,
             card::frame::default::card_frame_front_default_route,
             card::frame::default::card_frame_back_default_route,
+            card::get::card_route,
 
             trade::info::trade_route,
             trade::confirm::trade_confirm_route,

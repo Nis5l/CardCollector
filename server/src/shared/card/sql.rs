@@ -341,6 +341,33 @@ pub fn order_by_string_from_card_sort_type(sort_type: &CardSortType) -> &str {
     }
 }
 
+pub async fn get_card(sql: &Sql, card_id: &Id) -> Result<Option<Card>, sqlx::Error> {
+    let stmt = sqlx::query_as(
+        "SELECT
+         cards.cid AS cardId,
+         cards.uid AS cardUserId,
+         cards.cname AS cardName,
+         cards.ctime AS cardTime,
+         cardtypes.ctid AS typeId,
+         cardtypes.ctname AS typeName,
+         cardtypes.coid AS collectorId,
+         cardtypes.uid AS cardTypeUserId
+         FROM cards, cardtypes
+         WHERE
+         cards.ctid = cardtypes.ctid
+         AND cards.cid=?
+         LIMIT ? OFFSET ?;"
+    ).bind(card_id).fetch_one(sql.pool()).await;
+
+    if let Err(sqlx::Error::RowNotFound) = stmt {
+        return Ok(None);
+    }
+
+    let card_db: CardDb = stmt?;
+
+    return Ok(Some(Card::from(card_db)));
+}
+
 pub async fn get_cards(sql: &Sql, collector_id: &Id, mut name: String, sort_type: &CardSortType, amount: u32, offset: u32, state: Option<CardState>) -> Result<Vec<Card>, sqlx::Error> {
     name = util::escape_for_like(name);
 

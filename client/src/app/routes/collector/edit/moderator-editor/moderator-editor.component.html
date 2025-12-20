@@ -6,7 +6,7 @@
         <p class="config" *ngIf="(moderators$ | async) as moderators">{{moderators.length}}/{{config.moderatorLimit}}</p>
       </div>
       @if (isOwner$ | async) {
-        <button *ngIf="(moderators$ | async) as moderators" mat-icon-button matTooltip="Add Moderator" (click)="addModerator(collectorId)" [disabled]="moderators.length >= config.moderatorLimit">
+        <button *ngIf="(moderators$ | async) as moderators" mat-icon-button matTooltip="Add Moderator" (click)="addModerator(collectorId, moderators)" [disabled]="moderators.length >= config.moderatorLimit">
           <mat-icon color="accent" svgIcon="person_add"></mat-icon>
         </button>
       }

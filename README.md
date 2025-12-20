@@ -28,8 +28,7 @@ For production docker-compose is used.
 ## TODO:
   Fix Theme. \
   Fix Notifications. \
-  multiple collector admins. \
   Friend list with link to trade under collector and same for collectors in friends. \
   Sidebar theme. \
   Notifications style \
-  Replace the ng-container *ngIf with new syntax (at least)
+  Update Card

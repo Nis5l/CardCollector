@@ -167,6 +167,9 @@ OR
   --md-sys-color-on-surface-variant: #49464b;
 }
 
+    // background: #141314,
+    // on-background: #e6e1e2,
+
 .dark {
   --mat-sys-color-primary: #d1bcff;
   --mat-sys-color-on-primary: #3d0090;
@@ -176,4 +179,5 @@ OR
   --mat-sys-color-on-surface: #e6e1e2;
   --mat-sys-color-background: #141314;
   --md-sys-color-on-surface-variant: #cac5cc;
+  //--mat-sidenav-container-background-color: #1f1d1f;
 }

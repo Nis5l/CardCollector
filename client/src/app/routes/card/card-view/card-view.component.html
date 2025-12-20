@@ -1,10 +1,7 @@
 <div class="card-view">
-  <ng-container *ngVar="(cardOrUnlockedCardId$ | async) as cardOrUnlockedCardId">
-    @if (cardOrUnlockedCardId != null) {
-      <cc-card [card]="cardOrUnlockedCardId"></cc-card>
-    }
-    @if (cardOrUnlockedCardId == null) {
-      <p>Card not found</p>
-    }
-  </ng-container>
+  @if (card$ | async; as card) {
+    <cc-card [card]="card"></cc-card>
+  } @else {
+
+  }
 </div>

@@ -48,7 +48,7 @@ pub async fn get_users_count(sql: &Sql, mut username: String, exclude_ids: &Vec<
     let mut query = String::from("SELECT COUNT(*)
                      FROM users
                      WHERE uusername LIKE CONCAT('%', ?, '%')
-                     AND uverified = ?;");
+                     AND uverified = ?");
 
     if !exclude_ids.is_empty() {
         let placeholders = exclude_ids

@@ -1,18 +1,18 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Observable, map, switchMap } from 'rxjs';
+import { Observable, map, switchMap, catchError, of as observableOf } from 'rxjs';
 
-import type { Card } from '../../../shared/types';
+import type { UnlockedCard } from '../../../shared/types';
 import { CardService } from '../../../shared/components';
 
 @Component({
-    selector: 'cc-card-view',
-    templateUrl: "./card-view.component.html",
-    styleUrls: ["./card-view.component.scss"],
+    selector: 'cc-card-unlock-view',
+    templateUrl: "./card-unlock-view.component.html",
+    styleUrls: ["./card-unlock-view.component.scss"],
     standalone: false
 })
-export class CardViewComponent {
-	public readonly card$: Observable<Card>;
+export class CardUnlockViewComponent {
+	public readonly unlockedCard$: Observable<UnlockedCard | null>;
 
 	public constructor(
     private readonly activatedRoute: ActivatedRoute,
@@ -26,8 +26,10 @@ export class CardViewComponent {
 			})
 		);
 
-    this.card$ = cardId$.pipe(
-      switchMap(cardId => this.cardService.getCard(cardId))
+		this.unlockedCard$ = cardId$.pipe(
+      switchMap(cardId => this.cardService.getUnlockedCard(cardId).pipe(
+        catchError(() => observableOf(null))
+      ))
     );
 	}
 }

@@ -1,9 +1,9 @@
 import { Component, Input, EventEmitter, Output } from '@angular/core';
-import { Observable,  ReplaySubject, catchError, of as observableOf } from 'rxjs';
+import { Observable,  BehaviorSubject } from 'rxjs';
 import type { SafeResourceUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 
-import type { UnlockedCard, Card, CardOrUnlockedCardId } from '../../types';
+import type { UnlockedCard, Card } from '../../types';
 import { CardService } from './card.service';
 
 function isCard(card: UnlockedCard | Card): card is Card {
@@ -17,26 +17,20 @@ function isCard(card: UnlockedCard | Card): card is Card {
     standalone: false
 })
 export class CardComponent {
-	private _card: CardOrUnlockedCardId | UnlockedCard | Card | null = null;
-	private readonly cardSubject: ReplaySubject<UnlockedCard | Card | null> = new ReplaySubject(1);
+	private readonly cardSubject: BehaviorSubject<UnlockedCard | Card | null> = new BehaviorSubject<UnlockedCard | Card | null>(null);
 	public readonly card$: Observable<UnlockedCard | Card | null>;
   @Output()
   public readonly clickEvent: EventEmitter<void> = new EventEmitter<void>();
 
 	@Input()
-	public set card(card: CardOrUnlockedCardId | UnlockedCard | Card | null) {
-		this._card = card;
-		if(card != null && "unlocked" in card) {
-      const req: Observable<Card | UnlockedCard> = card.unlocked ? this.cardService.getUnlockedCard(card.id) : this.cardService.getCard(card.id);
-      req.pipe(
-        catchError(_ => observableOf(null))
-      ).subscribe(data => this.cardSubject.next(data));
-		} else {
-			this.cardSubject.next(card);
-		}
+	public set card(card: UnlockedCard | Card | null) {
+    if(card == null) return;
+		this.cardSubject.next(card);
 	}
-	public get card(): CardOrUnlockedCardId | UnlockedCard | Card | null {
-		return this._card;
+	public get card(): UnlockedCard | Card | null {
+    const card = this.cardSubject.getValue();
+    if(card == null) throw new Error("card is null");
+		return card;
 	}
 
 	@Input()

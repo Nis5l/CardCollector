@@ -11,6 +11,7 @@ import {
 	CollectorReadonlyComponent,
 	CollectorEditComponent,
 	CardViewComponent,
+	CardUnlockViewComponent,
   CardUpgradeComponent,
   UsersComponent,
   ProfileReadonlyTradeComponent,
@@ -39,8 +40,9 @@ const routes: Routes = [
 	{ path: "user/:userId", component: ProfileReadonlyComponent, children: ProfileReadonlyComponent.getRoutes() },
 	{ path: "user/:userId/trade/:collectorId", component: ProfileReadonlyTradeComponent, children: ProfileReadonlyTradeComponent.getRoutes() },
 
+	{ path: "card/unlock/:cardId", component: CardUnlockViewComponent },
+	{ path: "card/unlock/:cardId/upgrade", component: CardUpgradeComponent },
 	{ path: "card/:cardId", component: CardViewComponent },
-	{ path: "card/:cardId/upgrade", component: CardUpgradeComponent },
 
 	{ path: "users", component: UsersComponent },
 	//{ path: "home", component: HomeComponent },

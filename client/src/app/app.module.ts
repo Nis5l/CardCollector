@@ -20,6 +20,7 @@ import {
 	CollectorReadonlyModule,
 	CollectorEditModule,
 	CardViewModule,
+	CardUnlockViewModule,
   CardUpgradeModule,
   UsersModule,
   ProfileReadonlyTradeModule,

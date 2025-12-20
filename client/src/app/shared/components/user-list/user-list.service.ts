@@ -11,8 +11,8 @@ export class UserListService {
   constructor(private readonly httpService: HttpService) {}
 
   public getUsers(username: string, page: number, excludeIds: Id[]): Observable<UsersResponse> {
-    const params = new HttpParams().set("username", username).set("page", page);
-    excludeIds.forEach(id => params.append('excludeIds', id));
+    let params = new HttpParams().set("username", username).set("page", page);
+    excludeIds.forEach(id => params = params.append('excludeIds', id));
     return this.httpService.get<UsersResponse>("/user", params);
   }
 }
