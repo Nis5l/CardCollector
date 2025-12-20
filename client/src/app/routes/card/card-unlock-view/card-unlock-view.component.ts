@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Observable, map, switchMap, catchError, of as observableOf } from 'rxjs';
+import { Observable, BehaviorSubject, tap, map, switchMap, catchError, of as observableOf } from 'rxjs';
 
 import type { UnlockedCard } from '../../../shared/types';
 import { CardService } from '../../../shared/components';
@@ -14,6 +14,9 @@ import { CardService } from '../../../shared/components';
 export class CardUnlockViewComponent {
 	public readonly unlockedCard$: Observable<UnlockedCard | null>;
 
+	private readonly loadingSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
+	public readonly loading$: Observable<boolean>;
+
 	public constructor(
     private readonly activatedRoute: ActivatedRoute,
     private readonly cardService: CardService,
@@ -26,10 +29,18 @@ export class CardUnlockViewComponent {
 			})
 		);
 
+		this.loading$ = this.loadingSubject.asObservable();
+
 		this.unlockedCard$ = cardId$.pipe(
+      tap(() => {
+        this.loadingSubject.next(true);
+      }),
       switchMap(cardId => this.cardService.getUnlockedCard(cardId).pipe(
         catchError(() => observableOf(null))
-      ))
+      )),
+      tap(() => {
+        this.loadingSubject.next(false);
+      }),
     );
 	}
 }

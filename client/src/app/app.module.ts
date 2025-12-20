@@ -50,6 +50,7 @@ const MODULES = [
 	HomeModule,
 	PopupModule,
 	CardViewModule,
+  CardUnlockViewModule,
   CardUpgradeModule,
   UsersModule,
   ProfileReadonlyTradeModule,

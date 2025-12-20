@@ -1,21 +1,38 @@
-<div class="card-upgrade" *ngVar="(unlockedCard$ | async) as unlockedCard">
-  @if (unlockedCard != null) {
+<div class="card-upgrade-wrapper">
+  <div class="card-upgrade" *ngVar="(unlockedCard$ | async) as unlockedCard">
     <div class="card">
-      <cc-card [card]="unlockedCard"></cc-card>
+      @if (!(cardLoading$ | async)) {
+        @if (unlockedCard != null) {
+          <cc-card [card]="unlockedCard" click="navigate"></cc-card>
+        } @else {
+          <div class="empty">
+            <div class="empty-content">
+              <mat-icon color="accent" svgIcon="credit_card_off"></mat-icon>
+              <p>card not found</p>
+            </div>
+          </div>
+        }
+      }
+      <div class="loading" *ngIf="cardLoading$ | async">
+        <cc-loading [observable]="cardLoading$" [boolObservable]="true"></cc-loading>
+      </div>
     </div>
     <!-- hacky but works, maybe change -->
     <mat-divider vertical></mat-divider>
     <mat-divider></mat-divider>
-    <div class="cards-wrapper" *ngVar="(unlockedCardsResponse$ | async) as unlockedCardsResponse">
-      <cc-loading [observable]="unlockedCardsResponse$"></cc-loading>
-      @if (unlockedCardsResponse != null) {
-        <div class="cards">
-          @for (card of unlockedCardsResponse.cards; track card) {
-            <cc-card [card]="card" click="event" (clickEvent)="onClick(unlockedCard, card)"></cc-card>
-          }
-        </div>
-        <mat-paginator [length]="unlockedCardsResponse.cardCount" [pageSize]="unlockedCardsResponse.pageSize" (page)="changePage($event)"></mat-paginator>
+    <div class="cards-wrapper">
+      @if (!(cardLoading$ | async)) {
+        <cc-inventory
+          [input]="false"
+          [collectorId]="unlockedCard?.card?.collectorId ?? 'xxx'"
+          [userId]="unlockedCard?.userId ?? 'xxx'"
+          [excludeUuids]="unlockedCard?.id != null ? [unlockedCard?.id] : []"
+          [level]="unlockedCard?.level"
+          click="event"
+          (clickEvent)="onClick(unlockedCard, $event)"
+        ></cc-inventory>
       }
     </div>
-  }
+  </div>
 </div>
+

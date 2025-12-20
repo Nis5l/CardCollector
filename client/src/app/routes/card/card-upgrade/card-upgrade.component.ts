@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Observable, BehaviorSubject, map, filter, switchMap, combineLatest as observableCombibeLatest, share } from 'rxjs';
+import { Observable, BehaviorSubject, catchError, map, filter, switchMap, combineLatest as observableCombibeLatest, shareReplay, tap, of as observableOf } from 'rxjs';
 import type { PageEvent } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
 
 import { CardUpgradeService } from './card-upgrade.service';
-import type { UnlockedCard, InventoryResponse } from '../../../shared/types';
+import type { UnlockedCard, Id } from '../../../shared/types';
 import { CardService } from '../../../shared/components';
 import { SubscriptionManagerComponent } from '../../../shared/abstract';
 import { YesNoCancelDialogComponent } from '../../../shared/dialogs';
@@ -18,8 +18,10 @@ import { YesNoCancelDialogComponent } from '../../../shared/dialogs';
 })
 export class CardUpgradeComponent extends SubscriptionManagerComponent {
 	private readonly pageSubject: BehaviorSubject<number> = new BehaviorSubject<number>(0);
-  public readonly unlockedCard$: Observable<UnlockedCard>;
-  public readonly unlockedCardsResponse$: Observable<InventoryResponse>;
+  public readonly unlockedCard$: Observable<UnlockedCard | null>;
+
+	private readonly cardLoadingSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
+	public readonly cardLoading$: Observable<boolean>;
 
   constructor(
     private readonly cardUpgradeService: CardUpgradeService,
@@ -35,25 +37,28 @@ export class CardUpgradeComponent extends SubscriptionManagerComponent {
 				if(typeof cardId !== "string") throw new Error("cardId not set");
 				return cardId;
 			}),
-      switchMap(cardId => this.cardService.getUnlockedCard(cardId))
+      tap(() => this.cardLoadingSubject.next(true)),
+      switchMap(cardId => this.cardService.getUnlockedCard(cardId).pipe(
+        catchError(() => observableOf(null))
+      )),
+      tap(() => this.cardLoadingSubject.next(false)),
+      shareReplay(1),
 		);
-    this.unlockedCardsResponse$ = observableCombibeLatest([this.unlockedCard$, this.pageSubject.asObservable()]).pipe(
-      switchMap(([unlockedCard, page]) => this.cardUpgradeService.getUpgradeCards(unlockedCard.userId, unlockedCard.card.collectorId, page, unlockedCard.level, [unlockedCard.id], unlockedCard.card.cardInfo.id)),
-      share(),
-    );
+
+		this.cardLoading$ = this.cardLoadingSubject.asObservable();
   }
 
 	public changePage(page: PageEvent): void {
 		this.pageSubject.next(page.pageIndex);
 	}
 
-  public onClick(cardOne: UnlockedCard, cardTwo: UnlockedCard): void {
+  public onClick(cardOne: UnlockedCard, cardTwo: Id): void {
     this.registerSubscription(YesNoCancelDialogComponent.open(this.matDialog, "Attempt Card Upgrade?").pipe(
       filter(confirm => confirm === true),
-      switchMap(() => this.cardUpgradeService.upgrade(cardOne.id, cardTwo.id))
+      switchMap(() => this.cardUpgradeService.upgrade(cardOne.id, cardTwo))
     ).subscribe(({ card }) => {
       //TODO: upgade effect, use success
-      this.router.navigate(["card", card], { queryParams: { unlocked: true } });
+      this.router.navigate(["card", "unlocked", card]);
     }));
   }
 }

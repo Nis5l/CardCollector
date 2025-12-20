@@ -218,18 +218,25 @@ pub async fn get_inventory(sql: &Sql, options: &InventoryOptions) -> Result<Vec<
 
     let order_by = order_by_string_from_sort_type(&options.sort_type);
 
-    let mut extra_conditions = String::from("");
+    let mut extra_conditions: Vec<String> = Vec::new();
 
-    if let Some(level) = options.level {
-        extra_conditions += &format!("cardunlocks.culevel={} AND\n", level);
+    if options.level.is_some() {
+        extra_conditions.push(String::from("cardunlocks.culevel = ?"));
     }
-    if let Some(card_id) = &options.card_id {
-        extra_conditions += &format!("cards.cid={} AND\n", card_id);
+
+    if options.card_id.is_some() {
+        extra_conditions.push(String::from("cards.cid = ?"));
     }
 
     if !options.exclude_uuids.is_empty() {
-        extra_conditions += &format!("cardunlocks.cuid NOT IN ({}) AND\n", options.exclude_uuids.iter().map(|i| { format!("\"{}\"", i) }).collect::<Vec<String>>().join(","));
+        extra_conditions.push(format!("cardunlocks.cuid NOT IN ({})", vec!["?"; options.exclude_uuids.len()].join(",")));
     }
+
+    let extra_conditions_str = if extra_conditions.is_empty() {
+        String::new()
+    } else {
+        format!("{} AND", extra_conditions.join(" AND "))
+    };
 
     let query = format!(
         "SELECT
@@ -263,11 +270,24 @@ pub async fn get_inventory(sql: &Sql, options: &InventoryOptions) -> Result<Vec<
          ORDER BY
          {}
          LIMIT ? OFFSET ?;",
-         extra_conditions,
+         extra_conditions_str,
          order_by);
 
-    let cards_db: Vec<UnlockedCardDb> = sqlx::query_as(&query)
-        .bind(&options.collector_id)
+    let mut stmt = sqlx::query_as(&query);
+
+    if let Some(level) = options.level {
+        stmt = stmt.bind(level);
+    }
+
+    if let Some(card_id) = &options.card_id {
+        stmt = stmt.bind(card_id);
+    }
+
+    for exclude_id in &options.exclude_uuids {
+        stmt = stmt.bind(exclude_id);
+    }
+
+    let cards_db: Vec<UnlockedCardDb> = stmt.bind(&options.collector_id)
         .bind(&options.user_id)
         .bind(&search)
         .bind(&search)
@@ -285,18 +305,25 @@ pub async fn get_inventory_count(sql: &Sql, options: &InventoryOptions) -> Resul
 
     let order_by = order_by_string_from_sort_type(&options.sort_type);
 
-    let mut extra_conditions = String::from("");
+    let mut extra_conditions: Vec<String> = Vec::new();
 
-    if let Some(level) = options.level {
-        extra_conditions += &format!("cardunlocks.culevel={} AND\n", level);
+    if options.level.is_some() {
+        extra_conditions.push(String::from("cardunlocks.culevel = ?"));
     }
-    if let Some(card_id) = &options.card_id {
-        extra_conditions += &format!("cards.cid={} AND\n", card_id);
+
+    if options.card_id.is_some() {
+        extra_conditions.push(String::from("cards.cid = ?"));
     }
 
     if !options.exclude_uuids.is_empty() {
-        extra_conditions += &format!("cardunlocks.cuid NOT IN ({}) AND\n", options.exclude_uuids.iter().map(|i| { format!("\"{}\"", i) }).collect::<Vec<String>>().join(","));
+        extra_conditions.push(format!("cardunlocks.cuid NOT IN ({})", vec!["?"; options.exclude_uuids.len()].join(",")));
     }
+
+    let extra_conditions_str = if extra_conditions.is_empty() {
+        String::new()
+    } else {
+        format!("{} AND", extra_conditions.join(" AND "))
+    };
 
     let query = format!(
         "SELECT COUNT(*)
@@ -312,10 +339,24 @@ pub async fn get_inventory_count(sql: &Sql, options: &InventoryOptions) -> Resul
          AND (cards.cname LIKE CONCAT('%', ?, '%') OR cardtypes.ctname LIKE CONCAT('%', ?, '%'))
          ORDER BY
          {};",
-         extra_conditions,
+         extra_conditions_str,
          order_by);
 
-    let (count, ): (i64, ) = sqlx::query_as(&query)
+    let mut stmt = sqlx::query_as(&query);
+
+    if let Some(level) = options.level {
+        stmt = stmt.bind(level);
+    }
+
+    if let Some(card_id) = &options.card_id {
+        stmt = stmt.bind(card_id);
+    }
+
+    for exclude_id in &options.exclude_uuids {
+        stmt = stmt.bind(exclude_id);
+    }
+
+    let (count, ): (i64, ) = stmt
         .bind(&options.collector_id)
         .bind(&options.user_id)
         .bind(&search)

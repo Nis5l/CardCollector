@@ -1,7 +1,17 @@
-<div class="card-view">
-  @if (unlockedCard$ | async; as unlockedCard) {
-    <cc-card [card]="unlockedCard"></cc-card>
-  } @else {
-
+<div class="card-view" *ngVar="(unlockedCard$ | async) as unlockedCard">
+  <div class="loading" *ngIf="loading$ | async">
+    <cc-loading [observable]="loading$" [boolObservable]="true"></cc-loading>
+  </div>
+  @if (!(loading$ | async)) {
+    @if (unlockedCard != null) {
+      <cc-card [card]="unlockedCard"></cc-card>
+    } @else {
+      <div class="empty">
+        <div class="empty-content">
+          <mat-icon color="accent" svgIcon="credit_card_off"></mat-icon>
+          <p>Card not found</p>
+        </div>
+      </div>
+    }
   }
 </div>

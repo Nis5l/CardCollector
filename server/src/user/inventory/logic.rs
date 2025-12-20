@@ -16,7 +16,7 @@ pub async fn inventory_route(user_id: Id, collector_id: Id, mut data: InventoryR
     verify_collector!(sql, &collector_id);
 
     if let Some(friend) = data.friend {
-        data.exclude_uuids.append(&mut sql::get_trade_uuids(sql, &user_id, &friend.friend_id, friend.exclude_suggestions).await.unwrap());
+        data.exclude_uuids.append(&mut rjtry!(sql::get_trade_uuids(sql, &user_id, &friend.friend_id, friend.exclude_suggestions).await));
     }
 
     let inventory_options = card::data::InventoryOptions {

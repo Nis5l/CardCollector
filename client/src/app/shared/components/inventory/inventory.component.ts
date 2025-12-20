@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import type { PageEvent } from '@angular/material/paginator';
-import { Observable, BehaviorSubject, tap, combineLatest as observableCombineLatest, switchMap, startWith, debounceTime, distinctUntilChanged, share, filter } from 'rxjs';
+import { Observable, BehaviorSubject, tap, combineLatest as observableCombineLatest, catchError, of as observableOf, switchMap, startWith, debounceTime, distinctUntilChanged, share, filter } from 'rxjs';
 
 import { InventoryService } from './inventory.service';
 import { SortType } from './types';
@@ -15,24 +15,27 @@ import type { InventoryResponse, Id } from '../../types';
     standalone: false
 })
 export class InventoryComponent extends SubscriptionManagerComponent {
-  private _userIdSubject: BehaviorSubject<Id | null> = new BehaviorSubject<Id | null>(null);
+  private readonly userIdSubject: BehaviorSubject<Id | null> = new BehaviorSubject<Id | null>(null);
   @Input()
   public set userId(userId: Id | null) {
-    this._userIdSubject.next(userId);
+    this.userIdSubject.next(userId);
   }
   public get userId(): Id {
-    const userId = this._userIdSubject.getValue();
+    const userId = this.userIdSubject.getValue();
     if(userId == null) throw new Error("userId not set");
     return userId;
   }
 
-  private _collectorIdSubject: BehaviorSubject<Id | null> = new BehaviorSubject<Id | null>(null);
+  @Input()
+  public input: boolean = true;
+
+  private readonly collectorIdSubject: BehaviorSubject<Id | null> = new BehaviorSubject<Id | null>(null);
   @Input()
   public set collectorId(userId: Id | null) {
-    this._collectorIdSubject.next(userId);
+    this.collectorIdSubject.next(userId);
   }
   public get collectorId(): Id {
-    const collectorId = this._collectorIdSubject.getValue();
+    const collectorId = this.collectorIdSubject.getValue();
     if(collectorId == null) throw new Error("collectorId not set");
     return collectorId;
   }
@@ -49,6 +52,16 @@ export class InventoryComponent extends SubscriptionManagerComponent {
   }
   public get excludeUuids(): Id[] {
     return this.excludeUuidsSubject.getValue();
+  }
+
+  public readonly levelSubject: BehaviorSubject<number | null> = new BehaviorSubject<number | null>(null);
+  @Input()
+  public set level(number: number | null | undefined) {
+    if(number == null) return;
+    this.levelSubject.next(number);
+  }
+  public get level(): number | null | undefined {
+    return this.levelSubject.getValue();
   }
 
   public readonly inventoryResponseSubject: BehaviorSubject<InventoryResponse>;
@@ -81,8 +94,8 @@ export class InventoryComponent extends SubscriptionManagerComponent {
     private readonly inventoryService: InventoryService,
   ) {
     super();
-    const userId$: Observable<Id> = this._userIdSubject.pipe(filter((userId): userId is Id => userId != null));
-    const collectorId$: Observable<Id> = this._collectorIdSubject.pipe(filter((userId): userId is Id => userId != null));
+    const userId$: Observable<Id> = this.userIdSubject.pipe(filter((userId): userId is Id => userId != null));
+    const collectorId$: Observable<Id> = this.collectorIdSubject.pipe(filter((userId): userId is Id => userId != null));
 
     const searchFormControl = new FormControl("", { nonNullable: true });
 
@@ -110,13 +123,17 @@ export class InventoryComponent extends SubscriptionManagerComponent {
         distinctUntilChanged()
       ),
       sortTypeFormControl.valueChanges.pipe(startWith(sortTypeDefaultValue)),
-      this.excludeUuidsSubject.asObservable()
+      this.excludeUuidsSubject.asObservable(),
+      this.levelSubject.asObservable()
     ]).pipe(
       tap(() => {
         this.loadingSubject.next(true);
         this.inventoryResponseSubject.next(loadingInventoryResponse);
       }),
-      switchMap(([userId, collectorId, page, search, sortType, excludeUuids]) => this.inventoryService.getInventory(userId, collectorId, page, search, sortType, excludeUuids).pipe(share()))
+      switchMap(([userId, collectorId, page, search, sortType, excludeUuids, level]) => this.inventoryService.getInventory(userId, collectorId, page, search, sortType, excludeUuids, level).pipe(
+        catchError(() => observableOf(loadingInventoryResponse)),
+        share()
+      ))
     ).subscribe(inventoryResponse => {
       this.loadingSubject.next(false);
       this.inventoryResponseSubject.next(inventoryResponse)

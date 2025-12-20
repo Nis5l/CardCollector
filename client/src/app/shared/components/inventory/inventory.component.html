@@ -1,5 +1,5 @@
 <div *ngVar="(inventoryResponse$ | async) as inventoryResponse" class="inventory">
-  <form [formGroup]="formGroup" class="options">
+  <form [formGroup]="formGroup" class="options" *ngIf="input">
     <mat-form-field>
       <input matInput type="text" formControlName="search" placeholder="Search" />
     </mat-form-field>

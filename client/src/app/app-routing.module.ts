@@ -40,8 +40,8 @@ const routes: Routes = [
 	{ path: "user/:userId", component: ProfileReadonlyComponent, children: ProfileReadonlyComponent.getRoutes() },
 	{ path: "user/:userId/trade/:collectorId", component: ProfileReadonlyTradeComponent, children: ProfileReadonlyTradeComponent.getRoutes() },
 
-	{ path: "card/unlock/:cardId", component: CardUnlockViewComponent },
-	{ path: "card/unlock/:cardId/upgrade", component: CardUpgradeComponent },
+	{ path: "card/unlocked/:cardId", component: CardUnlockViewComponent },
+	{ path: "card/unlocked/:cardId/upgrade", component: CardUpgradeComponent },
 	{ path: "card/:cardId", component: CardViewComponent },
 
 	{ path: "users", component: UsersComponent },

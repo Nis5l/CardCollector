@@ -4,11 +4,12 @@ import { CommonModule } from '@angular/common';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
 
 import { CardUpgradeComponent } from './card-upgrade.component';
 import { CardUpgradeService } from './card-upgrade.service';
 import { HttpModule } from '../../../shared/services';
-import { CardModule, LoadingModule } from '../../../shared/components';
+import { CardModule, LoadingModule, InventoryModule } from '../../../shared/components';
 import { NgVarModule } from '../../../shared/directives';
 import { YesNoCancelDialogModule } from '../../../shared/dialogs';
 
@@ -16,6 +17,8 @@ const MATERIAL_MODULES = [
   MatPaginatorModule,
   MatDividerModule,
   MatDialogModule,
+  MatIconModule,
+  InventoryModule,
 ];
 
 @NgModule({
@@ -32,6 +35,7 @@ const MATERIAL_MODULES = [
     CardModule,
     YesNoCancelDialogModule,
     LoadingModule,
+    InventoryModule,
   ]
 })
 export class CardUpgradeModule {}
