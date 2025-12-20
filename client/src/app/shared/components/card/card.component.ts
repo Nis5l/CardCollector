@@ -37,7 +37,7 @@ export class CardComponent {
 	public cardImage: string | SafeResourceUrl | null = null;
 
   @Input()
-  public click: "none" | "upgrade" | "event" = "none";
+  public click: "none" | "upgrade" | "event" | "navigate" = "none";
 
   @Input()
   public suggestion: boolean = false;
@@ -94,9 +94,17 @@ export class CardComponent {
     switch(this.click) {
       case "none": {
       } break;
+      case "navigate": {
+        if(card == null) throw new Error("card is not UnlockedCard");
+        if(isCard(card)) {
+          this.router.navigate(["card", card.cardInfo.id]);
+          return;
+        }
+        this.router.navigate(["card", "unlocked", card.id]);
+      } break;
       case "upgrade": {
         if(card == null || isCard(card)) throw new Error("card is not UnlockedCard");
-        this.router.navigate(["card", card.id, "upgrade"]);
+        this.router.navigate(["card", "unlocked", card.id, "upgrade"]);
       } break;
       case "event": {
         this.clickEvent.emit();

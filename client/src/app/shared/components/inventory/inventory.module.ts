@@ -6,6 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
+import { MatIconModule } from '@angular/material/icon';
 
 import { InventoryComponent } from './inventory.component';
 import { InventoryService } from './inventory.service';
@@ -18,6 +19,7 @@ const MATERIAL_MODULES = [
   MatFormFieldModule,
   MatInputModule,
   MatSelectModule,
+  MatIconModule,
 ];
 
 @NgModule({

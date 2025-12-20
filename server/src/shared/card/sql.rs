@@ -355,8 +355,7 @@ pub async fn get_card(sql: &Sql, card_id: &Id) -> Result<Option<Card>, sqlx::Err
          FROM cards, cardtypes
          WHERE
          cards.ctid = cardtypes.ctid
-         AND cards.cid=?
-         LIMIT ? OFFSET ?;"
+         AND cards.cid=?;"
     ).bind(card_id).fetch_one(sql.pool()).await;
 
     if let Err(sqlx::Error::RowNotFound) = stmt {

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
-import { Observable, debounceTime, distinctUntilChanged, BehaviorSubject, startWith, combineLatest as observableCombibeLatest } from 'rxjs';
+import { Observable, debounceTime, distinctUntilChanged, BehaviorSubject, switchMap, startWith, combineLatest as observableCombibeLatest, tap } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import type { PageEvent } from '@angular/material/paginator';
 
@@ -27,7 +27,7 @@ export class CollectorsComponent extends SubscriptionManagerComponent {
 	public readonly formGroup;
 	private readonly searchForm;
 
-	public readonly loadingSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
+	private readonly loadingSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
 	public readonly loading$: Observable<boolean>;
 
 	constructor(
@@ -46,10 +46,16 @@ export class CollectorsComponent extends SubscriptionManagerComponent {
 				distinctUntilChanged(),
 			),
 			this.pageSubject.asObservable()
-		]).subscribe(([search, page]) => {
-				this.loadCollectors(search, page);
-			})
-		);
+		]).pipe(
+      tap(() => {
+        this.loadingSubject.next(true);
+        this.collectorIndexResponseSubject.next(this.collectorsIndexResponseDefault);
+      }),
+      switchMap(([search, page]) => this.collectorsService.getCollectors(search, page))
+		).subscribe(collectorIndexResponse => {
+				this.collectorIndexResponseSubject.next(collectorIndexResponse);
+				this.loadingSubject.next(false);
+    }));
 
 		this.formGroup = new FormGroup({
 			search: this.searchForm
@@ -62,17 +68,5 @@ export class CollectorsComponent extends SubscriptionManagerComponent {
 
 	public changePage(page: PageEvent): void {
 		this.pageSubject.next(page.pageIndex);
-	}
-
-	private loadCollectors(search: string, page: number): void {
-		//TODO: rewrite if this can be solved using waitFor
-		this.loadingSubject.next(true);
-    this.collectorIndexResponseSubject.next(this.collectorsIndexResponseDefault);
-		this.registerSubscription(
-			this.collectorsService.getCollectors(search, page).subscribe(collectorIndexResponse => {
-				this.collectorIndexResponseSubject.next(collectorIndexResponse);
-				this.loadingSubject.next(false);
-			})
-		);
 	}
 }

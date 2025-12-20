@@ -1,4 +1,4 @@
-<div class="collectors-wrapper wrap">
+<div class="collectors-wrapper wrap" *ngVar="(collectorIndexResponse$ | async) as res">
   <form [formGroup]="formGroup">
     <mat-form-field>
       <input matInput type="text" formControlName="search" placeholder="Search" />
@@ -8,14 +8,21 @@
   <div class="loading" *ngIf="loading$ | async">
     <cc-loading [observable]="loading$" [boolObservable]="true"></cc-loading>
   </div>
-  <ng-container *ngVar="(collectorIndexResponse$ | async) as res">
-    @if (res != null) {
+  @if (res != null && !(loading$ | async)) {
+    @if (res.collectors.length > 0) {
       <div class="collectors">
         @for (collector of res.collectors; track collector) {
           <cc-collector-card [collector]="collector"></cc-collector-card>
         }
-        <mat-paginator [pageSize]="res.pageSize" [length]="res.collectorCount" (page)="changePage($event)"></mat-paginator>
+      </div>
+    } @else {
+      <div class="empty">
+        <div class="empty-content">
+          <mat-icon color="accent" svgIcon="credit_card_off"></mat-icon>
+          <p>No collectors found</p>
+        </div>
       </div>
     }
-  </ng-container>
+  }
+  <mat-paginator *ngIf="res != null" [pageSize]="res.pageSize" [length]="res.collectorCount" (page)="changePage($event)"></mat-paginator>
 </div>

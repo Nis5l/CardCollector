@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import type { PageEvent } from '@angular/material/paginator';
-import { Observable, BehaviorSubject, of as observableOf, combineLatest as observableCombineLatest, switchMap, startWith, debounceTime, distinctUntilChanged, share, filter } from 'rxjs';
+import { Observable, BehaviorSubject, tap, combineLatest as observableCombineLatest, switchMap, startWith, debounceTime, distinctUntilChanged, share, filter } from 'rxjs';
 
 import { InventoryService } from './inventory.service';
 import { SortType } from './types';
@@ -55,7 +55,6 @@ export class InventoryComponent extends SubscriptionManagerComponent {
   public readonly inventoryResponse$: Observable<InventoryResponse>;
 	private readonly pageSubject: BehaviorSubject<number> = new BehaviorSubject<number>(0);
   public readonly formGroup: FormGroup;
-  public loading$: Observable<unknown> = observableOf(undefined);
   public readonly sortTypes: { text: string, value: SortType }[] = [
     {
       text: "Name",
@@ -74,6 +73,9 @@ export class InventoryComponent extends SubscriptionManagerComponent {
       value: SortType.Recent,
     },
   ];
+
+	private readonly loadingSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
+	public readonly loading$: Observable<boolean>;
 
   constructor(
     private readonly inventoryService: InventoryService,
@@ -96,18 +98,29 @@ export class InventoryComponent extends SubscriptionManagerComponent {
     this.inventoryResponseSubject = new BehaviorSubject(loadingInventoryResponse);
     this.inventoryResponse$ = this.inventoryResponseSubject.asObservable();
 
-     this.registerSubscription(observableCombineLatest([userId$, collectorId$, this.pageSubject.asObservable(), searchFormControl.valueChanges.pipe(
-      startWith(""),
-      debounceTime(300),
-      distinctUntilChanged()
-    ), sortTypeFormControl.valueChanges.pipe(startWith(sortTypeDefaultValue)), this.excludeUuidsSubject.asObservable()]).pipe(
-      switchMap(([userId, collectorId, page, search, sortType, excludeUuids]) => {
+		this.loading$ = this.loadingSubject.asObservable();
+
+    this.registerSubscription(observableCombineLatest([
+      userId$,
+      collectorId$,
+      this.pageSubject.asObservable(),
+      searchFormControl.valueChanges.pipe(
+        startWith(""),
+        debounceTime(300),
+        distinctUntilChanged()
+      ),
+      sortTypeFormControl.valueChanges.pipe(startWith(sortTypeDefaultValue)),
+      this.excludeUuidsSubject.asObservable()
+    ]).pipe(
+      tap(() => {
+        this.loadingSubject.next(true);
         this.inventoryResponseSubject.next(loadingInventoryResponse);
-        const o = this.inventoryService.getInventory(userId, collectorId, page, search, sortType, excludeUuids).pipe(share());
-        this.loading$ = o;
-        return o;
-      })
-    ).subscribe(inventoryResponse => this.inventoryResponseSubject.next(inventoryResponse)));
+      }),
+      switchMap(([userId, collectorId, page, search, sortType, excludeUuids]) => this.inventoryService.getInventory(userId, collectorId, page, search, sortType, excludeUuids).pipe(share()))
+    ).subscribe(inventoryResponse => {
+      this.loadingSubject.next(false);
+      this.inventoryResponseSubject.next(inventoryResponse)
+    }));
   }
 
 	public changePage(page: PageEvent): void {

@@ -102,6 +102,7 @@ export class AppModule {
       'border_circle',
       'book',
       'group_off',
+      'credit_card_off',
     ].forEach(icon => {
       iconRegistry.addSvgIcon(
         icon,

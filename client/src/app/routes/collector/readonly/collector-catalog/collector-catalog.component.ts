@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import type { PageEvent } from '@angular/material/paginator';
-import { Observable, map, combineLatest, BehaviorSubject, startWith, debounceTime, distinctUntilChanged, switchMap, share, of as observableOf } from 'rxjs';
+import { Observable, map, combineLatest, BehaviorSubject, startWith, debounceTime, distinctUntilChanged, switchMap, share, tap } from 'rxjs';
 
 import type { Id } from '../../../../shared/types';
 import { CardSortType, CardIndexResponse } from '../../../../shared/types';
@@ -35,9 +35,11 @@ export class CollectorCatalogComponent extends SubscriptionManagerComponent {
 
   public readonly cardIndexResponseSubject: BehaviorSubject<CardIndexResponse>;
   public readonly cardIndexResponse$: Observable<CardIndexResponse>;
-  public loading$: Observable<unknown> = observableOf(undefined);
 
 	private readonly pageSubject: BehaviorSubject<number> = new BehaviorSubject<number>(0);
+
+	private readonly loadingSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
+	public readonly loading$: Observable<boolean>;
 
   constructor(activatedRoute: ActivatedRoute, cardService: CardService) {
     super();
@@ -76,13 +78,17 @@ export class CollectorCatalogComponent extends SubscriptionManagerComponent {
       ),
       sortTypeFormControl.valueChanges.pipe(startWith(sortTypeDefaultValue))
     ]).pipe(
-      switchMap(([collector_id, page, search, sort_type]) => {
+      tap(() => {
+        this.loadingSubject.next(true);
         this.cardIndexResponseSubject.next(loadingCardIndexResponse);
-        const o$ = cardService.getCards(collector_id, search, page, null, sort_type).pipe(share());
-        this.loading$ = o$;
-        return o$;
-      })
-    ).subscribe(res => this.cardIndexResponseSubject.next(res)));
+      }),
+      switchMap(([collector_id, page, search, sort_type]) => cardService.getCards(collector_id, search, page, null, sort_type).pipe(share()))
+    ).subscribe(res => {
+      this.loadingSubject.next(false);
+      this.cardIndexResponseSubject.next(res);
+    }));
+
+		this.loading$ = this.loadingSubject.asObservable();
   }
 
 	public changePage(page: PageEvent): void {

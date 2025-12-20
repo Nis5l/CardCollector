@@ -22,6 +22,6 @@
         </div>
       </div>
     }
-    <mat-paginator [length]="usersResponse.userCount" [pageSize]="usersResponse.pageSize" (page)="changePage($event)"></mat-paginator>
   }
+  <mat-paginator *ngIf="usersResponse != null" [length]="usersResponse.userCount" [pageSize]="usersResponse.pageSize" (page)="changePage($event)"></mat-paginator>
 </div>

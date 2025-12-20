@@ -1,3 +1,5 @@
+@import "../../../../screen.scss";
+
 .inventory {
   margin: 30px 0;
   .cards {
@@ -17,5 +19,44 @@
     gap: 30px;
     flex-direction: row;
     margin: 10px;
+  }
+
+  .loading, .empty {
+    height: 300px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    @media (max-width: $breakpoint-md) {
+      height: 220px;
+    }
+
+    .empty-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      opacity: 0.6;
+      color: var(--mat-sys-color-on-surface);
+
+      p {
+        font-size: 25px;
+        margin: 0;
+
+        @media (max-width: $breakpoint-md) {
+          font-size: 20px;
+        }
+      }
+
+      mat-icon {
+        transform: scale(1.5);
+
+        @media (max-width: $breakpoint-md) {
+          transform: scale(1.2);
+        }
+      }
+    }
   }
 }
