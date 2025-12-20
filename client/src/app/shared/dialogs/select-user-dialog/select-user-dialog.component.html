@@ -1,3 +1,9 @@
 <div class="select-user-dialog">
+  <mat-toolbar class="header">
+    <p>{{title}}</p>
+    <button mat-icon-button (click)="dialogRef.close()">
+      <mat-icon color="accent" svgIcon="close"></mat-icon>
+    </button>
+  </mat-toolbar>
   <cc-user-list click="event" (onClick)="onUserSelect($event)" [excludeIds]="excludeUserIds"></cc-user-list>
 </div>

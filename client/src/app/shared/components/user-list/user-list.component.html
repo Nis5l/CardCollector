@@ -7,12 +7,21 @@
   <div class="loading" *ngIf="loading$ | async">
     <cc-loading [observable]="loading$" [boolObservable]="true"></cc-loading>
   </div>
-  @if (usersResponse != null) {
-    <div class="user-wrap">
-      @for (user of usersResponse.users; track user) {
-        <cc-user-card [click]="click" (onClick)="onClick.emit($event)" [user]="user"></cc-user-card>
-      }
-      <mat-paginator [length]="usersResponse.userCount" [pageSize]="usersResponse.pageSize" (page)="changePage($event)"></mat-paginator>
-    </div>
+  @if (usersResponse != null && !(loading$ | async)) {
+    @if (usersResponse.users.length > 0) {
+      <div class="user-wrap">
+        @for (user of usersResponse.users; track user) {
+          <cc-user-card [click]="click" (onClick)="onClick.emit($event)" [user]="user"></cc-user-card>
+        }
+      </div>
+    } @else {
+      <div class="empty">
+        <div class="empty-content">
+          <mat-icon color="accent" svgIcon="group_off"></mat-icon>
+          <p>No users found</p>
+        </div>
+      </div>
+    }
+    <mat-paginator [length]="usersResponse.userCount" [pageSize]="usersResponse.pageSize" (page)="changePage($event)"></mat-paginator>
   }
 </div>

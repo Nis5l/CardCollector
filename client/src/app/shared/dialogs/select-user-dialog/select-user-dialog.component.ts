@@ -14,22 +14,20 @@ import type { Id } from '../../types';
 })
 export class SelectUserDialogComponent {
 	public readonly excludeUserIds: Id[];
+  public readonly title: string;
 
 	constructor(
-		private readonly dialogRef: MatDialogRef<SelectUserDialogComponent>,
+		public readonly dialogRef: MatDialogRef<SelectUserDialogComponent>,
 		@Inject(MAT_DIALOG_DATA) data: SelectUserDialogConfig
 	) {
     this.excludeUserIds = data.excludeUserIds;
+    this.title = data.title;
 	}
 
 	public static open(matDialog: MatDialog, config: SelectUserDialogConfig): Observable<User | null | undefined> {
 		return matDialog.open<SelectUserDialogComponent, SelectUserDialogConfig, User | null | undefined>(SelectUserDialogComponent, {
       data: config,
-      minWidth: "250px",
-      width: "60vw",
-	    maxWidth: "1000px",
-      height: "auto",
-      maxHeight: "70vh",
+      panelClass: "responsive-dialog"
     }).afterClosed();
 	}
 

@@ -4,8 +4,8 @@ import { UserRanking } from './user-ranking.enum';
 
 export interface User {
     id: Id,
-    username: String,
+    username: string,
     badges: Badge[]
     ranking: UserRanking,
-    time: String
+    time: string
 }

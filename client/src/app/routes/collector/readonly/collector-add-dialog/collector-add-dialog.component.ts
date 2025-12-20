@@ -11,6 +11,9 @@ import type { Id } from '../../../../shared/types';
     standalone: false
 })
 export class CollectorAddDialogComponent {
+
+  public selectedTabIndex: number = 0;
+
 	constructor(
     private readonly dialogRef: MatDialogRef<CollectorAddDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public readonly collectorId: Id

@@ -16,7 +16,7 @@
           }
         </mat-form-field>
         <div class="create">
-          <div *ngVar="(error$ | async) as error" class="error">
+          <div *ngIf="(error$ | async) as error" class="error">
             @if (error != null) {
               <mat-error>{{error}}</mat-error>
             }

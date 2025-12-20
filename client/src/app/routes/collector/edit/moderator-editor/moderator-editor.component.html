@@ -1,29 +1,40 @@
 <div class="moderator-editor-wrapper" *ngIf="(collectorId$ | async) as collectorId">
-  <div class="header">
-    <p>Moderators</p>
-    @if (isOwner$ | async) {
-      <button mat-icon-button matTooltip="Add Moderator" (click)="addModerator(collectorId)">
-        <mat-icon color="accent" svgIcon="person_add"></mat-icon>
-      </button>
-    }
-  </div>
-  <div class="loading" *ngIf="!(moderators$ | async)">
-    <cc-loading [observable]="moderators$"></cc-loading>
-  </div>
-  @if (moderators$ | async; as moderators) {
-    @if (moderators.length > 0) {
-      <div class="list">
-        @for (mod of moderators; track mod.id) {
-          <cc-user-card [user]="mod"></cc-user-card>
-        }
+  @if (config$ | async; as config) {
+    <div class="header">
+      <div class="info">
+        <p class="title">Moderators</p>
+        <p class="config" *ngIf="(moderators$ | async) as moderators">{{moderators.length}}/{{config.moderatorLimit}}</p>
       </div>
-    } @else {
-      <div class="empty">
-        <div class="empty-content">
-          <mat-icon color="accent" svgIcon="group_off"></mat-icon>
-          <p>No moderators yet</p>
+      @if (isOwner$ | async) {
+        <button *ngIf="(moderators$ | async) as moderators" mat-icon-button matTooltip="Add Moderator" (click)="addModerator(collectorId)" [disabled]="moderators.length >= config.moderatorLimit">
+          <mat-icon color="accent" svgIcon="person_add"></mat-icon>
+        </button>
+      }
+    </div>
+    <div class="loading" *ngIf="!(moderators$ | async)">
+      <cc-loading [observable]="moderators$"></cc-loading>
+    </div>
+    @if (moderators$ | async; as moderators) {
+      @if (moderators.length > 0) {
+        <div class="list">
+          @for (mod of moderators; track mod.id) {
+            <cc-user-card [user]="mod">
+              <div class="remove-moderator" *ngIf="isOwner$ | async">
+                <button mat-icon-button matTooltip="Remove Moderator" (click)="removeModerator(collectorId, mod)">
+                  <mat-icon color="accent" svgIcon="close"></mat-icon>
+                </button>
+              </div>
+            </cc-user-card>
+          }
         </div>
-      </div>
+      } @else {
+        <div class="empty">
+          <div class="empty-content">
+            <mat-icon color="accent" svgIcon="group_off"></mat-icon>
+            <p>No moderators yet</p>
+          </div>
+        </div>
+      }
     }
   }
 </div>

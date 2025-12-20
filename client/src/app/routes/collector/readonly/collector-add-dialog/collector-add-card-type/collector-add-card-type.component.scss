@@ -1,12 +1,23 @@
+@import '../../../../../../screen.scss';
+
 .collector-add-card-type {
 	display: flex;
-	height: 520px;
-	margin: 20px;
+  padding: 30px;
+
+  @media (min-width: $breakpoint-md) {
+    height: 50vh;
+  }
 
 	form {
 		display: flex;
 		flex: 1;
 		flex-direction: column;
+
+    gap: 20px;
+
+    // @media (max-width: $breakpoint-md) {
+    //   gap: 50px;
+    // }
 
 		.create {
 			display: flex;
@@ -14,10 +25,17 @@
 			align-items: center;
 			margin-top: auto;
 
-			gap: 20px;
+      gap: 20px;
+
+      @media (max-width: $breakpoint-md) {
+        gap: 35px;
+      }
 
 			button {
-				width: 400px;
+        width: 100%;
+
+        min-height: 45px;
+        font-size: 17px;
 			}
 		}
 	}

@@ -34,8 +34,9 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .responsive-dialog {
   min-width: 600px !important;
   width: 50vw !important;
-  max-width: 800px !important;
+  max-width: 1000px !important;
   height: auto !important;
+  max-height: 80vh !important;
 
   .header {
     width: 100%;

@@ -51,10 +51,8 @@ export class CollectorImageComponent extends SubscriptionManagerComponent {
 			map(collectorImage => typeof collectorImage === "string" ? collectorImage : this.collectorImageService.getImageUrl(collectorImage.id)),
 		);
 
-		this.editable$ = observableCombineLatest([this.editableSubject.asObservable(), collectorImageNonNull$, this.authService.authData()]).pipe(
-			map(([editable, collectorImage, authData]) => editable === true && AuthService.userIdEqual(authData?.userId, collectorImage.userId))
-		);
-	}
+		this.editable$ = this.editableSubject.asObservable()
+  }
 
 	public uploadImage(file: File) {
 		this.registerSubscription(

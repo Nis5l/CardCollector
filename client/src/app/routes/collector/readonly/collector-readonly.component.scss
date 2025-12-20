@@ -70,14 +70,34 @@
     font-size: 85%;
   }
 
-  .creator{
+  .creator-moderators {
     display: flex;
-    flex-direction: row;
-    align-items: center;
+    align-items: flex-start;
+    gap: 8px;
     margin-top: 10px;
-    .owner{ margin: 0 5px 0 0; }
-    &, cc-user{
-      height: 1em;
+
+    .label {
+      margin: 0;
+      line-height: 1.2em;
+    }
+
+    .users {
+      display: flex;
+      flex-wrap: wrap;
+      line-height: 1;
+
+      cc-user {
+        display: inline-flex;
+        align-items: center;
+        height: 1.2em;
+        flex: 0 0 auto;
+      }
+
+      .comma {
+        line-height: 1;
+        margin-right: 8px;
+        white-space: nowrap;
+      }
     }
   }
 }

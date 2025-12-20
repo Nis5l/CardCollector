@@ -1,10 +1,10 @@
 import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Observable, BehaviorSubject, filter, switchMap, map, shareReplay } from 'rxjs';
+import { Observable, BehaviorSubject, filter, switchMap, map, shareReplay, mapTo, Subject, combineLatest, startWith } from 'rxjs';
 
 import { SubscriptionManagerComponent } from '../../../../shared/abstract';
 import { UserService, AuthService } from '../../../../shared/services';
-import { SelectUserDialogComponent } from '../../../../shared/dialogs';
+import { SelectUserDialogComponent, YesNoCancelDialogComponent } from '../../../../shared/dialogs';
 import type { Id } from '../../../../shared/types';
 import type { User } from '../../../../shared/types/user';
 import { ModeratorEditorService } from './moderator-editor.service';
@@ -18,6 +18,7 @@ import type { CollectorConfig } from '../../types';
     standalone: false
 })
 export class ModeratorEditorComponent extends SubscriptionManagerComponent {
+  private readonly refreshModeratorsSubject: Subject<void> = new Subject<void>();
   public readonly moderators$: Observable<User[]>;
 
   public readonly isOwner$: Observable<boolean>;
@@ -66,8 +67,8 @@ export class ModeratorEditorComponent extends SubscriptionManagerComponent {
       filter((config): config is CollectorConfig => config != null)
     );
 
-    this.moderators$ = this.collectorId$.pipe(
-      switchMap(collectorId => this.collectorService.getModerators(collectorId).pipe(
+    this.moderators$ = combineLatest([this.collectorId$, this.refreshModeratorsSubject.pipe(startWith(0))]).pipe(
+      switchMap(([collectorId]) => this.collectorService.getModerators(collectorId).pipe(
         map(({ moderators }) => moderators)
       )),
       shareReplay(1)
@@ -79,9 +80,24 @@ export class ModeratorEditorComponent extends SubscriptionManagerComponent {
     );
   }
 
-  public addModerator(collector_id: Id): void {
+  public addModerator(collectorId: Id): void {
     const userId = this.authService.getUserId();
     if(userId == null) throw new Error("userId not set");
-    SelectUserDialogComponent.open(this.matDialog, { excludeUserIds: [ userId ] });
+    this.registerSubscription(SelectUserDialogComponent.open(this.matDialog, { excludeUserIds: [ userId ], title: "Add Moderator" }).pipe(
+      filter((user): user is User => user != null),
+      switchMap(user => YesNoCancelDialogComponent.open(this.matDialog, `Add ${user.username} as moderator?`).pipe(
+        filter(res => res === true),
+        mapTo(user),
+        switchMap(user => this.moderatorEditorService.addModerator(collectorId, user.id))
+      ))
+    ).subscribe(() => this.refreshModeratorsSubject.next()));
+  }
+
+  public removeModerator(collectorId: Id, user: User): void {
+    this.registerSubscription(YesNoCancelDialogComponent.open(this.matDialog, `Remove ${user.username} as moderator?`).pipe(
+      filter(res => res === true),
+      mapTo(user),
+      switchMap(user => this.moderatorEditorService.removeModerator(collectorId, user.id))
+    ).subscribe(() => this.refreshModeratorsSubject.next()));
   }
 }

@@ -47,7 +47,7 @@ export class UserCardComponent {
         return
       };
       case "event": {
-        this.onClick.emit();
+        this.onClick.emit(user);
         return
       };
     }

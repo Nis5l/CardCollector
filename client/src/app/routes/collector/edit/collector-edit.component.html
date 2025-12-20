@@ -31,7 +31,7 @@
           </div>
         </mat-card>
         <mat-card appearance="outlined" class="moderator-card">
-        <cc-collector-moderator-editor [collectorId]="collector.id"></cc-collector-moderator-editor>
+        <cc-collector-moderator-editor [collectorId]="collector.id" [config]="config"></cc-collector-moderator-editor>
         </mat-card>
       </div>
       <button class="floating-button-br" mat-fab aria-label="Profile" (click)="navigateCollector(collector.id)">

@@ -1,37 +1,41 @@
 @import '../../../../../../screen.scss';
 
+//TODO: both this and the other are fine for now but still disgusting, maybe one day
 .card-add-container {
-	margin: 10px;
-  height: 100%;
-  overflow: scroll;
-	//height: 520px;
+  padding: 30px;
 	width: auto;
 	display: flex;
-	gap: 50px;
+	gap: 30px;
 	justify-content: space-between;
 
 	flex-direction: row;
 	@media (max-width: $breakpoint-md) {
 		flex-direction: column;
+    margin-bottom: 20px;
 	}
+
+  button {
+    width: 100%;
+
+    min-height: 45px;
+    font-size: 17px;
+  }
 
 	form {
 		display: flex;
 		flex: 1;
 		flex-direction: column;
+    gap: 20px;
 
 		.request {
 			margin-top: auto;
 
       @media (max-width: $breakpoint-md) {
-        margin-top: 25px;
+        margin-top: 15px;
       }
 
 			.error {
 				text-align: center;
-			}
-			button {
-				width: 100%;
 			}
 		}
 	}
@@ -39,8 +43,12 @@
 	.card {
 		display: flex;
 		flex: 1;
-		margin: 20px;
+		//margin: 20px;
 		justify-content: center;
 		align-items: center;
+
+    @media (max-width: $breakpoint-md) {
+      margin-top: 20px;
+    }
 	}
 }

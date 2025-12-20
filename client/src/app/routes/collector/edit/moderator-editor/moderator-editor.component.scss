@@ -21,13 +21,37 @@
       height: 35px;
     }
 
-    p {
-      font-size: 25px;
-      margin: 0;
-
+    .info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
       @media (max-width: $breakpoint-md) {
-        font-size: 20px;
-        //line-height: 15px;
+        gap: 10px;
+      }
+
+      .title {
+        font-size: 25px;
+        line-height: 25px;
+        margin: 0;
+
+        @media (max-width: $breakpoint-md) {
+          font-size: 20px;
+          line-height: 20px;
+          //line-height: 15px;
+        }
+      }
+
+      .config {
+        font-size: 21px;
+        line-height: 21px;
+        opacity: 0.8;
+        margin: 0;
+
+        @media (max-width: $breakpoint-md) {
+          font-size: 18px;
+        line-height: 18px;
+          //line-height: 15px;
+        }
       }
     }
 
@@ -37,6 +61,36 @@
 
       @media (max-width: $breakpoint-md) {
         transform: scale(1.2);
+      }
+    }
+  }
+
+  .list {
+    margin-top: 20px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+    gap: 20px;
+    cc-user-card {
+      width: 100%;
+    }
+
+    .remove-moderator {
+      display: flex;
+      align-items: center;
+      margin-left: auto;
+      margin-right: 10px;
+
+      @media (max-width: $breakpoint-md) {
+        margin-right: 10px;
+      }
+      button {
+        transform: scale(1.5);
+
+        @media (max-width: $breakpoint-md) {
+          transform: scale(1.2);
+        }
       }
     }
   }

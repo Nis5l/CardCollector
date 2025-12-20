@@ -26,9 +26,18 @@
             </div>
           </div>
 
-          <div class="creator">
-            <p class="owner">by </p>
-            <cc-user [userId]="collector.userId"></cc-user>
+          <div class="creator-moderators" *ngIf="(moderators$ | async) as moderators">
+            <p class="label">Moderators:</p>
+
+            <div class="users">
+
+              <cc-user [userId]="collector.userId"></cc-user>
+
+              @for (moderator of moderators; track moderator.id) {
+                <span class="comma">, </span>
+                <cc-user [user]="moderator"></cc-user>
+              }
+            </div>
           </div>
         </div>
       </div>

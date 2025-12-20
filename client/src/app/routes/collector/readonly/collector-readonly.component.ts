@@ -17,6 +17,7 @@ import { CollectorRequestsComponent } from './collector-requests';
 import { CollectorInventoryComponent } from './collector-inventory';
 import { CollectorCatalogComponent } from './collector-catalog';
 
+import { User } from 'src/app/shared/types/user';
 const ROUTES: Route[] = [
   { path: "", pathMatch: "full", redirectTo: "dashboard" },
   { path: "dashboard", component: CollectorDashboardComponent },
@@ -36,6 +37,7 @@ export class CollectorReadonlyComponent extends SubscriptionManagerComponent {
 
 	public readonly collector$: Observable<Collector>;
 	public readonly canEdit$: Observable<boolean>;
+	public readonly moderators$: Observable<User[]>;
 
 	private readonly reloadCardTypesSubject: Subject<void> = new Subject();
 	public readonly cardTypeIndexSubject: ReplaySubject<CardTypeIndexResponse> = new ReplaySubject<CardTypeIndexResponse>(1);
@@ -71,6 +73,12 @@ export class CollectorReadonlyComponent extends SubscriptionManagerComponent {
 				return this.collectorService.getCollector(collectorId);
 			})
 		));
+
+    this.moderators$ = this.collector$.pipe(
+      switchMap(({ id }) => this.collectorService.getModerators(id).pipe(
+        map(({ moderators }) => moderators)
+      ))
+    );
 
 		this.canEdit$ = observableCombineLatest([this.collector$, this.authService.authData()]).pipe(
 			map(([collector, authData]) => AuthService.userIdEqual(collector.userId, authData?.userId))

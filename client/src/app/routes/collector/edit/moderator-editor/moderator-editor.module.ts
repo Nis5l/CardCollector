@@ -7,7 +7,7 @@ import { ModeratorEditorComponent } from './moderator-editor.component';
 import { ModeratorEditorService } from './moderator-editor.service';
 import { HttpModule, UserModule, AuthModule } from '../../../../shared/services';
 import { UserCardModule, LoadingModule } from '../../../../shared/components';
-import { SelectUserDialogModule } from '../../../../shared/dialogs';
+import { SelectUserDialogModule, YesNoCancelDialogModule } from '../../../../shared/dialogs';
 import { CollectorService } from '../../collector.service';
 
 const MATERIAL_MODULES = [
@@ -25,6 +25,7 @@ const MATERIAL_MODULES = [
     UserModule,
     UserCardModule,
     LoadingModule,
+    YesNoCancelDialogModule,
     SelectUserDialogModule,
     AuthModule,
   ],
