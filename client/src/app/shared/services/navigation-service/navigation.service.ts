@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Location } from '@angular/common';
-import { Router, NavigationStart } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
 
 import { SubscriptionManagerComponent } from '../../abstract';
 
@@ -15,8 +15,12 @@ export class NavigationService extends SubscriptionManagerComponent {
     super();
 
     this.registerSubscription(this.router.events.subscribe(event => {
-      if (event instanceof NavigationStart) {
-        this.history.push(event.url);
+      if (event instanceof NavigationEnd) {
+        const url = event.urlAfterRedirects;
+        const last = this.history[this.history.length - 1];
+        if (last !== url) {
+          this.history.push(url);
+        }
       }
     }));
   }
@@ -25,7 +29,7 @@ export class NavigationService extends SubscriptionManagerComponent {
     return this.history.length > 1;
   }
 
-  public goBack(defaultUrl: string = '/'): void {
+  public goBack(): void {
     if (!this.canGoBack()) return;
     this.location.back();
   }
