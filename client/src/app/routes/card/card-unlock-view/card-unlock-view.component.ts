@@ -4,6 +4,7 @@ import { Observable, BehaviorSubject, tap, map, switchMap, catchError, of as obs
 
 import type { UnlockedCard } from '../../../shared/types';
 import { CardService } from '../../../shared/components';
+import { NavigationService } from '../../../shared/services';
 
 @Component({
     selector: 'cc-card-unlock-view',
@@ -20,6 +21,7 @@ export class CardUnlockViewComponent {
 	public constructor(
     private readonly activatedRoute: ActivatedRoute,
     private readonly cardService: CardService,
+    private readonly navigationService: NavigationService,
   ) {
 		const cardId$ = this.activatedRoute.params.pipe(
 			map(params => {
@@ -43,4 +45,12 @@ export class CardUnlockViewComponent {
       }),
     );
 	}
+
+  public goBack(): void {
+    this.navigationService.goBack();
+  }
+
+  public canGoBack(): boolean {
+    return this.navigationService.canGoBack();
+  }
 }

@@ -6,6 +6,13 @@
 
 	margin-top: calc(50vh - (455px / 2) - 50px); //TODO: make less disgusting maybe
 
+  .back-button {
+    position: absolute;
+    top: 40px;
+    right: 50px;
+    transform: scale(1.5);
+  }
+
   .loading, .empty {
     height: 300px;
     width: 100%;

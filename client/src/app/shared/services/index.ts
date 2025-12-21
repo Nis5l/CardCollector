@@ -3,3 +3,4 @@ export { HttpModule, HttpService } from './http-service';
 export { UserModule, UserService } from './user-service';
 export { PopupModule, PopupService } from './popup';
 export { LoadingModule, LoadingService } from './loading';
+export { NavigationService } from './navigation-service';

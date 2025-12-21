@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, BehaviorSubject, tap, map, switchMap, of as observableOf, catchError } from 'rxjs';
 
 import type { Card } from '../../../shared/types';
 import { CardService } from '../../../shared/components';
+import { NavigationService } from '../../../shared/services';
 
 @Component({
     selector: 'cc-card-view',
@@ -20,6 +21,7 @@ export class CardViewComponent {
 	public constructor(
     private readonly activatedRoute: ActivatedRoute,
     private readonly cardService: CardService,
+    private readonly navigationService: NavigationService
   ) {
 		const cardId$ = this.activatedRoute.params.pipe(
 			map(params => {
@@ -43,4 +45,12 @@ export class CardViewComponent {
       }),
     );
 	}
+
+  public goBack(): void {
+    this.navigationService.goBack();
+  }
+
+  public canGoBack(): boolean {
+    return this.navigationService.canGoBack();
+  }
 }
