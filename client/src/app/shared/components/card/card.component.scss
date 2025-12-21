@@ -5,6 +5,26 @@
 .card-container{
 	position: relative;
 	margin: 10%;
+
+  .card-front {
+    width: 100%;
+    height: 100%;
+    transition: transform 1s ease;
+    transform: rotateY(0deg);
+    backface-visibility: hidden;
+  }
+
+  .card-back {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transition: transform 1s ease;
+    transform: rotateY(-180deg);
+    backface-visibility: hidden;
+  }
+  backface-visibility: hidden;
 	.card-inner{
 		position: relative;
 		width: 100%;
@@ -22,19 +42,6 @@
 		left: -15%;
 		width: 130%;
 		height: 122%;
-
-    .frame-back {
-      position: absolute;
-      top: 0;
-      left: 0;
-      transform: rotateY(180deg);
-      backface-visibility: hidden;
-    }
-
-    .frame-front {
-      transform: rotateY(0deg);
-      backface-visibility: hidden;
-    }
 	}
 	.card-inner img, .card-frame img{
 		display: block;
@@ -83,5 +90,43 @@
     top: -3px;
     right: 2px;
     z-index: 1;
+  }
+
+  &.turn {
+    .card-front {
+      transition: transform 1s ease;
+      transform: rotateY(180deg);
+    }
+
+    .card-back {
+      transition: transform 1s ease;
+      transform: rotateY(0deg);
+    }
+
+    //transform: rotateY(180deg);
+    // .card-inner {
+    //     transform: rotateY(180deg);
+    // }
+    // .card-frame {
+    //   .frame-back {
+    //     transform: rotateY(180deg);
+    //   }
+    // }
+
+    //   .frame-front {
+    //     transform: rotateY(180deg);
+    //   }
+
+    //   .level {
+    //     transform: rotateY(180deg);
+    //   }
+
+    //   .quality {
+    //     transform: rotateY(180deg);
+    //   }
+    //   .card-text {
+    //     transform: rotateY(180deg);
+    //   }
+    // }
   }
 }

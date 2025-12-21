@@ -1,9 +1,10 @@
 import { Component, Input, EventEmitter, Output } from '@angular/core';
-import { Observable,  BehaviorSubject } from 'rxjs';
+import { Observable,  BehaviorSubject, timer } from 'rxjs';
 import type { SafeResourceUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 
 import type { UnlockedCard, Card } from '../../types';
+import { SubscriptionManagerComponent } from '../../abstract';
 import { CardService } from './card.service';
 
 function isCard(card: UnlockedCard | Card): card is Card {
@@ -16,7 +17,7 @@ function isCard(card: UnlockedCard | Card): card is Card {
     styleUrls: ['./card.component.scss'],
     standalone: false
 })
-export class CardComponent {
+export class CardComponent extends SubscriptionManagerComponent {
 	private readonly cardSubject: BehaviorSubject<UnlockedCard | Card | null> = new BehaviorSubject<UnlockedCard | Card | null>(null);
 	public readonly card$: Observable<UnlockedCard | Card | null>;
   @Output()
@@ -42,10 +43,15 @@ export class CardComponent {
   @Input()
   public suggestion: boolean = false;
 
+  @Input()
+  public turn: boolean = false;
+  private turning: boolean = false;
+
 	constructor(
     private readonly cardService: CardService,
     private readonly router: Router,
   ) {
+    super();
 		this.card$ = this.cardSubject.asObservable();
 	}
 
@@ -91,6 +97,13 @@ export class CardComponent {
   }
 
   public onClick(card: Card | UnlockedCard | null): void {
+    if(this.turning === true) return;
+    if(this.turn) {
+      this.turn = false;
+      this.turning = true;
+      this.registerSubscription(timer(1000).subscribe(() => this.turning = false));
+    }
+
     switch(this.click) {
       case "none": {
       } break;

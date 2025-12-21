@@ -14,6 +14,7 @@ import { NavigationService } from '../../../shared/services';
 })
 export class CardUnlockViewComponent {
 	public readonly unlockedCard$: Observable<UnlockedCard | null>;
+	public readonly turn$: Observable<boolean>;
 
 	private readonly loadingSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
 	public readonly loading$: Observable<boolean>;
@@ -28,6 +29,13 @@ export class CardUnlockViewComponent {
 				const cardId: unknown = params["cardId"] as unknown;
 				if(typeof cardId !== "string") throw new Error("cardId not set");
 				return cardId;
+			})
+		);
+
+		this.turn$ = this.activatedRoute.queryParams.pipe(
+			map(params => {
+				const turn: unknown = params["turn"] as unknown;
+				return turn != null;
 			})
 		);
 
