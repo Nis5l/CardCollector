@@ -1,7 +1,7 @@
 export { ImageCircleModule } from './image-circle';
 export { ProfileImageModule } from './profile-image';
 export { UserModule } from './user';
-export { CardModule, CardService } from './card';
+export { CardModule } from './card';
 export { LoadingSpinnerModule } from './loading-spinner';
 export { LoadingModule } from './loading';
 export { CollectorCardModule } from './collector-card';

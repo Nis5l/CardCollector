@@ -1,10 +1,12 @@
 import { Component, Input, Output, EventEmitter, forwardRef, Injector, AfterViewInit } from '@angular/core'
+import { ErrorStateMatcher } from '@angular/material/core';
 import { BehaviorSubject, Observable, filter, combineLatest as observableCombineLatest, switchMap, startWith, map, distinctUntilChanged } from 'rxjs'
 
-import { CardTypeSelectorService } from './card-type-selector.service';
-import { SubscriptionManagerComponent } from '../../../../../../shared/abstract';
-import type { Id, CardType } from '../../../../../../shared/types';
-import { ControlValueAccessor, FormControl, NgControl, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { CollectorService } from '../../shared';
+import { SubscriptionManagerComponent } from '../../../../shared/abstract';
+import type { Id, CardType } from '../../../../shared/types';
+import { CardTypeSortType, CardState } from '../../../../shared/types';
+import { ControlValueAccessor, FormControl, NgControl, NG_VALUE_ACCESSOR, Validators } from '@angular/forms';
 
 @Component({
     selector: 'cc-card-type-selector',
@@ -47,7 +49,28 @@ export class CardTypeSelectorComponent extends SubscriptionManagerComponent impl
 		return collectorId;
 	}
 
-	constructor(private injector: Injector, private readonly cardTypeSelectorService: CardTypeSelectorService) {
+	private readonly cardStateSubject: BehaviorSubject<CardState | null> = new BehaviorSubject<CardState | null>(null);
+	private readonly cardState$: Observable<CardState | null>;
+	@Input()
+	public set cardState(cardState: CardState | null) {
+		this.cardStateSubject.next(cardState);
+	}
+
+	public get cardState(): CardState {
+		const cardState = this.cardStateSubject.getValue();
+		if(cardState == null) throw new Error("cardState not set");
+		return cardState;
+	}
+
+  public readonly errorStateMatcher: ErrorStateMatcher = {
+    isErrorState: (_: FormControl | null) => {
+      const parent = this.control;
+      if(parent == null) return false;
+      return parent.invalid && (this.formControl.touched || this.formControl.dirty);
+    }
+  };
+
+	constructor(private injector: Injector, private readonly collectorService: CollectorService) {
 		super();
 		this.collectorId$ = this.collectorIdSubject.asObservable().pipe(
 			filter((collectorId): collectorId is Id => collectorId != null)
@@ -59,8 +82,10 @@ export class CardTypeSelectorComponent extends SubscriptionManagerComponent impl
 			distinctUntilChanged()
 		);
 
-		this.cardTypeOptions$ = observableCombineLatest([this.collectorId$, formControlString]).pipe(
-			switchMap(([collectorId, name]) => this.cardTypeSelectorService.getCardTypes(collectorId, name)),
+    this.cardState$ = this.cardStateSubject.asObservable();
+
+		this.cardTypeOptions$ = observableCombineLatest([this.collectorId$, formControlString, this.cardState$]).pipe(
+			switchMap(([collectorId, name, cardState]) => this.collectorService.getCardTypes(collectorId, name, 0, cardState, CardTypeSortType.Name)),
 			map(({ cardTypes }) => cardTypes)
 		);
 

@@ -3,7 +3,7 @@ import { Observable, BehaviorSubject, combineLatest, switchMap, filter, startWit
 
 import type { CardType, Id } from '../../../../../../shared/types';
 import { RequestCardCardTypeService } from './request-card-card-type.service';
-import { LoadingService } from '../../../../../../shared/services';
+import { LoadingService, CardService } from '../../../../../../shared/services';
 import { SubscriptionManagerComponent } from '../../../../../../shared/abstract';
 import type { VoteGetResponse } from './types';
 import type { CardVote } from '../shared/types';
@@ -49,13 +49,18 @@ export class RequestCardCardTypeComponent extends SubscriptionManagerComponent {
 
 	constructor(
 		private readonly requestCardCardTypeService: RequestCardCardTypeService,
-		private readonly loadingService: LoadingService
+		private readonly loadingService: LoadingService,
+    private readonly cardService: CardService,
 	) {
 		super();
 
     const cardType$: Observable<CardType> = this.cardTypeSubject.asObservable().pipe(
       filter((cardType): cardType is CardType => cardType != null)
     );
+
+    /* cardType$.pipe(
+      filter(cardType =>
+    ); */
 
     this.voteResponse$ = combineLatest([cardType$, this.refreshVoteSubject.pipe(startWith(0))]).pipe(
       switchMap(([cardType]) => this.requestCardCardTypeService.votes(cardType.id))
@@ -76,8 +81,8 @@ export class RequestCardCardTypeComponent extends SubscriptionManagerComponent {
 		}));
 	}
 
-	public vote(card_type_id: Id, vote: CardVote): void {
-    this.registerSubscription(this.requestCardCardTypeService.vote(card_type_id, vote).subscribe(
+	public vote(cardTypeId: Id, vote: CardVote): void {
+    this.registerSubscription(this.requestCardCardTypeService.vote(cardTypeId, vote).subscribe(
       () => this.refreshVoteSubject.next()
     ));
 	}

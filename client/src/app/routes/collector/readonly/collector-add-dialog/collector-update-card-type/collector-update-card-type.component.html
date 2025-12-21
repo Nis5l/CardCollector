@@ -1,0 +1,30 @@
+@if (config$ | async; as config) {
+  @if (collectorId$ | async; as collectorId) {
+    <div class="collector-update-card-type" *ngIf="(formGroup$ | async) as formGroup">
+      <form [formGroup]="formGroup" (submit)="updateCardTypeRequest(collectorId, formGroup)">
+        <cc-card-type-selector formControlName="type" [collectorId]="collectorId" [cardState]="CardState.Created"></cc-card-type-selector>
+        <mat-form-field *ngVar="formGroup.controls.name as nameFormControl">
+          <input matInput type="text" formControlName="name" placeholder="Name" [minlength]="config.nameLengthMin" [maxlength]="config.nameLengthMax" />
+          @if (nameFormControl.hasError('required') || nameFormControl.hasError('minlength')) {
+            <mat-error>
+              Name has to be {{config.nameLengthMin}}-{{config.nameLengthMax}} characters
+            </mat-error>
+          }
+          @if (nameFormControl.hasError('pattern')) {
+            <mat-error>
+              Name can only contain letters, numbers, _ and whitespaces in between words
+            </mat-error>
+          }
+        </mat-form-field>
+        <div class="create">
+          <div *ngIf="(error$ | async) as error" class="error">
+            @if (error != null) {
+              <mat-error>{{error}}</mat-error>
+            }
+          </div>
+          <button matButton="outlined" type="submit" [disabled]="!formGroup.valid">Create</button>
+        </div>
+      </form>
+    </div>
+  }
+}

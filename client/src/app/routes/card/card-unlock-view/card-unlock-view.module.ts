@@ -7,6 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { CardModule, LoadingModule } from '../../../shared/components';
 import { NgVarModule } from '../../../shared/directives';
 import { CardUnlockViewComponent } from './card-unlock-view.component';
+import { CardServiceModule } from '../../../shared/services';
 
 const MATERIAL_MODULES = [
   MatButtonModule,
@@ -22,6 +23,7 @@ const MATERIAL_MODULES = [
 
 		NgVarModule,
 		CardModule,
+    CardServiceModule,
     LoadingModule,
 	],
 	declarations: [ CardUnlockViewComponent ],

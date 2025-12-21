@@ -12,7 +12,7 @@ export class UserListService {
 
   public getUsers(username: string, page: number, excludeIds: Id[]): Observable<UsersResponse> {
     let params = new HttpParams().set("username", username).set("page", page);
-    excludeIds.forEach(id => params = params.append('excludeIds', id));
+    excludeIds.forEach(id => params = params.append('exclude_ids', id));
     return this.httpService.get<UsersResponse>("/user", params);
   }
 }

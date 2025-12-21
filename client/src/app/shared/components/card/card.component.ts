@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 
 import type { UnlockedCard, Card } from '../../types';
 import { SubscriptionManagerComponent } from '../../abstract';
-import { CardService } from './card.service';
+import { CardService } from '../../services';
 
 function isCard(card: UnlockedCard | Card): card is Card {
 	return !("id" in card);

@@ -1,12 +1,17 @@
 import { Component, Input, EventEmitter, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Observable, share, BehaviorSubject } from 'rxjs';
+import { Observable, shareReplay, filter, map, BehaviorSubject } from 'rxjs';
 
 import { CollectorAddCardTypeService } from './collector-add-card-type.service';
-import type { CollectorCardTypeConfig } from './types';
 import type { Id } from '../../../../../shared/types';
 import { LoadingService } from '../../../../../shared/services';
 import { HttpErrorResponse } from '@angular/common/http';
+import { CollectorService } from '../../../shared';
+import type { CollectorCardTypeConfig } from '../../../types';
+
+type CollectorAddCardTypeFormGroup = FormGroup<{
+  name: FormControl<string>
+}>;
 
 @Component({
     selector: 'cc-collector-add-card-type',
@@ -18,37 +23,57 @@ export class CollectorAddCardTypeComponent {
 	@Output()
 	public readonly onClose: EventEmitter<void> = new EventEmitter<void>();
 
-	private _collectorId: Id | null = null;
+	private readonly collectorIdSubject: BehaviorSubject<Id | null> = new BehaviorSubject<Id | null>(null);
+	public readonly collectorId$: Observable<Id>;
+
 	@Input()
-	public set collectorId(id: Id) {
-		this._collectorId = id;
+	public set collectorId(id: Id | null | undefined) {
+    if(id == null) return;
+    this.collectorIdSubject.next(id);
 	}
 
 	public get collectorId(): Id {
-		if(this._collectorId == null) throw new Error("collectorId not set");
-		return this._collectorId;
+    const collectorId = this.collectorIdSubject.getValue();
+		if(collectorId == null) throw new Error("collectorId not set");
+		return collectorId;
 	}
 
 	public readonly config$: Observable<CollectorCardTypeConfig>;
-	public readonly formGroup;
+	public readonly formGroup$: Observable<CollectorAddCardTypeFormGroup>;
 
 	private readonly errorSubject: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
 	public readonly error$: Observable<string | null>;
 
-	constructor(private readonly collectorAddCardTypeService: CollectorAddCardTypeService, private readonly loadingService: LoadingService) {
-		this.formGroup = new FormGroup({
-			name: new FormControl("", {
-				nonNullable: true,
-				validators: [ Validators.required, Validators.pattern("^[a-zA-Z0-9_]+( [a-zA-Z0-9_]+)*$") ]
-			})
-		});
+	constructor(
+    private readonly collectorAddCardTypeService: CollectorAddCardTypeService,
+    private readonly loadingService: LoadingService,
+    private readonly collectorService: CollectorService
+  ) {
+		this.config$ = this.collectorService.getCardTypeConfig().pipe(shareReplay(1));
 
-		this.config$ = this.collectorAddCardTypeService.getConfig().pipe(share());
+		this.formGroup$ = this.config$.pipe(
+      map(config => new FormGroup({
+        name: new FormControl("", {
+          nonNullable: true,
+          validators: [
+            Validators.required,
+            Validators.pattern("^[a-zA-Z0-9_]+( [a-zA-Z0-9_]+)*$"),
+            Validators.minLength(config.nameLengthMin),
+            Validators.maxLength(config.nameLengthMax),
+          ]
+        })
+      })
+    ));
+
+    this.collectorId$ = this.collectorIdSubject.pipe(
+      filter((collectorId): collectorId is Id => collectorId != null)
+    );
+
 		this.error$ = this.errorSubject.asObservable();
 	}
 
-	public createCardTypeRequest(): void {
-		this.loadingService.waitFor(this.collectorAddCardTypeService.createCollectorRequest(this.collectorId, this.formGroup.getRawValue())).subscribe({
+	public createCardTypeRequest(collectorId: Id, formGroup: CollectorAddCardTypeFormGroup): void {
+		this.loadingService.waitFor(this.collectorAddCardTypeService.createCollectorRequest(collectorId, formGroup.getRawValue())).subscribe({
 			next: () => { this.onClose.emit() },
 			error: (err: HttpErrorResponse) => {
 				this.errorSubject.next(err.error?.error ?? "Creating type failed");

@@ -6,8 +6,7 @@ import type { PageEvent } from '@angular/material/paginator';
 import { UserListService } from './user-list.service';
 import type { UsersResponse } from './types';
 import { SubscriptionManagerComponent } from '../../abstract';
-import type { User } from '../../types/user';
-import type { Id } from '../../types';
+import type { Id, User } from '../../types';
 
 @Component({
     selector: "cc-user-list",

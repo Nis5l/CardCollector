@@ -4,12 +4,12 @@ import { MatDialog } from '@angular/material/dialog';
 import type { PageEvent } from '@angular/material/paginator';
 import { switchMap, map, Observable, combineLatest as observableCombineLatest, BehaviorSubject, ReplaySubject, Subject } from 'rxjs';
 
-import { CollectorService } from '../collector.service';
+import { CollectorService } from '../shared';
 import { CollectorReadonlyService } from './collector-readonly.service';
 import { LoadingService, AuthService } from '../../../shared/services';
 import { SubscriptionManagerComponent } from '../../../shared/abstract';
 import type { Collector } from '../../../shared/types';
-import type { CardTypeIndexResponse } from './types';
+import type { CardTypeIndexResponse } from '../types';
 import { type NavigationItem } from '../../../shared/components';
 
 import { CollectorDashboardComponent } from './collector-dashboard';

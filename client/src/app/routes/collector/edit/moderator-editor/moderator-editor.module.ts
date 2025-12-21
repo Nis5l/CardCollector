@@ -8,7 +8,7 @@ import { ModeratorEditorService } from './moderator-editor.service';
 import { HttpModule, UserModule, AuthModule } from '../../../../shared/services';
 import { UserCardModule, LoadingModule } from '../../../../shared/components';
 import { SelectUserDialogModule, YesNoCancelDialogModule } from '../../../../shared/dialogs';
-import { CollectorService } from '../../collector.service';
+import { CollectorServiceModule } from '../../shared';
 
 const MATERIAL_MODULES = [
   MatIconModule,
@@ -28,8 +28,9 @@ const MATERIAL_MODULES = [
     YesNoCancelDialogModule,
     SelectUserDialogModule,
     AuthModule,
+    CollectorServiceModule,
   ],
-  providers: [ ModeratorEditorService, CollectorService ],
+  providers: [ ModeratorEditorService ],
   declarations: [ ModeratorEditorComponent ],
   exports: [ ModeratorEditorComponent ]
 })

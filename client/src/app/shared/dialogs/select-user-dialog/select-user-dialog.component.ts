@@ -3,8 +3,7 @@ import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dial
 import { Observable } from 'rxjs';
 
 import type { SelectUserDialogConfig } from './types';
-import type { User } from '../../types/user';
-import type { Id } from '../../types';
+import type { Id, User } from '../../types';
 
 @Component({
     selector: 'cc-select-user-dialog',

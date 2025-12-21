@@ -1,23 +1,28 @@
+use std::collections::{HashSet, HashMap};
+
 use crate::sql::Sql;
 use crate::shared::{util, Id};
-use crate::shared::card::data::{CardType, CardState};
+use crate::shared::card::data::{CardType, CardTypeDb, CardState, CardTypeSortType};
 
-pub async fn get_card_types(sql: &Sql, collector_id: &Id, mut name: String, amount: u32, offset: u32, state: Option<CardState>) -> Result<Vec<CardType>, sqlx::Error> {
+pub async fn get_card_types(sql: &Sql, collector_id: &Id, mut name: String, sort_type: &CardTypeSortType, amount: u32, offset: u32, state: Option<CardState>) -> Result<Vec<CardType>, sqlx::Error> {
     name = util::escape_for_like(name);
 
     let query = format!(
-        "SELECT
-         ctid as id,
-         uid as userId,
-         ctname as name
+        "SELECT ctid, uid, ctname, ctstate, ctupdatectid
          FROM cardtypes
          WHERE ctname LIKE CONCAT('%', ?, '%') AND
          coid = ?
+         {}
+         ORDER BY
          {}
          LIMIT ? OFFSET ?;",
              match state {
                 Some(_) => "AND ctstate = ?",
                 None => ""
+            },
+             match sort_type {
+                CardTypeSortType::Name => "ctname,\ncttime DESC",
+                CardTypeSortType::Recent => "cttime DESC",
             }
         );
 
@@ -31,9 +36,52 @@ pub async fn get_card_types(sql: &Sql, collector_id: &Id, mut name: String, amou
 
     stmt = stmt.bind(amount).bind(offset);
 
-    let card_types: Vec<CardType> = stmt.fetch_all(sql.pool()).await?;
+    let card_types_db: Vec<CardTypeDb> = stmt.fetch_all(sql.pool()).await?;
 
-    Ok(card_types)
+    let card_type_reference_ids: Vec<Id> = card_types_db
+        .iter()
+        .filter_map(|ct| ct.ctupdatectid.clone())
+        .collect::<HashSet<_>>()
+        .into_iter()
+        .collect();
+
+    let update_card_types_map: HashMap<Id, CardType> = if !card_type_reference_ids.is_empty() {
+        let query = format!(
+            "SELECT ctid, uid, ctname, ctstate, ctupdatectid
+             FROM cardtypes
+             WHERE ctid IN ({})",
+            card_type_reference_ids.iter().map(|_| "?").collect::<Vec<_>>().join(",")
+        );
+
+        let mut q = sqlx::query_as(&query);
+        for id in &card_type_reference_ids {
+            q = q.bind(id);
+        }
+
+        let rows: Vec<CardTypeDb> = q.fetch_all(sql.pool()).await?;
+
+        rows.into_iter()
+            .map(|u| {
+                let ct = CardType::from(u);
+                (ct.id.clone(), ct)
+            })
+            .collect()
+    } else {
+        HashMap::new()
+    };
+
+    let result: Vec<CardType> = card_types_db
+        .into_iter()
+        .map(|ct_db| {
+            let update_card_type = ct_db
+                .ctupdatectid.as_ref()
+                .and_then(|id| update_card_types_map.get(id).cloned());
+
+            CardType::from((ct_db, update_card_type))
+        })
+        .collect();
+
+    Ok(result)
 }
 
 pub async fn get_card_type_count(sql: &Sql, collector_id: &Id, mut name: String, state: Option<CardState>) -> Result<u32, sqlx::Error> {

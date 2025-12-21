@@ -72,8 +72,8 @@ export class RequestCardCardComponent extends SubscriptionManagerComponent {
 		}));
 	}
 
-	public vote(card_id: Id, vote: CardVote): void {
-    this.registerSubscription(this.requestCardCardService.vote(card_id, vote).subscribe(
+	public vote(cardId: Id, vote: CardVote): void {
+    this.registerSubscription(this.requestCardCardService.vote(cardId, vote).subscribe(
       () => this.refreshVoteSubject.next()
     ));
 	}

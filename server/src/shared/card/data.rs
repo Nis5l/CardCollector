@@ -26,11 +26,22 @@ pub struct CardFrame {
 
 #[derive(Debug, Serialize, FromRow)]
 #[serde(rename_all="camelCase")]
+pub struct CardTypeDb {
+    pub ctid: Id,
+    pub ctname: String,
+    pub uid: Id,
+    pub ctstate: i32,
+    pub ctupdatectid: Option<Id>
+}
+
+#[derive(Debug, Serialize, Clone, FromRow)]
+#[serde(rename_all="camelCase")]
 pub struct CardType {
     pub id: Id,
     pub name: String,
-    #[sqlx(rename="userId")]
     pub user_id: Id,
+    pub state: CardState,
+    pub update_card_type: Option<Box<CardType>>
 }
 
 #[derive(Debug, Serialize)]
@@ -60,6 +71,53 @@ pub struct UnlockedCard {
     pub card_effect: Option<CardEffect>,
 
     pub card: Card,
+}
+
+impl From<CardTypeDb> for CardType {
+    fn from(card_type_db: CardTypeDb) -> Self {
+        CardType {
+            id: card_type_db.ctid,
+            user_id: card_type_db.uid,
+            name: card_type_db.ctname,
+            state: CardState::from(card_type_db.ctstate),
+            update_card_type: None
+        }
+    }
+}
+
+impl From<(CardTypeDb, CardType)> for CardType {
+    fn from((card_type_db, card_type_reference): (CardTypeDb, CardType)) -> Self {
+        let mut card_type = CardType::from(card_type_db);
+        card_type.update_card_type = Some(Box::new(card_type_reference));
+        card_type
+    }
+}
+
+impl From<(CardTypeDb, CardTypeDb)> for CardType {
+    fn from((card_type_db, card_type_db_reference): (CardTypeDb, CardTypeDb)) -> Self {
+        let mut card_type = CardType::from(card_type_db);
+        let card_type_reference = CardType::from(card_type_db_reference);
+        card_type.update_card_type = Some(Box::new(card_type_reference));
+        card_type
+    }
+}
+
+impl From<(CardTypeDb, Option<CardTypeDb>)> for CardType {
+    fn from((card_type_db, card_type_db_reference): (CardTypeDb, Option<CardTypeDb>)) -> Self {
+        match card_type_db_reference {
+            Some(ctdb) => Self::from((card_type_db, ctdb)),
+            None => Self::from(card_type_db),
+        }
+    }
+}
+
+impl From<(CardTypeDb, Option<CardType>)> for CardType {
+    fn from((card_type_db, card_type_reference): (CardTypeDb, Option<CardType>)) -> Self {
+        match card_type_reference {
+            Some(ct) => Self::from((card_type_db, ct)),
+            None => Self::from(card_type_db),
+        }
+    }
 }
 
 impl From<UnlockedCardDb> for UnlockedCard {
@@ -107,6 +165,8 @@ impl From<CardDb> for Card {
                 id: card.type_id,
                 name: card.type_name,
                 user_id: card.card_type_user_id,
+                update_card_type: None,
+                state: CardState::Created //TODO
             }
         }
     }
@@ -162,7 +222,8 @@ pub struct UnlockedCardCreateData {
     pub level: i32
 }
 
-#[derive(Debug, Clone, FromFormField)]
+#[derive(Debug, Clone, Serialize_repr, FromFormField)]
+#[repr(i32)]
 pub enum CardState {
     #[field(value = "0")]
     Requested = 0,
@@ -170,15 +231,21 @@ pub enum CardState {
     Created = 1,
 }
 
+impl From<i32> for CardState {
+    fn from(value: i32) -> Self {
+        match value {
+            0 => Self::Requested,
+            _ => Self::Created
+        }
+    }
+}
+
 impl<'de> Deserialize<'de> for CardState {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
        where D: serde::Deserializer<'de> {
             let i = i32::deserialize(deserializer)?;
 
-            Ok(match i {
-                0 => Self::Requested,
-                _ => Self::Created
-            })
+            Ok(CardState::from(i))
        }
 }
 
@@ -197,17 +264,23 @@ impl Default for SortType {
     }
 }
 
+impl From<i32> for SortType {
+    fn from(value: i32) -> Self {
+        match value {
+            1 => Self::Level,
+            2 => Self::Recent,
+            3 => Self::CardType,
+            _ => Self::Name
+        }
+    }
+}
+
 impl<'de> Deserialize<'de> for SortType {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
        where D: serde::Deserializer<'de> {
             let i = i32::deserialize(deserializer)?;
 
-            Ok(match i {
-                1 => Self::Level,
-                2 => Self::Recent,
-                3 => Self::CardType,
-                _ => Self::Name
-            })
+            Ok(Self::from(i))
        }
 }
 
@@ -241,6 +314,37 @@ impl<'de> Deserialize<'de> for CardSortType {
             let i = i32::deserialize(deserializer)?;
 
             Ok(CardSortType::from(i))
+       }
+}
+
+#[derive(Debug, FromFormField, Serialize_repr)]
+#[repr(i32)]
+pub enum CardTypeSortType {
+    Name = 0,
+    Recent = 1
+}
+
+impl Default for CardTypeSortType {
+    fn default() -> Self {
+        Self::Name
+    }
+}
+
+impl From<i32> for CardTypeSortType {
+    fn from(value: i32) -> Self {
+        match value {
+            1 => Self::Recent,
+            _ => Self::Name,
+        }
+    }
+}
+
+impl<'de> Deserialize<'de> for CardTypeSortType {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+       where D: serde::Deserializer<'de> {
+            let i = i32::deserialize(deserializer)?;
+
+            Ok(CardTypeSortType::from(i))
        }
 }
 

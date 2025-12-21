@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable, BehaviorSubject, tap, map, switchMap, catchError, of as observableOf } from 'rxjs';
 
 import type { UnlockedCard } from '../../../shared/types';
-import { CardService } from '../../../shared/components';
+import { CardService } from '../../../shared/services';
 import { NavigationService } from '../../../shared/services';
 
 @Component({

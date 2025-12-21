@@ -1,7 +1,7 @@
 use sqlx::mysql::MySqlQueryResult;
 
 use crate::sql::Sql;
-use super::data::{UnlockedCardCreateData, UnlockedCard, UnlockedCardDb, CardDb, SortType, Card, InventoryOptions, CardState, CardSortType};
+use super::data::{UnlockedCardCreateData, UnlockedCard, UnlockedCardDb, CardDb, SortType, Card, InventoryOptions, CardState, CardSortType, CardTypeDb, CardType};
 use crate::shared::{Id, util};
 
 pub async fn get_card_type_collector_id(sql: &Sql, card_type_id: &Id) -> Result<Id, sqlx::Error> {
@@ -455,4 +455,22 @@ pub async fn get_cards(sql: &Sql, collector_id: &Id, mut name: String, sort_type
     let cards = cards_db.into_iter().map(Card::from).collect();
 
     Ok(cards)
+}
+
+pub async fn get_card_type(sql: &Sql, collector_id: &Id, card_type_id: &Id) -> Result<CardType, sqlx::Error> {
+    let query = "SELECT ctid, uid, ctname, ctstate, ctupdatectid
+                 FROM cardtypes
+                 WHERE ctid = ? AND coid=?;";
+    let card_type_db: CardTypeDb = sqlx::query_as(query)
+        .bind(card_type_id)
+        .bind(collector_id)
+        .fetch_one(sql.pool())
+        .await?;
+
+    let reference_db: Option<CardTypeDb> = match card_type_db.ctupdatectid {
+        Some(ref id) => Some(sqlx::query_as(query).bind(id).bind(collector_id).fetch_one(sql.pool()).await?),
+        None => None
+    };
+
+    Ok(CardType::from((card_type_db, reference_db)))
 }

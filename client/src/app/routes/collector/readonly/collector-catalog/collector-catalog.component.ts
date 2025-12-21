@@ -6,7 +6,7 @@ import { Observable, map, combineLatest, BehaviorSubject, startWith, debounceTim
 
 import type { Id } from '../../../../shared/types';
 import { CardSortType, CardIndexResponse } from '../../../../shared/types';
-import { CardService } from '../../../../shared/components';
+import { CardService } from '../../../../shared/services';
 import { SubscriptionManagerComponent } from '../../../../shared/abstract';
 
 @Component({
@@ -82,7 +82,7 @@ export class CollectorCatalogComponent extends SubscriptionManagerComponent {
         this.loadingSubject.next(true);
         this.cardIndexResponseSubject.next(loadingCardIndexResponse);
       }),
-      switchMap(([collector_id, page, search, sort_type]) => cardService.getCards(collector_id, search, page, null, sort_type).pipe(share()))
+      switchMap(([collectorId, page, search, sortType]) => cardService.getCards(collectorId, search, page, null, sortType).pipe(share()))
     ).subscribe(res => {
       this.loadingSubject.next(false);
       this.cardIndexResponseSubject.next(res);

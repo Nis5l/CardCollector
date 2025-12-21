@@ -5,7 +5,7 @@ use rocket::form::FromForm;
 
 use crate::shared::crypto::random_string::generate_random_string;
 
-#[derive(Debug, Clone, sqlx::Type, Serialize, FromForm)]
+#[derive(Debug, Clone, sqlx::Type, Serialize, FromForm, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[sqlx(transparent)]
 pub struct Id(String);
 
@@ -36,12 +36,6 @@ impl std::ops::Deref for Id {
 
     fn deref(&self) -> &Self::Target {
         &self.0
-    }
-}
-
-impl PartialEq for Id {
-    fn eq(&self, other: &Self) -> bool {
-        self.0 == other.0
     }
 }
 

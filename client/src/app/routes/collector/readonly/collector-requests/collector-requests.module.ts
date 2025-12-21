@@ -9,7 +9,8 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { RequestCardCardTypeModule } from './request-cards';
 import { RequestCardCardModule } from './request-cards';
 import { CollectorRequestsComponent } from './collector-requests.component';
-import { CollectorRequestsService } from './collector-requests.service';
+import { CollectorService } from '../../shared';
+import { CardServiceModule } from '../../../../shared/services';
 import { LoadingModule } from '../../../../shared/components';
 
 const MATERIAL_MODULES = [
@@ -24,12 +25,13 @@ const MATERIAL_MODULES = [
 
     ...MATERIAL_MODULES,
 
-	LoadingModule,
+    LoadingModule,
     NgVarModule,
     RequestCardCardTypeModule,
-	RequestCardCardModule,
+    RequestCardCardModule,
+    CardServiceModule,
   ],
-  providers: [ CollectorRequestsService ],
+  providers: [ CollectorService ],
 	declarations: [ CollectorRequestsComponent ],
   exports: [ CollectorRequestsComponent ]
 })

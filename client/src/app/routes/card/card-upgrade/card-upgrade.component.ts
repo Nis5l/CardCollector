@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 
 import { CardUpgradeService } from './card-upgrade.service';
 import type { UnlockedCard, Id } from '../../../shared/types';
-import { CardService } from '../../../shared/components';
+import { CardService } from '../../../shared/services';
 import { SubscriptionManagerComponent } from '../../../shared/abstract';
 import { YesNoCancelDialogComponent } from '../../../shared/dialogs';
 

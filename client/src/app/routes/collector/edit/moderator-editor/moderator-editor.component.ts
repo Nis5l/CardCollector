@@ -5,10 +5,9 @@ import { Observable, BehaviorSubject, filter, switchMap, map, shareReplay, mapTo
 import { SubscriptionManagerComponent } from '../../../../shared/abstract';
 import { UserService, AuthService } from '../../../../shared/services';
 import { SelectUserDialogComponent, YesNoCancelDialogComponent } from '../../../../shared/dialogs';
-import type { Id } from '../../../../shared/types';
-import type { User } from '../../../../shared/types/user';
+import type { Id, User } from '../../../../shared/types';
 import { ModeratorEditorService } from './moderator-editor.service';
-import { CollectorService } from '../../collector.service';
+import { CollectorService } from '../../shared';
 import type { CollectorConfig } from '../../types';
 
 @Component({
@@ -75,7 +74,7 @@ export class ModeratorEditorComponent extends SubscriptionManagerComponent {
     );
 
     this.isOwner$ = this.collectorId$.pipe(
-      switchMap(collector_id => this.userService.isCollectorOwner(collector_id)),
+      switchMap(collectorId => this.userService.isCollectorOwner(collectorId)),
       shareReplay(1)
     );
   }

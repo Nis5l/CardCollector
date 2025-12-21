@@ -5,7 +5,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable, BehaviorSubject, map, shareReplay } from 'rxjs';
 
-import { CollectorService } from '../../collector/collector.service';
+import { CollectorService } from '../../collector/shared';
 import type { CollectorConfig } from '../../collector/types';
 import { NewCollectorDialogService } from './new-collector-dialog.service';
 

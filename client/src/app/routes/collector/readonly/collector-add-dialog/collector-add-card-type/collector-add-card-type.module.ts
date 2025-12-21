@@ -10,6 +10,7 @@ import { HttpModule } from '../../../../../shared/services';
 import { NgVarModule } from '../../../../../shared/directives';
 import { CollectorAddCardTypeComponent } from './collector-add-card-type.component';
 import { CollectorAddCardTypeService } from './collector-add-card-type.service';
+import { CollectorServiceModule } from '../../../shared';
 
 const MATERIAL_MODULES = [
 	MatFormFieldModule,
@@ -22,10 +23,11 @@ const MATERIAL_MODULES = [
 		CommonModule,
 		ReactiveFormsModule,
 
+		...MATERIAL_MODULES,
+
 		HttpModule,
 		NgVarModule,
-		
-		...MATERIAL_MODULES,
+    CollectorServiceModule,
 	],
 	providers: [ CollectorAddCardTypeService ],
 	declarations: [ CollectorAddCardTypeComponent ],

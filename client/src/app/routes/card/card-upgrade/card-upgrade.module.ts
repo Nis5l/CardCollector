@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 
 import { CardUpgradeComponent } from './card-upgrade.component';
 import { CardUpgradeService } from './card-upgrade.service';
-import { HttpModule } from '../../../shared/services';
+import { HttpModule, CardServiceModule } from '../../../shared/services';
 import { CardModule, LoadingModule, InventoryModule } from '../../../shared/components';
 import { NgVarModule } from '../../../shared/directives';
 import { YesNoCancelDialogModule } from '../../../shared/dialogs';
@@ -36,6 +36,7 @@ const MATERIAL_MODULES = [
     YesNoCancelDialogModule,
     LoadingModule,
     InventoryModule,
+    CardServiceModule,
   ]
 })
 export class CardUpgradeModule {}

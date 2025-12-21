@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, filter } from 'rxjs';
 
-import type { User } from '../../types/user';
+import type { User } from '../../types';
 
 @Component({
     selector: "cc-user-card",

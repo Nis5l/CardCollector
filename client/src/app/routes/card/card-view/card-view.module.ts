@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
 import { CardModule, LoadingModule } from '../../../shared/components';
+import { CardServiceModule } from '../../../shared/services';
 import { NgVarModule } from '../../../shared/directives';
 import { CardViewComponent } from './card-view.component';
 
@@ -20,6 +21,7 @@ const MATERIAL_MODULES = [
 
     ...MATERIAL_MODULES,
 
+    CardServiceModule,
 		NgVarModule,
 		CardModule,
     LoadingModule

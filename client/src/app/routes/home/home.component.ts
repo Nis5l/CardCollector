@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 
 import type { UnlockedCard, CardInfo, CardFrame, CardType, CardEffect } from '../../shared/types/card';
+import { CardState } from '../../shared/types/card';
 
 @Component({
     selector: 'cc-home',
@@ -14,7 +15,7 @@ export class HomeComponent {
 	constructor(){
     const nowStr = (new Date()).toISOString();
 		let cardInfo: CardInfo = { id: "asd", userId: "userId", name: "Doggo?", time: nowStr };
-		let cardType: CardType = { id: "asdss", name: "Doggies", userId: null };
+		let cardType: CardType = { id: "asdss", name: "Doggies", userId: null, state: CardState.Created, updateCardType: null };
 		let cardEffect: CardEffect = { id: 1, image: "http://localhost:8080/effect/Effect2.gif", opacity: 0.5 };
 		this.cardData = {
 			id: "id",

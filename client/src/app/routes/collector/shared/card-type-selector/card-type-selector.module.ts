@@ -5,9 +5,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
-import { HttpModule } from '../../../../../../shared/services';
+import { HttpModule } from '../../../../shared/services';
 import { CardTypeSelectorComponent } from './card-type-selector.component';
-import { CardTypeSelectorService } from './card-type-selector.service';
+import { CollectorServiceModule } from '../../shared';
 
 const MATERIAL_MODULES = [
 	MatInputModule,
@@ -24,7 +24,7 @@ const MATERIAL_MODULES = [
 
 		HttpModule,
 	],
-	providers: [ CardTypeSelectorService ],
+	providers: [ CollectorServiceModule ],
 	declarations: [ CardTypeSelectorComponent ],
 	exports: [ CardTypeSelectorComponent ]
 })

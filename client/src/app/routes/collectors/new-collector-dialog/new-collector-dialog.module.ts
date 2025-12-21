@@ -14,7 +14,7 @@ import { ImageCircleModule } from '../../../shared/components';
 import { LoadingModule } from '../../../shared/services/loading';
 import { NewCollectorDialogService } from './new-collector-dialog.service';
 import { NewCollectorDialogComponent } from './new-collector-dialog.component';
-import { CollectorService } from '../../collector/collector.service';
+import { CollectorServiceModule } from '../../collector/shared';
 
 const MATERIAL_MODULES = [
 	MatFormFieldModule,
@@ -32,11 +32,12 @@ const MATERIAL_MODULES = [
 
 		...MATERIAL_MODULES,
 
+    CollectorServiceModule,
 		CollectorImageModule,
 		LoadingModule,
 		ImageCircleModule,
 	],
-	providers: [ NewCollectorDialogService, CollectorService ],
+	providers: [ NewCollectorDialogService ],
 	declarations: [ NewCollectorDialogComponent ],
 })
 export class NewCollectorDialogModule {}

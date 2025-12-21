@@ -4,3 +4,4 @@ export { UserModule, UserService } from './user-service';
 export { PopupModule, PopupService } from './popup';
 export { LoadingModule, LoadingService } from './loading';
 export { NavigationService } from './navigation-service';
+export { CardService, CardServiceModule } from './card-service';

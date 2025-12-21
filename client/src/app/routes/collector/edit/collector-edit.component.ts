@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { switchMap, combineLatest as observableCombineLatest, map, Observable, shareReplay } from 'rxjs';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
-import { CollectorService } from '../collector.service';
+import { CollectorService } from '../shared';
 import type { CollectorConfig } from '../types';
 import { LoadingService } from '../../../shared/services';
 import { SubscriptionManagerComponent } from '../../../shared/abstract';

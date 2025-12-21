@@ -10,6 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
 
 import { CollectorCatalogComponent } from './collector-catalog.component';
 import { CardModule, LoadingModule } from '../../../../shared/components';
+import { CardServiceModule } from '../../../../shared/services';
 import { NgVarModule } from '../../../../shared/directives';
 
 const MATERIAL_MODULES = [
@@ -30,7 +31,8 @@ const MATERIAL_MODULES = [
 
     CardModule,
     LoadingModule,
-    NgVarModule
+    NgVarModule,
+    CardServiceModule,
   ],
   declarations: [ CollectorCatalogComponent ],
 })

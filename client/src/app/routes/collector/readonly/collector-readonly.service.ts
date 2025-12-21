@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { HttpService } from '../../../shared/services';
 import type { Id } from '../../../shared/types';
 import { CardState } from '../../../shared/types';
-import type { CardTypeIndexResponse } from './types';
+import type { CardTypeIndexResponse } from '../types';
 
 @Injectable()
 export class CollectorReadonlyService {

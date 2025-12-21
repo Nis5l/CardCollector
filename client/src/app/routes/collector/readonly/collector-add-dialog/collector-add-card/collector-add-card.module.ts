@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 
 import { CollectorAddCardComponent } from './collector-add-card.component';
 import { CollectorAddCardService } from './collector-add-card.service';
-import { CardTypeSelectorModule } from './card-type-selector';
+import { CardTypeSelectorModule } from '../../../shared';
 import { HttpModule, LoadingModule } from '../../../../../shared/services';
 import { CardModule } from '../../../../../shared/components';
 import { NgVarModule } from '../../../../../shared/directives';

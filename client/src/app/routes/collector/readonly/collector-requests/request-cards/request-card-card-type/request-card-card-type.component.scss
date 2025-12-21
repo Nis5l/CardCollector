@@ -1,5 +1,15 @@
-.card-type-content {
-	margin: 24px 16px;
+.card-type-content, .card-type-content-update {
+  min-height: 100px;
+  display: flex;
+  //justify-content: center;
+  align-items: center;
+  &.card-type-content {
+    margin-left: 30px;
+  }
+  // &.card-type-content-update {
+  //   margin-top: 24px;
+  // }
+  width: 100%;
 
 	.name {
 		display: flex;
@@ -14,4 +24,15 @@
       color: var(--mat-theme-on-surface-variant);
 		}
 	}
+
+  .update {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+
+    .old {
+
+    }
+  }
 }

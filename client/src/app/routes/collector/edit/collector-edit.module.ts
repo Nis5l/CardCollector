@@ -10,7 +10,7 @@ import { MatCardModule } from '@angular/material/card';
 
 
 import { CollectorEditComponent } from './collector-edit.component';
-import { CollectorService } from '../collector.service';
+import { CollectorServiceModule } from '../shared';
 import { HttpModule } from '../../../shared/services';
 import { NgVarModule } from '../../../shared/directives';
 import {
@@ -39,6 +39,7 @@ const MATERIAL_MODULES = [
 		...MATERIAL_MODULES,
 
 		NgVarModule,
+    CollectorServiceModule,
 
 		CollectorImageModule,
 		CollectorFavoriteModule,
@@ -47,7 +48,7 @@ const MATERIAL_MODULES = [
 
     ModeratorEditorModule,
 	],
-	providers: [ CollectorService ],
+	providers: [ ],
 	declarations: [ CollectorEditComponent ],
 })
 export class CollectorEditModule {}

@@ -9,3 +9,4 @@ export type { UnlockedCard } from './unlocked-card.interface';
 
 export { CardState } from './card-state.enum';
 export { CardSortType } from './card-sort-type.enum';
+export { CardTypeSortType } from './card-type-sort-type.enum';

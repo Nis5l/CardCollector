@@ -3,7 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { SubscriptionManagerComponent } from '../../../../shared/abstract';
 import { switchMap, Observable } from 'rxjs';
 
-import { CollectorService } from '../../collector.service';
+import { CollectorService } from '../../shared';
 
 import { UserService } from '../../../../shared/services';
 import type { Collector } from '../../../../shared/types';

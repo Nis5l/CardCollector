@@ -8,6 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { CollectorAddCardModule } from './collector-add-card';
 import { CollectorAddCardTypeModule } from './collector-add-card-type';
 import { CollectorAddDialogComponent } from './collector-add-dialog.component';
+import { CollectorUpdateCardTypeModule } from './collector-update-card-type';
 
 const MATERIAL_MODULES = [
 	MatTabsModule,
@@ -22,6 +23,7 @@ const MATERIAL_MODULES = [
 
 		CollectorAddCardModule,
 		CollectorAddCardTypeModule,
+    CollectorUpdateCardTypeModule,
 
 		...MATERIAL_MODULES,
 	],

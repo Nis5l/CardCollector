@@ -9,7 +9,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 
 import { CollectorReadonlyComponent } from './collector-readonly.component';
 import { CollectorReadonlyService } from './collector-readonly.service';
-import { CollectorService } from '../collector.service';
+import { CollectorServiceModule } from '../shared';
 import { HttpModule, AuthModule } from '../../../shared/services';
 import { NgVarModule, RenderedModule } from '../../../shared/directives';
 import {
@@ -47,6 +47,8 @@ const MATERIAL_MODULES = [
 		AuthModule,
 		NgVarModule,
     RenderedModule,
+    CollectorServiceModule,
+    UserModule,
 
 		CollectorImageModule,
 		CollectorFavoriteModule,
@@ -58,10 +60,8 @@ const MATERIAL_MODULES = [
     TabNavigationModule,
     CollectorInventoryModule,
     CollectorCatalogModule,
-
-    UserModule,
 	],
-	providers: [ CollectorService, CollectorReadonlyService ],
+	providers: [ CollectorReadonlyService ],
 	declarations: [ CollectorReadonlyComponent ],
 })
 export class CollectorReadonlyModule {}

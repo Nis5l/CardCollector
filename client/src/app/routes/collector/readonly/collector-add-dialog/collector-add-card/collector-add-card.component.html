@@ -1,5 +1,5 @@
 <div class="card-add-container" *ngVar="(card$ | async) as card">
-  <form [formGroup]="formGroup" (submit)="createCardRequest()">
+  <form *ngIf="(formGroup$ | async) as formGroup" [formGroup]="formGroup" (submit)="createCardRequest()">
     <ng-container *ngVar="(config$ | async) as config">
       @if (config) {
         <mat-form-field>
@@ -8,7 +8,7 @@
         </mat-form-field>
       }
     </ng-container>
-    <cc-card-type-selector formControlName="type" (cardType)="cardTypeChange($event)" [collectorId]="collectorId"></cc-card-type-selector>
+    <cc-card-type-selector [cardState]="CardState.Created" formControlName="type" (cardType)="cardTypeChange($event)" [collectorId]="collectorId"></cc-card-type-selector>
     <input #imageInput hidden="true" type="file" (change)="imageChange($event.target)" accept="image/jpeg,image/png"/>
     <button matButton="outlined" type="button" (click)="imageInput.click()" [color]="formGroup.hasError('noImage') ? 'error' : 'text'"><mat-icon color="accent" svgIcon="add_a_photo"></mat-icon>Image</button>
     <div class="request">

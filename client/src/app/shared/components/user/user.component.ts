@@ -1,8 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { Observable, BehaviorSubject, filter, switchMap, map, of as observableOf } from 'rxjs';
 
-import type { Id } from '../../types';
-import type { User } from '../../types/user';
+import type { Id, User } from '../../types';
 import { UserService } from '../../services';
 
 @Component({
