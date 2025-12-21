@@ -1,0 +1,61 @@
+{
+  "name": "profile",
+  "description": "User profile images - circular display",
+  "defaultVariant": "default",
+  "variants": {
+    "thumbnail": {
+      "description": "Small circular avatar for mobile",
+      "effects": [
+        {
+          "id": "resize_square",
+          "params": { "size": 150 }
+        },
+        {
+          "id": "webp",
+          "params": { "quality": 90 }
+        }
+      ],
+      "metadata": {
+        "width": 150,
+        "height": 150
+      },
+      "breakpoint": null
+    },
+    "default": {
+      "description": "Standard profile image for desktop",
+      "effects": [
+        {
+          "id": "resize_square",
+          "params": { "size": 500 }
+        },
+        {
+          "id": "webp",
+          "params": { "quality": 100 }
+        }
+      ],
+      "metadata": {
+        "width": 500,
+        "height": 500
+      },
+      "breakpoint": 768
+    },
+    "large": {
+      "description": "High-resolution profile for large screens",
+      "effects": [
+        {
+          "id": "resize_square",
+          "params": { "size": 1000 }
+        },
+        {
+          "id": "webp",
+          "params": { "quality": 100 }
+        }
+      ],
+      "metadata": {
+        "width": 1000,
+        "height": 1000
+      },
+      "breakpoint": 1200
+    }
+  }
+}

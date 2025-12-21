@@ -1,31 +1,50 @@
-use std::path::Path;
 use rocket::State;
-use rocket::{fs::NamedFile, http::Status};
+use rocket::http::{Status, ContentType};
 
-use crate::config::Config;
 use crate::sql::Sql;
+use crate::media::MediaManager;
 use crate::shared::Id;
-use crate::shared::user;
-use crate::shared::image::ImageResponse;
+use crate::shared::user::sql as user_sql;
 
 #[get("/user/<user_id>/profile-image")]
-pub async fn profile_image_get_route(user_id: Id, sql: &State<Sql>, config: &State<Config>) -> ImageResponse {
-    //NOTE: check user_id to avoid path traversal attacks or similar
-    match user::sql::username_from_user_id(sql, &user_id).await {
+pub async fn profile_image_get_route(
+    user_id: Id,
+    sql: &State<Sql>,
+    media_manager: &State<MediaManager>
+) -> Result<(ContentType, Vec<u8>), Status> {
+    println!("1");
+
+    // Check if user exists
+    match user_sql::username_from_user_id(sql, &user_id).await {
         Ok(Some(_)) => (),
-        Ok(None) => return ImageResponse::api_err(Status::NotFound, String::from("User not found")),
-        Err(_) => return ImageResponse::api_err(Status::InternalServerError, String::from("Database error"))
+        Ok(None) => return Err(Status::NotFound),
+        Err(_) => return Err(Status::InternalServerError)
     }
 
-    let path = Path::new(&config.user_fs_base);
+    println!("2");
 
-    let file = match NamedFile::open(path.join(user_id.to_string()).join("profile-image")).await {
-        Ok(file) => file,
-        Err(_) => match NamedFile::open(path.join("profile-image-default")).await {
-            Ok(file) => file,
-            Err(_) => return ImageResponse::api_err(Status::InternalServerError, String::from("Default image not found"))
-        }
+    // Get image hash from database
+    let image_hash = match user_sql::get_profile_image(sql, &user_id).await {
+        Ok(Some(hash)) => hash,
+        Ok(None) => {
+            String::from("profile-image-default")
+        },
+        Err(_) => return Err(Status::InternalServerError)
     };
 
-    ImageResponse::ok(Status::Ok, file)
+    println!("3");
+    
+    // Get image through MediaManager with "profile" media type and "default" variant
+    let (bytes, format) = media_manager
+        .get_image("profile", &image_hash, None)
+        .await
+        .map_err(|_| Status::NotFound)?;
+
+    println!("4");
+
+    // Parse Content-Type based on format
+    let content_type = ContentType::parse_flexible(format.mime_type())
+        .unwrap_or(ContentType::Binary);
+
+    Ok((content_type, bytes))
 }

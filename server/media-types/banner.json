@@ -1,0 +1,28 @@
+{
+  "name": "banner",
+  "defaultVariant": "default",
+  "variants": {
+    "default": {
+      "effects": [
+        { "id": "resize_ratio", "params": { "width": 1200, "height": 300 } },
+        { "id": "webp", "params": { "quality": 90 } }
+      ],
+      "metadata": {
+        "width": 1200,
+        "height": 300
+      },
+      "breakpoint": null
+    },
+    "mobile": {
+      "effects": [
+        { "id": "resize_ratio", "params": { "width": 800, "height": 200 } },
+        { "id": "webp", "params": { "quality": 85 } }
+      ],
+      "metadata": {
+        "width": 800,
+        "height": 200
+      },
+      "breakpoint": 768
+    }
+  }
+}

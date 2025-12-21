@@ -76,6 +76,11 @@ pub struct Config {
     pub collector_fs_base: String,
     pub card_fs_base: String,
 
+    // Media Manager paths
+    pub media_types_dir: String,
+    pub media_cache_dir: String,
+    pub media_storage_dir: String,
+
     pub log_file: String,
 
     pub email: String,
@@ -161,6 +166,11 @@ impl Default for Config {
             collector_fs_base: String::from("static/collector"),
             card_fs_base: String::from("static/card"),
 
+            // Media Manager defaults
+            media_types_dir: String::from("media-types"),
+            media_cache_dir: String::from("media/cache"),
+            media_storage_dir: String::from("media/originals"),
+
             log_file: String::from("./log-file.log"),
 
             email: String::from("foo@bar.baz"),
@@ -169,6 +179,7 @@ impl Default for Config {
 
             db_init_files: vec![
                 String::from("./sqlfiles/tables.sql"),
+                String::from("./sqlfiles/add_image_hashes.sql"),
                 /* String::from("./sqlfiles/cardtypes.sql"),
                 String::from("./sqlfiles/cards.sql"),
                 String::from("./sqlfiles/cardframes.sql"),

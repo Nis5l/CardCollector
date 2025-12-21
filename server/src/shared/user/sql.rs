@@ -123,3 +123,32 @@ pub async fn get_verify_data(sql: &Sql, user_id: &Id) -> Result<Option<EmailVeri
 
     Ok(Some(stmt?))
 }
+
+pub async fn set_profile_image(sql: &Sql, user_id: &Id, image_hash: &str) -> Result<(), sqlx::Error> {
+    sqlx::query(
+        "UPDATE users
+         SET uprofileimage=?
+         WHERE uid=?;")
+        .bind(image_hash)
+        .bind(user_id)
+        .execute(sql.pool())
+        .await?;
+
+    Ok(())
+}
+
+pub async fn get_profile_image(sql: &Sql, user_id: &Id) -> Result<Option<String>, sqlx::Error> {
+    let stmt: Result<(Option<String>,), sqlx::Error> = sqlx::query_as(
+        "SELECT uprofileimage
+         FROM users
+         WHERE uid=?;")
+        .bind(user_id)
+        .fetch_one(sql.pool())
+        .await;
+
+    if let Err(sqlx::Error::RowNotFound) = stmt {
+        return Ok(None)
+    }
+
+    Ok(stmt?.0)
+}

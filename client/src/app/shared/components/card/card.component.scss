@@ -68,6 +68,9 @@
       flex-shrink: 0;
       color: black;
       z-index: 1;
+      div {
+        text-align: center;
+      }
       &.card-name{
         margin-top: 3%;
         //margin-left: 22%;

@@ -1,0 +1,61 @@
+{
+  "name": "card",
+  "description": "Collectible card images - 330x516 aspect ratio",
+  "defaultVariant": "default",
+  "variants": {
+    "thumbnail": {
+      "description": "Small preview - JPEG for fast loading",
+      "effects": [
+        {
+          "id": "resize_ratio",
+          "params": { "width": 165, "height": 258 }
+        },
+        {
+          "id": "jpeg",
+          "params": { "quality": 85 }
+        }
+      ],
+      "metadata": {
+        "width": 165,
+        "height": 258
+      },
+      "breakpoint": null
+    },
+    "default": {
+      "description": "Standard card - WebP for quality/size balance",
+      "effects": [
+        {
+          "id": "resize_ratio",
+          "params": { "width": 330, "height": 516 }
+        },
+        {
+          "id": "webp",
+          "params": { "quality": 90 }
+        }
+      ],
+      "metadata": {
+        "width": 330,
+        "height": 516
+      },
+      "breakpoint": 768
+    },
+    "large": {
+      "description": "High-res - PNG for lossless quality",
+      "effects": [
+        {
+          "id": "resize_ratio",
+          "params": { "width": 660, "height": 1032 }
+        },
+        {
+          "id": "png",
+          "params": { "compression": 6 }
+        }
+      ],
+      "metadata": {
+        "width": 660,
+        "height": 1032
+      },
+      "breakpoint": 1200
+    }
+  }
+}
