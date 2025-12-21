@@ -1,14 +1,11 @@
+@import "../../../../../../../screen.scss";
+
 .card-type-content, .card-type-content-update {
+  margin-top: 20px;
   min-height: 100px;
   display: flex;
-  //justify-content: center;
   align-items: center;
-  &.card-type-content {
-    margin-left: 30px;
-  }
-  // &.card-type-content-update {
-  //   margin-top: 24px;
-  // }
+  justify-content: center;
   width: 100%;
 
 	.name {
@@ -28,11 +25,17 @@
   .update {
     width: 100%;
     display: flex;
+    flex-direction: row;
     align-items: center;
     justify-content: space-around;
 
-    .old {
+    @media (max-width: $breakpoint-md) {
+      gap: 25px;
+      flex-direction: column;
 
+      mat-icon {
+        transform: rotateZ(90deg)
+      }
     }
   }
 }

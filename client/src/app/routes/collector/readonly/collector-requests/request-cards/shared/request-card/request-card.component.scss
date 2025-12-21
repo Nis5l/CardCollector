@@ -36,9 +36,7 @@
 	}
 	/* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version.*/
 	.vote {
-		//padding: 20px 0;
-		padding: 0;
-		padding-bottom: 20px;
+		padding: 20px 0;
 		display: flex;
 		gap: 20px;
 		margin: 0 9px;
