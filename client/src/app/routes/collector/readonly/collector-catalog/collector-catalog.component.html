@@ -1,37 +1,3 @@
-<div *ngVar="(cardIndexResponse$ | async) as cardIndexResponse" class="catalog">
-  <form [formGroup]="formGroup" class="options">
-    <mat-form-field>
-      <input matInput type="text" formControlName="search" placeholder="Search" />
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>Sort Type</mat-label>
-      <mat-select formControlName="sortType">
-        @for (sortType of sortTypes; track sortType) {
-          <mat-option [value]="sortType.value">
-            {{sortType.text}}
-          </mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-  </form>
-  <div class="loading" *ngIf="loading$ | async">
-    <cc-loading [observable]="loading$" [boolObservable]="true"></cc-loading>
-  </div>
-  @if (cardIndexResponse != null && !(loading$ | async)) {
-    @if (cardIndexResponse.cards.length > 0) {
-      <div class="cards">
-        @for (card of cardIndexResponse.cards; track card) {
-          <cc-card [card]="card" click="navigate"></cc-card>
-        }
-      </div>
-    } @else {
-      <div class="empty">
-        <div class="empty-content">
-          <mat-icon color="accent" svgIcon="credit_card_off"></mat-icon>
-          <p>No cards found</p>
-        </div>
-      </div>
-    }
-  }
-  <mat-paginator *ngIf="cardIndexResponse != null" [length]="cardIndexResponse.cardCount" [pageSize]="cardIndexResponse.pageSize" (page)="changePage($event)"></mat-paginator>
+<div>
+  <cc-card-list [collectorId]="collectorId$ | async" click="navigate"></cc-card-list>
 </div>
