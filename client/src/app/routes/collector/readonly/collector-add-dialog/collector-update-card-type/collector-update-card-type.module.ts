@@ -6,7 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 
-import { HttpModule } from '../../../../../shared/services';
+import { HttpModule, CardServiceModule } from '../../../../../shared/services';
 import { NgVarModule } from '../../../../../shared/directives';
 import { CollectorUpdateCardTypeComponent } from './collector-update-card-type.component';
 import { CollectorUpdateCardTypeService } from './collector-update-card-type.service';
@@ -25,6 +25,7 @@ const MATERIAL_MODULES = [
 
 		...MATERIAL_MODULES,
 
+    CardServiceModule,
 		HttpModule,
 		NgVarModule,
     CollectorServiceModule,

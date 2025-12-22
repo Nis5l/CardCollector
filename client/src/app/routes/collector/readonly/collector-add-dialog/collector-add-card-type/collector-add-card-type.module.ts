@@ -6,11 +6,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 
-import { HttpModule } from '../../../../../shared/services';
+import { HttpModule, CardServiceModule } from '../../../../../shared/services';
 import { NgVarModule } from '../../../../../shared/directives';
 import { CollectorAddCardTypeComponent } from './collector-add-card-type.component';
 import { CollectorAddCardTypeService } from './collector-add-card-type.service';
-import { CollectorServiceModule } from '../../../shared';
 
 const MATERIAL_MODULES = [
 	MatFormFieldModule,
@@ -27,7 +26,7 @@ const MATERIAL_MODULES = [
 
 		HttpModule,
 		NgVarModule,
-    CollectorServiceModule,
+    CardServiceModule,
 	],
 	providers: [ CollectorAddCardTypeService ],
 	declarations: [ CollectorAddCardTypeComponent ],

@@ -10,21 +10,24 @@ use crate::shared::card;
 use crate::verify_user;
 use super::data::{CardRequestResponse, CardRequestRequest};
 use super::sql;
+use super::super::shared;
 
-#[post("/card/request", data="<data>")]
+#[post("/card/request/create", data="<data>")]
 pub async fn card_request_create_route(data: CardRequestRequest, token: JwtToken, config: &State<Config>, sql: &State<Sql>) -> ApiResponseErr<CardRequestResponse> {
     let user_id = &token.id;
     verify_user!(sql, user_id, true);
 
-    if rjtry!(sql::card_requests_user_count(sql, user_id).await) >= config.collector_card_request_limit as i32 {
+    if rjtry!(shared::sql::card_requests_user_count(sql, user_id).await) >= config.collector_card_request_limit as i32 {
         return ApiResponseErr::api_err(Status::Conflict, format!("Card request limit of {} reached", config.collector_card_request_limit))
     }
 
-    if rjtry!(sql::card_exists(sql, &data.name, &data.card_type, user_id).await) {
+    if rjtry!(shared::sql::card_exists(sql, &data.name, &data.card_type, user_id).await) {
         return ApiResponseErr::api_err(Status::Conflict, String::from("Card already exists"))
     }
 
-    if !rjtry!(card::sql::card_type_exists_created(sql, &data.card_type).await) {
+    let collector_id = rjtry!(card::sql::get_card_type_collector_id(sql, &data.card_type).await);
+
+    if !rjtry!(card::sql::card_type_exists_created(sql, &collector_id, &data.card_type).await) {
         return ApiResponseErr::api_err(Status::Conflict, String::from("Card Type does not exist"))
     }
 

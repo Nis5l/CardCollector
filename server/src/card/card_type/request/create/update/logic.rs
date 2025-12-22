@@ -5,7 +5,7 @@ use rocket::http::Status;
 use super::sql;
 use super::data::{CardTypeRequestUpdateRequest, CardTypeRequestUpdateResponse};
 use super::super::shared;
-use crate::shared::Id;
+use crate::shared::{card, Id};
 use crate::config::Config;
 use crate::sql::Sql;
 use crate::{verify_collector, verify_user};
@@ -25,7 +25,7 @@ pub async fn card_type_request_update_route(collector_id: Id, config: &State<Con
         return ApiResponseErr::api_err(Status::Conflict, String::from("Card-Type already exists"))
     }
 
-    if !rjtry!(sql::collector_card_type_exists(sql, &collector_id, &data.card_type_id).await) {
+    if !rjtry!(card::sql::card_type_exists_created(sql, &collector_id, &data.card_type_id).await) {
         return ApiResponseErr::api_err(Status::Conflict, String::from("Referenced Card-Type does not exists"))
     }
 

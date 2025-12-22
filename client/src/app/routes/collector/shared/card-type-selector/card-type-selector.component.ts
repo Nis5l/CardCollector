@@ -2,8 +2,8 @@ import { Component, Input, Output, EventEmitter, forwardRef, Injector, AfterView
 import { ErrorStateMatcher } from '@angular/material/core';
 import { BehaviorSubject, Observable, filter, combineLatest as observableCombineLatest, switchMap, startWith, map, distinctUntilChanged } from 'rxjs'
 
-import { CollectorService } from '../../shared';
 import { SubscriptionManagerComponent } from '../../../../shared/abstract';
+import { CardService } from '../../../../shared/services';
 import type { Id, CardType } from '../../../../shared/types';
 import { CardTypeSortType, CardState } from '../../../../shared/types';
 import { ControlValueAccessor, FormControl, NgControl, NG_VALUE_ACCESSOR, Validators } from '@angular/forms';
@@ -70,7 +70,10 @@ export class CardTypeSelectorComponent extends SubscriptionManagerComponent impl
     }
   };
 
-	constructor(private injector: Injector, private readonly collectorService: CollectorService) {
+	constructor(
+    private injector: Injector,
+    private readonly cardService: CardService,
+  ) {
 		super();
 		this.collectorId$ = this.collectorIdSubject.asObservable().pipe(
 			filter((collectorId): collectorId is Id => collectorId != null)
@@ -85,7 +88,7 @@ export class CardTypeSelectorComponent extends SubscriptionManagerComponent impl
     this.cardState$ = this.cardStateSubject.asObservable();
 
 		this.cardTypeOptions$ = observableCombineLatest([this.collectorId$, formControlString, this.cardState$]).pipe(
-			switchMap(([collectorId, name, cardState]) => this.collectorService.getCardTypes(collectorId, name, 0, cardState, CardTypeSortType.Name)),
+			switchMap(([collectorId, name, cardState]) => this.cardService.getCardTypes(collectorId, name, 0, cardState, CardTypeSortType.Name)),
 			map(({ cardTypes }) => cardTypes)
 		);
 

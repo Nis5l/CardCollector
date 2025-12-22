@@ -18,19 +18,3 @@ pub async fn card_type_update_request_create(sql: &Sql, card_type_id: &Id, colle
 
     Ok(())
 }
-
-pub async fn collector_card_type_exists(sql: &Sql, collector_id: &Id, card_type_id: &Id) -> Result<bool, sqlx::Error> {
-    let (count, ): (i64, ) = sqlx::query_as(
-        "SELECT COUNT(*)
-         FROM cardtypes
-         WHERE coid=? AND
-         ctid=? AND
-         ctstate=?;")
-        .bind(collector_id)
-        .bind(card_type_id)
-        .bind(CardState::Created as i32)
-        .fetch_one(sql.pool())
-        .await?;
-
-    Ok(count != 0)
-}

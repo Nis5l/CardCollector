@@ -1,4 +1,5 @@
 use sqlx::mysql::MySqlQueryResult;
+use std::collections::{HashSet, HashMap};
 
 use crate::sql::Sql;
 use super::data::{UnlockedCardCreateData, UnlockedCard, UnlockedCardDb, CardDb, SortType, Card, InventoryOptions, CardState, CardSortType, CardTypeDb, CardType};
@@ -16,14 +17,16 @@ pub async fn get_card_type_collector_id(sql: &Sql, card_type_id: &Id) -> Result<
     Ok(id)
 }
 
-pub async fn card_type_exists_created(sql: &Sql, card_type_id: &Id) -> Result<bool, sqlx::Error> {
+pub async fn card_type_exists_created(sql: &Sql, collector_id: &Id, card_type_id: &Id) -> Result<bool, sqlx::Error> {
     let (count, ): (i64, ) = sqlx::query_as(
         "SELECT COUNT(*)
          FROM cardtypes
-         WHERE ctid=?
-         AND ctstate=?;")
+         WHERE coid=? AND
+         ctid=? AND
+         ctstate=?;")
+        .bind(collector_id)
         .bind(card_type_id)
-        .bind(CardState::Created as i64)
+        .bind(CardState::Created as i32)
         .fetch_one(sql.pool())
         .await?;
 
@@ -112,10 +115,13 @@ pub async fn get_unlocked_cards(sql: &Sql, card_unlocked_ids: Vec<Id>, user_id: 
          cards.uid AS cardUserId,
          cards.cname AS cardName,
          cards.ctime AS cardTime,
+         cards.cstate AS cardState,
          cardtypes.ctid AS typeId,
          cardtypes.ctname AS typeName,
          cardtypes.uid AS cardTypeUserId,
          cardtypes.coid AS collectorId,
+         cardtypes.ctstate AS typeState,
+         cardtypes.cttime AS typeTime,
          cardframes.cfid AS frameId,
          cardframes.cfname AS frameName,
          cardeffects.ceid AS effectId,
@@ -249,10 +255,13 @@ pub async fn get_inventory(sql: &Sql, options: &InventoryOptions) -> Result<Vec<
          cards.uid AS cardUserId,
          cards.cname AS cardName,
          cards.ctime AS cardTime,
+         cards.cstate AS cardState,
          cardtypes.ctid AS typeId,
          cardtypes.ctname AS typeName,
          cardtypes.uid AS cardTypeUserId,
          cardtypes.coid AS collectorId,
+         cardtypes.ctstate AS typeState,
+         cardtypes.cttime AS typeTime,
          cardframes.cfid AS frameId,
          cardframes.cfname AS frameName,
          cardeffects.ceid AS effectId,
@@ -382,22 +391,27 @@ pub fn order_by_string_from_card_sort_type(sort_type: &CardSortType) -> &str {
     }
 }
 
-pub async fn get_card(sql: &Sql, card_id: &Id) -> Result<Option<Card>, sqlx::Error> {
-    let stmt = sqlx::query_as(
-        "SELECT
-         cards.cid AS cardId,
-         cards.uid AS cardUserId,
-         cards.cname AS cardName,
-         cards.ctime AS cardTime,
-         cardtypes.ctid AS typeId,
-         cardtypes.ctname AS typeName,
-         cardtypes.coid AS collectorId,
-         cardtypes.uid AS cardTypeUserId
-         FROM cards, cardtypes
-         WHERE
-         cards.ctid = cardtypes.ctid
-         AND cards.cid=?;"
-    ).bind(card_id).fetch_one(sql.pool()).await;
+pub async fn get_card(sql: &Sql, collector_id: &Id, card_id: &Id) -> Result<Option<Card>, sqlx::Error> {
+    let query = "SELECT
+                 cards.cid AS cardId,
+                 cards.uid AS cardUserId,
+                 cards.cname AS cardName,
+                 cards.ctime AS cardTime,
+                 cards.cupdatectid AS updateCard,
+                 cards.cstate AS cardState,
+                 cardtypes.ctid AS typeId,
+                 cardtypes.ctname AS typeName,
+                 cardtypes.coid AS collectorId,
+                 cardtypes.uid AS cardTypeUserId,
+                 cardtypes.ctstate AS typeState,
+                 cardtypes.cttime AS typeTime
+                 FROM cards, cardtypes
+                 WHERE
+                 cards.ctid = cardtypes.ctid
+                 AND cards.cid=?
+                 AND cardtypes.coid=?;";
+
+    let stmt = sqlx::query_as(query).bind(card_id).bind(collector_id).fetch_one(sql.pool()).await;
 
     if let Err(sqlx::Error::RowNotFound) = stmt {
         return Ok(None);
@@ -405,7 +419,12 @@ pub async fn get_card(sql: &Sql, card_id: &Id) -> Result<Option<Card>, sqlx::Err
 
     let card_db: CardDb = stmt?;
 
-    return Ok(Some(Card::from(card_db)));
+    let reference_db: Option<CardDb> = match card_db.update_card {
+        Some(ref id) => Some(sqlx::query_as(query).bind(id).bind(collector_id).fetch_one(sql.pool()).await?),
+        None => None
+    };
+
+    return Ok(Some(Card::from((card_db, reference_db))));
 }
 
 pub async fn get_cards(sql: &Sql, collector_id: &Id, mut name: String, sort_type: &CardSortType, amount: u32, offset: u32, state: Option<CardState>) -> Result<Vec<Card>, sqlx::Error> {
@@ -419,10 +438,14 @@ pub async fn get_cards(sql: &Sql, collector_id: &Id, mut name: String, sort_type
          cards.uid AS cardUserId,
          cards.cname AS cardName,
          cards.ctime AS cardTime,
+         cards.cupdatectid AS updateCard,
+         cards.cstate AS cardState,
          cardtypes.ctid AS typeId,
          cardtypes.ctname AS typeName,
          cardtypes.coid AS collectorId,
-         cardtypes.uid AS cardTypeUserId
+         cardtypes.uid AS cardTypeUserId,
+         cardtypes.ctstate AS typeState,
+         cardtypes.cttime AS typeTime
          FROM cards, cardtypes
          WHERE
          cards.ctid = cardtypes.ctid
@@ -452,15 +475,71 @@ pub async fn get_cards(sql: &Sql, collector_id: &Id, mut name: String, sort_type
 
     let cards_db: Vec<CardDb> = stmt.fetch_all(sql.pool()).await?;
 
-    let cards = cards_db.into_iter().map(Card::from).collect();
+    let card_reference_ids: Vec<Id> = cards_db
+        .iter()
+        .filter_map(|ct| ct.update_card.clone())
+        .collect::<HashSet<_>>()
+        .into_iter()
+        .collect();
 
-    Ok(cards)
+    let update_card_map: HashMap<Id, Card> = if !card_reference_ids.is_empty() {
+        let query = format!(
+            "SELECT
+             cards.cid AS cardId,
+             cards.uid AS cardUserId,
+             cards.cname AS cardName,
+             cards.ctime AS cardTime,
+             cards.cupdatectid AS updateCard,
+             cards.cstate AS cardState,
+             cardtypes.ctid AS typeId,
+             cardtypes.ctname AS typeName,
+             cardtypes.coid AS collectorId,
+             cardtypes.uid AS cardTypeUserId,
+             cardtypes.ctstate AS typeState,
+             cardtypes.cttime AS typeTime
+             FROM cards, cardtypes
+             WHERE
+             cards.ctid = cardtypes.ctid
+             AND cid IN ({});",
+             card_reference_ids.iter().map(|_| "?").collect::<Vec<_>>().join(",")
+        );
+
+        let mut q = sqlx::query_as(&query);
+        for id in &card_reference_ids {
+            q = q.bind(id);
+        }
+
+        let rows: Vec<CardDb> = q.fetch_all(sql.pool()).await?;
+
+        rows.into_iter()
+            .map(|u| {
+                let c = Card::from(u);
+                (c.card_info.id.clone(), c)
+            })
+            .collect()
+    } else {
+        HashMap::new()
+    };
+
+    let result: Vec<Card> = cards_db
+        .into_iter()
+        .map(|c_db| {
+            let update_card = c_db
+                .update_card.as_ref()
+                .and_then(|id| update_card_map.get(id).cloned());
+
+            Card::from((c_db, update_card))
+        })
+        .collect();
+
+    Ok(result)
 }
 
 pub async fn get_card_type(sql: &Sql, collector_id: &Id, card_type_id: &Id) -> Result<CardType, sqlx::Error> {
     let query = "SELECT ctid, uid, ctname, ctstate, ctupdatectid
                  FROM cardtypes
                  WHERE ctid = ? AND coid=?;";
+
     let card_type_db: CardTypeDb = sqlx::query_as(query)
         .bind(card_type_id)
         .bind(collector_id)

@@ -1,15 +1,11 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router, Route } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
-import type { PageEvent } from '@angular/material/paginator';
-import { switchMap, map, Observable, combineLatest as observableCombineLatest, BehaviorSubject, ReplaySubject, Subject } from 'rxjs';
+import { switchMap, map, Observable, combineLatest as observableCombineLatest } from 'rxjs';
 
 import { CollectorService } from '../shared';
-import { CollectorReadonlyService } from './collector-readonly.service';
 import { LoadingService, AuthService } from '../../../shared/services';
 import { SubscriptionManagerComponent } from '../../../shared/abstract';
 import type { Collector } from '../../../shared/types';
-import type { CardTypeIndexResponse } from '../types';
 import { type NavigationItem } from '../../../shared/components';
 
 import { CollectorDashboardComponent } from './collector-dashboard';
@@ -33,15 +29,9 @@ const ROUTES: Route[] = [
     standalone: false
 })
 export class CollectorReadonlyComponent extends SubscriptionManagerComponent {
-	private readonly pageSubject: BehaviorSubject<number> = new BehaviorSubject<number>(0);
-
 	public readonly collector$: Observable<Collector>;
 	public readonly canEdit$: Observable<boolean>;
 	public readonly moderators$: Observable<User[]>;
-
-	private readonly reloadCardTypesSubject: Subject<void> = new Subject();
-	public readonly cardTypeIndexSubject: ReplaySubject<CardTypeIndexResponse> = new ReplaySubject<CardTypeIndexResponse>(1);
-	public readonly cardTypeIndex$: Observable<CardTypeIndexResponse>;
 
   public readonly navigationItems: NavigationItem[] = [
     { name: "Dashboard", link: "./dashboard", icon: "home" },
@@ -58,12 +48,10 @@ export class CollectorReadonlyComponent extends SubscriptionManagerComponent {
 		private readonly collectorService: CollectorService,
 		private readonly activatedRoute: ActivatedRoute,
 		private readonly authService: AuthService,
-		private readonly matDialog: MatDialog,
-		private readonly collectorReadonlyService: CollectorReadonlyService,
 		private readonly loadingService: LoadingService
 	) {
 		super();
-		this.collector$ = loadingService.waitFor(activatedRoute.params.pipe(
+		this.collector$ = this.loadingService.waitFor(activatedRoute.params.pipe(
 			switchMap(params => {
 				const collectorId = params["collectorId"] as unknown;
 				if(typeof collectorId !== "string") {
@@ -83,16 +71,6 @@ export class CollectorReadonlyComponent extends SubscriptionManagerComponent {
 		this.canEdit$ = observableCombineLatest([this.collector$, this.authService.authData()]).pipe(
 			map(([collector, authData]) => AuthService.userIdEqual(collector.userId, authData?.userId))
 		);
-
-		this.registerSubscription(this.loadingService.waitFor(
-			observableCombineLatest([this.collector$, this.pageSubject.asObservable(), this.reloadCardTypesSubject.asObservable()]).pipe(
-				switchMap(([{ id }, page]) => this.collectorReadonlyService.indexRequestedCardTypes(id, "", page))
-			)
-		)
-		.subscribe(cardTypeIndex => this.cardTypeIndexSubject.next(cardTypeIndex)));
-
-		this.cardTypeIndex$ = this.cardTypeIndexSubject.asObservable();
-		this.reloadCardTypes();
 	}
 
   public onDescriptionChange(el: HTMLElement) {
@@ -107,14 +85,6 @@ export class CollectorReadonlyComponent extends SubscriptionManagerComponent {
 
 	public edit(): void {
 		this.router.navigate(["edit"], { relativeTo: this.activatedRoute });
-	}
-
-	public reloadCardTypes(): void {
-		this.reloadCardTypesSubject.next();
-	}
-
-	public changePage(page: PageEvent): void {
-		this.pageSubject.next(page.pageIndex);
 	}
 
   public static getRoutes(){

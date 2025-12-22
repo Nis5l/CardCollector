@@ -1,4 +1,4 @@
-export interface CollectorCardTypeConfig {
+export interface CardConfig {
     nameLengthMin: number,
     nameLengthMax: number
 }

@@ -12,7 +12,7 @@ use crate::shared::Id;
 #[validate(context = config::Config)]
 pub struct CardTypeRequestUpdateRequest {
     pub card_type_id: Id,
-    #[validate(custom(function="validate_collector_type_name", use_context))]
+    #[validate(custom(function="validate_card_type_name", use_context))]
     pub name: String
 }
 
@@ -22,7 +22,7 @@ pub struct CardTypeRequestUpdateResponse {
 }
 
 //TODO: share
-fn validate_collector_type_name(name: &str, config: &config::Config) -> Result<(), ValidationError> {
+fn validate_card_type_name(name: &str, config: &config::Config) -> Result<(), ValidationError> {
     if name.len() < config.card_type_len_min as usize || name.len() > config.card_type_len_max as usize {
         let mut err = ValidationError::new("card-type name does not fit the length constraints");
         err.add_param(Cow::from("min"), &config.card_type_len_min);

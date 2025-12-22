@@ -123,7 +123,8 @@ async fn rocket() -> _ {
 
             card::unlocked::card_unlocked_route,
             card::upgrade::upgrade_route,
-            card::request::card_request_create_route,
+            card::request::create::create::card_request_create_route,
+            card::request::create::update::card_request_update_route,
             card::request::card_request_accept_route,
             card::request::card_request_decline_route,
             card::request::vote::get::card_request_vote_get_route,

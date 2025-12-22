@@ -1,16 +1,15 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { SubscriptionManagerComponent } from '../../../../shared/abstract';
-import { switchMap, combineLatest as observableCombineLatest, Observable, BehaviorSubject, ReplaySubject, Subject, share } from 'rxjs';
+import { switchMap, map, combineLatest as observableCombineLatest, Observable, BehaviorSubject, ReplaySubject, Subject, share } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 
 import { CollectorService } from '../../shared';
 import { CollectorAddDialogComponent } from '../collector-add-dialog';
 
-import type { Collector, Id, CardIndexResponse } from '../../../../shared/types';
+import type { Id, CardIndexResponse, CardTypeIndexResponse } from '../../../../shared/types';
 import { CardSortType, CardTypeSortType, CardState } from '../../../../shared/types';
 import { CardService } from '../../../../shared/services';
-import type { CardTypeIndexResponse } from '../../types';
 import type { PageEvent } from '@angular/material/paginator';
 
 @Component({
@@ -20,7 +19,7 @@ import type { PageEvent } from '@angular/material/paginator';
     standalone: false
 })
 export class CollectorRequestsComponent extends SubscriptionManagerComponent {
-  public readonly collector$: Observable<Collector>;
+  public readonly collectorId$: Observable<Id>;
   public readonly loading$: Observable<unknown>;
 
   private readonly pageSubject: BehaviorSubject<number> = new BehaviorSubject<number>(0);
@@ -32,7 +31,6 @@ export class CollectorRequestsComponent extends SubscriptionManagerComponent {
   public readonly cardIndex$: Observable<CardIndexResponse>;
 
   constructor(
-    private readonly collectorService: CollectorService,
     private readonly cardService: CardService,
     private readonly activatedRoute: ActivatedRoute,
     private readonly matDialog: MatDialog,
@@ -40,24 +38,24 @@ export class CollectorRequestsComponent extends SubscriptionManagerComponent {
     super();
     const params$ = this.activatedRoute.parent?.params ?? this.activatedRoute.params;
 
-    this.collector$ = params$.pipe(
-      switchMap(params => {
+    this.collectorId$ = params$.pipe(
+      map(params => {
         const collectorId = params["collectorId"] as unknown;
         if(typeof collectorId !== "string") {
           throw new Error("collectorId is not a string");
         }
 
-        return this.collectorService.getCollector(collectorId);
+        return collectorId;
       })
     );
 
-    const cardTypes$ = observableCombineLatest([this.collector$, this.pageSubject.asObservable(), this.reloadSubject.asObservable()]).pipe(
-      switchMap(([{id}, page]) => this.collectorService.getCardTypes(id, "", page, CardState.Requested, CardTypeSortType.Recent)),
+    const cardTypes$ = observableCombineLatest([this.collectorId$, this.pageSubject.asObservable(), this.reloadSubject.asObservable()]).pipe(
+      switchMap(([id, page]) => this.cardService.getCardTypes(id, "", page, CardState.Requested, CardTypeSortType.Recent)),
       share()
     );
 
-    const cards$ = observableCombineLatest([this.collector$, this.pageSubject.asObservable(), this.reloadSubject.asObservable()]).pipe(
-      switchMap(([{id}, page]) => this.cardService.getCards(id, "", page, CardState.Requested, CardSortType.Recent)),
+    const cards$ = observableCombineLatest([this.collectorId$, this.pageSubject.asObservable(), this.reloadSubject.asObservable()]).pipe(
+      switchMap(([id, page]) => this.cardService.getCards(id, "", page, CardState.Requested, CardSortType.Recent)),
       share()
     );
     this.loading$ = observableCombineLatest([cardTypes$, cards$]).pipe();

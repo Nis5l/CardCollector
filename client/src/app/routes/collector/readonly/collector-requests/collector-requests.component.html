@@ -1,21 +1,21 @@
-<ng-container *ngVar="(collector$ | async) as collector">
+@if (collectorId$ | async; as collectorId) {
   <div class="request-container">
     <cc-loading [observable]="loading$"></cc-loading>
     <ng-container *ngVar="(cardTypeIndex$ | async) as cardTypeRes">
       <ng-container *ngVar="(cardIndex$ | async) as cardRes">
         @if (cardTypeRes != null && cardRes != null) {
           @for (cardType of cardTypeRes.cardTypes; track cardType) {
-            <cc-request-card-card-type (onRemove)="reload()" [cardType]="cardType" [collectorId]="collector.id"></cc-request-card-card-type>
+            <cc-request-card-card-type (onRemove)="reload()" [cardType]="cardType" [collectorId]="collectorId"></cc-request-card-card-type>
           }
           @for (card of cardRes.cards; track card) {
-            <cc-request-card-card (onRemove)="reload()" [card]="card" [collectorId]="collector.id"></cc-request-card-card>
+            <cc-request-card-card (onRemove)="reload()" [card]="card" [collectorId]="collectorId"></cc-request-card-card>
           }
           <mat-paginator [length]="cardTypeRes.cardTypeCount + cardRes.cardCount" [pageSize]="cardTypeRes.pageSize + cardRes.pageSize" (page)="changePage($event)"></mat-paginator>
         }
       </ng-container>
     </ng-container>
   </div>
-  <button class="floating-button-br" mat-fab aria-label="Add" (click)="openAddDialog(collector.id)">
+  <button class="floating-button-br" mat-fab aria-label="Add" (click)="openAddDialog(collectorId)">
     <mat-icon color="accent" svgIcon="add"></mat-icon>
   </button>
-</ng-container>
+}

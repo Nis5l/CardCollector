@@ -6,10 +6,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
-import { CollectorAddCardComponent } from './collector-add-card.component';
-import { CollectorAddCardService } from './collector-add-card.service';
+import { CollectorUpdateCardComponent } from './collector-update-card.component';
+import { CollectorUpdateCardService } from './collector-update-card.service';
 import { CardTypeSelectorModule } from '../../../shared';
-import { HttpModule, LoadingModule, CardServiceModule } from '../../../../../shared/services';
+import { HttpModule, LoadingModule } from '../../../../../shared/services';
 import { CardModule } from '../../../../../shared/components';
 import { NgVarModule } from '../../../../../shared/directives';
 
@@ -31,12 +31,11 @@ const MATERIAL_MODULES = [
 		CardModule,
 		NgVarModule,
 		LoadingModule,
-    CardServiceModule,
 
 		CardTypeSelectorModule,
 	],
-	providers: [ CollectorAddCardService ],
-	declarations: [ CollectorAddCardComponent ],
-	exports: [ CollectorAddCardComponent ],
+	providers: [ CollectorUpdateCardService ],
+	declarations: [ CollectorUpdateCardComponent ],
+	exports: [ CollectorUpdateCardComponent ],
 })
-export class CollectorAddCardModule {}
+export class CollectorUpdateCardModule {}

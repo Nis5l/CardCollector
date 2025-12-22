@@ -3,11 +3,9 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable, shareReplay, filter, map, BehaviorSubject } from 'rxjs';
 
 import { CollectorAddCardTypeService } from './collector-add-card-type.service';
-import type { Id } from '../../../../../shared/types';
-import { LoadingService } from '../../../../../shared/services';
+import type { Id, CardTypeConfig } from '../../../../../shared/types';
+import { LoadingService, CardService } from '../../../../../shared/services';
 import { HttpErrorResponse } from '@angular/common/http';
-import { CollectorService } from '../../../shared';
-import type { CollectorCardTypeConfig } from '../../../types';
 
 type CollectorAddCardTypeFormGroup = FormGroup<{
   name: FormControl<string>
@@ -38,7 +36,7 @@ export class CollectorAddCardTypeComponent {
 		return collectorId;
 	}
 
-	public readonly config$: Observable<CollectorCardTypeConfig>;
+	public readonly config$: Observable<CardTypeConfig>;
 	public readonly formGroup$: Observable<CollectorAddCardTypeFormGroup>;
 
 	private readonly errorSubject: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
@@ -47,9 +45,9 @@ export class CollectorAddCardTypeComponent {
 	constructor(
     private readonly collectorAddCardTypeService: CollectorAddCardTypeService,
     private readonly loadingService: LoadingService,
-    private readonly collectorService: CollectorService
+    private readonly cardService: CardService
   ) {
-		this.config$ = this.collectorService.getCardTypeConfig().pipe(shareReplay(1));
+		this.config$ = this.cardService.getCardTypeConfig().pipe(shareReplay(1));
 
 		this.formGroup$ = this.config$.pipe(
       map(config => new FormGroup({

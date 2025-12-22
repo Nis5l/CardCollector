@@ -7,7 +7,7 @@ use std::convert::From;
 
 use crate::shared::{Id, IdInt};
 
-#[derive(Debug, Serialize, FromRow)]
+#[derive(Debug, Serialize, Clone, FromRow)]
 #[serde(rename_all="camelCase")]
 pub struct CardInfo {
     pub id: Id,
@@ -16,6 +16,8 @@ pub struct CardInfo {
     #[sqlx(rename="cardName")]
     pub name: String,
     pub time: DateTime<Utc>,
+    pub state: CardState,
+    pub update_card: Option<Box<CardInfo>>
 }
 
 #[derive(Debug, Serialize)]
@@ -50,7 +52,7 @@ pub struct CardEffect {
     pub opacity: f32
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Clone)]
 #[serde(rename_all="camelCase")]
 pub struct Card {
     pub collector_id: Id,
@@ -85,38 +87,37 @@ impl From<CardTypeDb> for CardType {
     }
 }
 
-impl From<(CardTypeDb, CardType)> for CardType {
-    fn from((card_type_db, card_type_reference): (CardTypeDb, CardType)) -> Self {
+impl CardType {
+    fn from_with_update<T: Into<CardType>>(card_type_db: CardTypeDb, update: Option<T>) -> Self {
         let mut card_type = CardType::from(card_type_db);
-        card_type.update_card_type = Some(Box::new(card_type_reference));
+        if let Some(update_card) = update {
+            card_type.update_card_type = Some(Box::new(update_card.into()));
+        }
         card_type
+    }
+}
+
+impl From<(CardTypeDb, CardType)> for CardType {
+    fn from((db, update): (CardTypeDb, CardType)) -> Self {
+        Self::from_with_update(db, Some(update))
     }
 }
 
 impl From<(CardTypeDb, CardTypeDb)> for CardType {
-    fn from((card_type_db, card_type_db_reference): (CardTypeDb, CardTypeDb)) -> Self {
-        let mut card_type = CardType::from(card_type_db);
-        let card_type_reference = CardType::from(card_type_db_reference);
-        card_type.update_card_type = Some(Box::new(card_type_reference));
-        card_type
-    }
-}
-
-impl From<(CardTypeDb, Option<CardTypeDb>)> for CardType {
-    fn from((card_type_db, card_type_db_reference): (CardTypeDb, Option<CardTypeDb>)) -> Self {
-        match card_type_db_reference {
-            Some(ctdb) => Self::from((card_type_db, ctdb)),
-            None => Self::from(card_type_db),
-        }
+    fn from((db, update_db): (CardTypeDb, CardTypeDb)) -> Self {
+        Self::from_with_update(db, Some(update_db))
     }
 }
 
 impl From<(CardTypeDb, Option<CardType>)> for CardType {
-    fn from((card_type_db, card_type_reference): (CardTypeDb, Option<CardType>)) -> Self {
-        match card_type_reference {
-            Some(ct) => Self::from((card_type_db, ct)),
-            None => Self::from(card_type_db),
-        }
+    fn from((db, update): (CardTypeDb, Option<CardType>)) -> Self {
+        Self::from_with_update(db, update)
+    }
+}
+
+impl From<(CardTypeDb, Option<CardTypeDb>)> for CardType {
+    fn from((db, update_db): (CardTypeDb, Option<CardTypeDb>)) -> Self {
+        Self::from_with_update(db, update_db)
     }
 }
 
@@ -143,9 +144,13 @@ impl From<UnlockedCardDb> for UnlockedCard {
                 card_name: card.card_name,
                 card_user_id: card.card_user_id,
                 card_time: card.card_time,
+                update_card: None,
+                type_state: card.type_state,
+                card_state: card.card_state,
 
                 type_id: card.type_id,
                 type_name: card.type_name,
+                type_time: card.type_time
             })
         }
     }
@@ -159,18 +164,55 @@ impl From<CardDb> for Card {
                 id: card.card_id,
                 user_id: card.card_user_id,
                 name: card.card_name,
-                time: card.card_time
+                time: card.card_time,
+                state: CardState::from(card.card_state),
+                update_card: None,
             },
             card_type: CardType {
                 id: card.type_id,
                 name: card.type_name,
                 user_id: card.card_type_user_id,
                 update_card_type: None,
-                state: CardState::Created //TODO
+                state: CardState::from(card.type_state)
             }
         }
     }
 }
+
+impl Card {
+    fn from_with_update<T: Into<Card>>(card_db: CardDb, update: Option<T>) -> Self {
+        let mut card = Card::from(card_db);
+        if let Some(update_card) = update {
+            card.card_info.update_card = Some(Box::new(update_card.into().card_info));
+        }
+        card
+    }
+}
+
+impl From<(CardDb, Card)> for Card {
+    fn from((db, update): (CardDb, Card)) -> Self {
+        Self::from_with_update(db, Some(update))
+    }
+}
+
+impl From<(CardDb, CardDb)> for Card {
+    fn from((db, update_db): (CardDb, CardDb)) -> Self {
+        Self::from_with_update(db, Some(update_db))
+    }
+}
+
+impl From<(CardDb, Option<Card>)> for Card {
+    fn from((db, update): (CardDb, Option<Card>)) -> Self {
+        Self::from_with_update(db, update)
+    }
+}
+
+impl From<(CardDb, Option<CardDb>)> for Card {
+    fn from((db, update_db): (CardDb, Option<CardDb>)) -> Self {
+        Self::from_with_update(db, update_db)
+    }
+}
+
 
 #[derive(Debug, Serialize, FromRow)]
 #[serde(rename_all="camelCase")]
@@ -188,9 +230,12 @@ pub struct UnlockedCardDb {
     pub card_user_id: Id,
     pub card_name: String,
     pub card_time: DateTime<Utc>,
+    pub card_state: i32,
 
     pub type_id: Id,
     pub type_name: String,
+    pub type_state: i32,
+    pub type_time: DateTime<Utc>,
 
     pub frame_id: Option<IdInt>,
     pub frame_name: Option<String>,
@@ -209,9 +254,13 @@ pub struct CardDb {
     pub collector_id: Id,
     pub card_name: String,
     pub card_time: DateTime<Utc>,
+    pub update_card: Option<Id>,
+    pub card_state: i32,
 
+    pub type_state: i32,
     pub type_id: Id,
     pub type_name: String,
+    pub type_time: DateTime<Utc>,
 }
 
 #[derive(Debug, Serialize)]

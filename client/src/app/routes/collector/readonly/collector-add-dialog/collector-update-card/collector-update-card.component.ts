@@ -4,7 +4,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { BehaviorSubject, Observable, shareReplay, switchMap, filter, map, startWith } from 'rxjs';
 import type { HttpErrorResponse } from '@angular/common/http';
 
-import { CollectorAddCardService } from './collector-add-card.service';
+import { CollectorUpdateCardService } from './collector-update-card.service';
 import type { UnlockedCard, CardType, Id, CardConfig } from '../../../../../shared/types';
 import { CardState } from '../../../../../shared/types';
 import { SubscriptionManagerComponent } from '../../../../../shared/abstract';
@@ -12,18 +12,19 @@ import { HttpService, LoadingService, CardService } from '../../../../../shared/
 import { eventGetImage } from '../../../../../shared/utils';
 import type { CardRequestRequest } from './types';
 
-type CollectorAddCardFormGroup = FormGroup<{
+type CollectorUpdateCardFormGroup = FormGroup<{
     name: FormControl<string>,
     type: FormControl<CardType | null>,
 }>;
 
+//TODO: card select popup, edit from there.
 @Component({
-    selector: "cc-collector-add-card",
-    templateUrl: "./collector-add-card.component.html",
-    styleUrls: ["./collector-add-card.component.scss"],
+    selector: "cc-collector-update-card",
+    templateUrl: "./collector-update-card.component.html",
+    styleUrls: ["./collector-update-card.component.scss"],
     standalone: false
 })
-export class CollectorAddCardComponent extends SubscriptionManagerComponent {
+export class CollectorUpdateCardComponent extends SubscriptionManagerComponent {
   public readonly CardState: typeof CardState = CardState;
 	@Output()
 	public readonly onClose: EventEmitter<void> = new EventEmitter<void>();
@@ -80,7 +81,7 @@ export class CollectorAddCardComponent extends SubscriptionManagerComponent {
 	public readonly card$: Observable<UnlockedCard>;
 	public readonly config$: Observable<CardConfig>;
 
-	public readonly formGroup$: Observable<CollectorAddCardFormGroup>;
+	public readonly formGroup$: Observable<CollectorUpdateCardFormGroup>;
 
 	private readonly errorSubject: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
 	public readonly error$: Observable<string | null>;
@@ -88,7 +89,7 @@ export class CollectorAddCardComponent extends SubscriptionManagerComponent {
 	constructor(
 		private readonly httpService: HttpService,
 		private readonly domSanitizer: DomSanitizer,
-		private readonly collectorAddCardService: CollectorAddCardService,
+		private readonly collectorAddCardService: CollectorUpdateCardService,
 		private readonly cardService: CardService,
 		private readonly loadingService: LoadingService,
 	) {
@@ -172,20 +173,21 @@ export class CollectorAddCardComponent extends SubscriptionManagerComponent {
 
 	public createCardRequest(): void {
 		const data = this.cardSubject.getValue();
-		const cardData: CardRequestRequest = {
+    return;
+		/* const cardData: CardRequestRequest = {
 			cardType: data.card.cardType.id,
 			name: data.card.cardInfo.name,
 		};
 		const image = this.imageSubject.getValue();
 		if(image == null) throw new Error("image not set");
 
-		this.loadingService.waitFor(this.collectorAddCardService.createCardRequest(cardData).pipe(
+		this.loadingService.waitFor(this.collectorAddCardService.updateCardRequest(cardData).pipe(
 			switchMap(({ id }) => this.cardService.setCardImage(id, image))
 		)).subscribe({
 			next: () => { this.onClose.emit(); },
 			error: (err: HttpErrorResponse) => {
 				this.errorSubject.next(err.error?.error ?? "Creating card failed");
 			}
-		})
+		}) */
 	}
 }

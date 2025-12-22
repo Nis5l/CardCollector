@@ -8,7 +8,6 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatDialogModule } from '@angular/material/dialog';
 
 import { CollectorReadonlyComponent } from './collector-readonly.component';
-import { CollectorReadonlyService } from './collector-readonly.service';
 import { CollectorServiceModule } from '../shared';
 import { HttpModule, AuthModule } from '../../../shared/services';
 import { NgVarModule, RenderedModule } from '../../../shared/directives';
@@ -61,7 +60,7 @@ const MATERIAL_MODULES = [
     CollectorInventoryModule,
     CollectorCatalogModule,
 	],
-	providers: [ CollectorReadonlyService ],
+	providers: [ ],
 	declarations: [ CollectorReadonlyComponent ],
 })
 export class CollectorReadonlyModule {}

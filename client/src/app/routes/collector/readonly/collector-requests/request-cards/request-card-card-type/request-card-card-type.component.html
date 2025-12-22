@@ -1,5 +1,5 @@
 @if (voteResponse$ | async; as voteResponse) {
-  <cc-request-card title="Card-Type" [userId]="cardType.userId" [collectorId]="collectorId" [vote]="voteResponse.vote" [votes]="voteResponse.count" (onAccept)="accept()" (onDecline)="decline()" (onVote)="vote(cardType.id, $event)">
+  <cc-request-card [title]="(cardType.updateCardType == null ? 'Create' : 'Update') + ' Card-Type'" [userId]="cardType.userId" [collectorId]="collectorId" [vote]="voteResponse.vote" [votes]="voteResponse.count" (onAccept)="accept()" (onDecline)="decline()" (onVote)="vote(cardType.id, $event)">
     <ng-template #cardContent let-card>
       <div class="name">
         <span class="label">Name:</span>
