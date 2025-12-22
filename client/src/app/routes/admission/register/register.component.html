@@ -1,39 +1,45 @@
 <div class="wrap">
-  <div class="register-wrapper" *ngIf="(formGroup$ | async) as formGroup">
-    <mat-card appearance="outlined" *ngIf="(config$ | async) as config">
-      <form class="register" [formGroup]="formGroup" (submit)="register(formGroup)">
-        <mat-form-field *ngVar="formGroup.controls.username as usernameFormControl">
-          <input matInput type="text" formControlName="username" placeholder="Username" />
-          @if (usernameFormControl.hasError('required') || usernameFormControl.hasError('minlength')) {
-            <mat-error>
-              Username has to be {{config.username.minLength}}-{{config.username.maxLength}} characters
-            </mat-error>
-          }
-          @if (usernameFormControl.hasError('pattern')) {
-            <mat-error>
-              Username can only contain letters, numbers, _ and whitespaces in between words
-            </mat-error>
-          }
-        </mat-form-field>
-        <mat-form-field >
-          <input matInput type="text" formControlName="email" placeholder="Email" />
-          <mat-error>Email has to be a valid Email</mat-error>
-        </mat-form-field>
-        <mat-form-field>
-          <input matInput type="password" formControlName="password" placeholder="Password"/>
-          <mat-error>Password has to be {{config.password.minLength}}-{{config.password.maxLength}} characters</mat-error>
-        </mat-form-field>
-        <mat-form-field *ngVar="formGroup.controls.passwordRepeat as passwordRepeatFormControl">
-          <input matInput type="password" formControlName="passwordRepeat" placeholder="Repeat Password" />
-          @if (passwordRepeatFormControl.hasError('passwordNotSame')) {
-            <mat-error>Passwords do not match</mat-error>
-          }
-        </mat-form-field>
-        <div *ngIf="(error$ | async) as error" class="error">
-          <mat-error>{{error}}</mat-error>
-        </div>
-        <button matButton="outlined" type="submit" [disabled]="!formGroup.valid">Register</button>
-      </form>
-    </mat-card>
-  </div>
+  @if ((formGroup$ | async); as formGroup) {
+    <div class="register-wrapper">
+      @if ((config$ | async); as config) {
+        <mat-card appearance="outlined">
+          <form class="register" [formGroup]="formGroup" (submit)="register(formGroup)">
+            <mat-form-field *ngVar="formGroup.controls.username as usernameFormControl">
+              <input matInput type="text" formControlName="username" placeholder="Username" />
+              @if (usernameFormControl.hasError('required') || usernameFormControl.hasError('minlength')) {
+                <mat-error>
+                  Username has to be {{config.username.minLength}}-{{config.username.maxLength}} characters
+                </mat-error>
+              }
+              @if (usernameFormControl.hasError('pattern')) {
+                <mat-error>
+                  Username can only contain letters, numbers, _ and whitespaces in between words
+                </mat-error>
+              }
+            </mat-form-field>
+            <mat-form-field >
+              <input matInput type="text" formControlName="email" placeholder="Email" />
+              <mat-error>Email has to be a valid Email</mat-error>
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput type="password" formControlName="password" placeholder="Password"/>
+              <mat-error>Password has to be {{config.password.minLength}}-{{config.password.maxLength}} characters</mat-error>
+            </mat-form-field>
+            <mat-form-field *ngVar="formGroup.controls.passwordRepeat as passwordRepeatFormControl">
+              <input matInput type="password" formControlName="passwordRepeat" placeholder="Repeat Password" />
+              @if (passwordRepeatFormControl.hasError('passwordNotSame')) {
+                <mat-error>Passwords do not match</mat-error>
+              }
+            </mat-form-field>
+            @if ((error$ | async); as error) {
+              <div class="error">
+                <mat-error>{{error}}</mat-error>
+              </div>
+            }
+            <button matButton="outlined" type="submit" [disabled]="!formGroup.valid">Register</button>
+          </form>
+        </mat-card>
+      }
+    </div>
+  }
 </div>

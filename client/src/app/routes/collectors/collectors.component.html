@@ -5,9 +5,11 @@
     </mat-form-field>
     <button class="new-collector" matButton="outlined" (click)="newCollector()">New</button>
   </form>
-  <div class="loading" *ngIf="loading$ | async">
-    <cc-loading [observable]="loading$" [boolObservable]="true"></cc-loading>
-  </div>
+  @if (loading$ | async) {
+    <div class="loading">
+      <cc-loading [observable]="loading$" [boolObservable]="true"></cc-loading>
+    </div>
+  }
   @if (res != null && !(loading$ | async)) {
     @if (res.collectors.length > 0) {
       <div class="collectors">
@@ -24,5 +26,7 @@
       </div>
     }
   }
-  <mat-paginator *ngIf="res != null" [pageSize]="res.pageSize" [length]="res.collectorCount" (page)="changePage($event)"></mat-paginator>
+  @if (res != null) {
+    <mat-paginator [pageSize]="res.pageSize" [length]="res.collectorCount" (page)="changePage($event)"></mat-paginator>
+  }
 </div>

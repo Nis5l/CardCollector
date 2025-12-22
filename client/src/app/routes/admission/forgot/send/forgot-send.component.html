@@ -6,7 +6,9 @@
           <input matInput type="text" formControlName="usernameOrEmail" placeholder="Username/Email" />
         </mat-form-field>
         <button matButton="outlined" type="submit" [disabled]="!formGroup.valid">Send Email</button>
-        <p *ngIf="(message$ | async) as message">{{message}}</p>
+        @if ((message$ | async); as message) {
+          <p>{{message}}</p>
+        }
       </form>
     </mat-card>
   </div>

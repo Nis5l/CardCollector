@@ -17,7 +17,6 @@ pub async fn get_notifications(sql: &Sql, user_id: &Id, collector_id: &Option<Id
         .bind(user_id);
 
     if let Some(collector_id) = collector_id {
-        println!("{:?}", collector_id);
         stmt = stmt.bind(collector_id);
     }
 

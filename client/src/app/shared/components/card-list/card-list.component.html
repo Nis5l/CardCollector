@@ -14,9 +14,11 @@
       </mat-select>
     </mat-form-field>
   </form>
-  <div class="loading" *ngIf="loading$ | async">
-    <cc-loading [observable]="loading$" [boolObservable]="true"></cc-loading>
-  </div>
+  @if (loading$ | async) {
+    <div class="loading">
+      <cc-loading [observable]="loading$" [boolObservable]="true"></cc-loading>
+    </div>
+  }
   @if (cardIndexResponse != null && !(loading$ | async)) {
     @if (cardIndexResponse.cards.length > 0) {
       <div class="cards">
@@ -33,5 +35,7 @@
       </div>
     }
   }
-  <mat-paginator *ngIf="cardIndexResponse != null" [length]="cardIndexResponse.cardCount" [pageSize]="cardIndexResponse.pageSize" (page)="changePage($event)"></mat-paginator>
+  @if (cardIndexResponse != null) {
+    <mat-paginator [length]="cardIndexResponse.cardCount" [pageSize]="cardIndexResponse.pageSize" (page)="changePage($event)"></mat-paginator>
+  }
 </div>

@@ -8,7 +8,9 @@
       <div class="description-wrapper">
         <p class="description" ccRendered (rendered)="onDescriptionChange($event)">{{ collector.description }}</p>
 
-        <div class="fade-bar" *ngIf="descriptionOverflows"></div>
+        @if (descriptionOverflows) {
+          <div class="fade-bar"></div>
+        }
       </div>
     </mat-card-subtitle> <!-- TODO: long description formatting -->
     <!--<mat-card-subtitle>...stats...</mat-card-subtitle>!-->

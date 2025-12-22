@@ -1,44 +1,38 @@
-<ng-container *ngVar="(card$ | async) as c">
+@if(card$ | async; as c) {
   <div class="card" [style.cursor]="(click !== 'none' || turn) ? 'pointer' : 'unset'" (click)="onClick(c)" [style.filter]="suggestion === true ? 'grayscale(70%)' : 'none'">
     <div class="card-container" [class.turn]="turn">
       <div class="card-front">
         <div class="card-inner">
-          <ng-container *ngVar="getCardEffectImage(c) as cardEffectImage">
-            @if (cardEffectImage != null) {
-              <img class="card-effect" [src]="cardImage" alt="Card Effect"/>
-            }
-          </ng-container>
-          <ng-container *ngVar="getCardImage(c) as cardImage">
-            @if (cardImage != null) {
-              <img [src]="cardImage" alt="Card Image"/>
-            }
-            @if (cardImage == null) {
-              <div class="card-not-found">Card not found</div>
-            }
-          </ng-container>
+          @if (effectImage$ | async; as effectImage) {
+            <img class="card-effect" [src]="effectImage" alt="Card Effect"/>
+          }
+          @if (image$ | async; as image) {
+            <img [src]="image" alt="Card Image"/>
+          }
         </div>
         <div class="card-frame">
-          <ng-container *ngVar="getCardLevel(c) as level">
-            @if (level != null) {
-              <div class="level">{{level}}</div>
-            }
-          </ng-container>
-          <ng-container *ngVar="getCardQuality(c) as quality">
-            @if (quality != null) {
-              <div class="quality">{{quality}}</div>
-            }
-          </ng-container>
-          <span class="card-name card-text">{{getCardName(c)}}</span>
-          <span class="card-type-name card-text">{{getCardTypeName(c)}}</span>
+          @if (level$ | async; as level) {
+            <div class="level">{{level}}</div>
+          }
+          @if (quality$ | async; as quality) {
+            <div class="quality">{{quality}}</div>
+          }
+          <div class="card-name" *ngIf="name$ | async as name">
+            <div [fittext]="true" [activateOnResize]="true" [activateOnInputEvents]="true" [modelToWatch]="name" [minFontSize]="1">{{name}}</div>
+          </div>
 
-          <img class="frame-front" [src]="getCardFrameFront(c)" alt="Card Frame Front" />
+          <div class="card-type-name" *ngIf="type$ | async as type">
+            <div [fittext]="true" [activateOnResize]="true" [activateOnInputEvents]="true" [modelToWatch]="type">{{type}}</div>
+          </div>
+
+          <img class="frame-front" [src]="frameFront$ | async" alt="Card Frame Front" />
         </div>
       </div>
       <div class="card-back">
         <div class="card-frame">
-          <img class="frame-back" [src]="getCardFrameBack(c)" alt="Card Frame Back" />
+          <img class="frame-back" [src]="frameBack$ | async" alt="Card Frame Back" />
         </div>
       </div>
     </div>
   </div>
-</ng-container>
+}

@@ -19,11 +19,13 @@
           <mat-error>Description has to be {{config.description.minLength}}-{{config.description.maxLength}} characters</mat-error>
         </mat-form-field>
 
-        <div *ngIf="(error$ | async) as error" class="error">
-          @if (error != null) {
-            <mat-error>{{error}}</mat-error>
-          }
-        </div>
+        @if ((error$ | async); as error) {
+          <div class="error">
+            @if (error != null) {
+              <mat-error>{{error}}</mat-error>
+            }
+          </div>
+        }
         <button matButton="outlined" type="submit" [disabled]="!formGroup.valid">Create</button>
       </form>
     </div>

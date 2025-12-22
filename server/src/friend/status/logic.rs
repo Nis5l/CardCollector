@@ -20,10 +20,7 @@ pub async fn friend_status_route(sql: &State<Sql>, friend_user_id: Id, token: Jw
         Some(friend_db) => {
             match friend::data::FriendStatus::from_database(&user_id, &friend_db) {
                 Some(status) => status,
-                None => {
-                    println!("Friend status invalid");
-                    return ApiResponseErr::api_err(Status::NotFound, String::from("Internal server error"))
-                }
+                None => return ApiResponseErr::api_err(Status::NotFound, String::from("Internal server error"))
             }
         }
         None => FriendStatus::Nothing

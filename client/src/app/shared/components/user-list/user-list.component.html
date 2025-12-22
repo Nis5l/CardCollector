@@ -4,9 +4,11 @@
       <input matInput type="text" formControlName="search" placeholder="Search" />
     </mat-form-field>
   </form>
-  <div class="loading" *ngIf="loading$ | async">
-    <cc-loading [observable]="loading$" [boolObservable]="true"></cc-loading>
-  </div>
+  @if (loading$ | async) {
+    <div class="loading">
+      <cc-loading [observable]="loading$" [boolObservable]="true"></cc-loading>
+    </div>
+  }
   @if (usersResponse != null && !(loading$ | async)) {
     @if (usersResponse.users.length > 0) {
       <div class="user-wrap">
@@ -23,5 +25,7 @@
       </div>
     }
   }
-  <mat-paginator *ngIf="usersResponse != null" [length]="usersResponse.userCount" [pageSize]="usersResponse.pageSize" (page)="changePage($event)"></mat-paginator>
+  @if (usersResponse != null) {
+    <mat-paginator [length]="usersResponse.userCount" [pageSize]="usersResponse.pageSize" (page)="changePage($event)"></mat-paginator>
+  }
 </div>

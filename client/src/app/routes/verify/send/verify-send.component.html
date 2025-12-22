@@ -7,9 +7,11 @@
 
         <button [disabled]="!(canResend$ | async)" matButton="outlined" color="primary" (click)="resend()">Resend</button>
 
-        <p *ngIf="!(canResend$ | async)" class="cooldown">
-          Resend available in {{ countdown$ | async }}
-        </p>
+        @if (!(canResend$ | async)) {
+          <p class="cooldown">
+            Resend available in {{ countdown$ | async }}
+          </p>
+        }
       </div>
     </mat-card>
   </div>

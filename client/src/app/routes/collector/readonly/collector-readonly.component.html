@@ -16,29 +16,32 @@
             <p class="description" ccRendered (rendered)="onDescriptionChange($event)">{{ collector.description }}</p>
 
             <!-- Fade + Show more button (collapsed only) -->
-            <div class="fade-bar" *ngIf="showToggle && !descriptionExpanded">
-              <button class="toggle-btn" (click)="descriptionExpanded = true">Show more</button>
-            </div>
+            @if (showToggle && !descriptionExpanded) {
+              <div class="fade-bar">
+                <button class="toggle-btn" (click)="descriptionExpanded = true">Show more</button>
+              </div>
+            }
 
             <!-- Show less button (expanded only) -->
-            <div class="show-less-wrapper" *ngIf="showToggle && descriptionExpanded">
-              <button class="toggle-btn" (click)="descriptionExpanded = false">Show less</button>
-            </div>
+            @if (showToggle && descriptionExpanded) {
+              <div class="show-less-wrapper">
+                <button class="toggle-btn" (click)="descriptionExpanded = false">Show less</button>
+              </div>
+            }
           </div>
 
-          <div class="creator-moderators" *ngIf="(moderators$ | async) as moderators">
-            <p class="label">Moderators:</p>
-
-            <div class="users">
-
-              <cc-user [userId]="collector.userId"></cc-user>
-
-              @for (moderator of moderators; track moderator.id) {
-                <span class="comma">, </span>
-                <cc-user [user]="moderator"></cc-user>
-              }
+          @if ((moderators$ | async); as moderators) {
+            <div class="creator-moderators">
+              <p class="label">Moderators:</p>
+              <div class="users">
+                <cc-user [userId]="collector.userId"></cc-user>
+                @for (moderator of moderators; track moderator.id) {
+                  <span class="comma">, </span>
+                  <cc-user [user]="moderator"></cc-user>
+                }
+              </div>
             </div>
-          </div>
+          }
         </div>
       </div>
       <div class="wrap">

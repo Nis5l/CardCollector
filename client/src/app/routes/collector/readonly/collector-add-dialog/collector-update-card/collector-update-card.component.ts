@@ -2,15 +2,13 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { BehaviorSubject, Observable, shareReplay, switchMap, filter, map, startWith } from 'rxjs';
-import type { HttpErrorResponse } from '@angular/common/http';
 
 import { CollectorUpdateCardService } from './collector-update-card.service';
-import type { UnlockedCard, CardType, Id, CardConfig } from '../../../../../shared/types';
+import type { Card, CardType, Id, CardConfig } from '../../../../../shared/types';
 import { CardState } from '../../../../../shared/types';
 import { SubscriptionManagerComponent } from '../../../../../shared/abstract';
 import { HttpService, LoadingService, CardService } from '../../../../../shared/services';
 import { eventGetImage } from '../../../../../shared/utils';
-import type { CardRequestRequest } from './types';
 
 type CollectorUpdateCardFormGroup = FormGroup<{
     name: FormControl<string>,
@@ -52,33 +50,20 @@ export class CollectorUpdateCardComponent extends SubscriptionManagerComponent {
     updateCardType: null
 	};
 
-	private readonly cardSubject: BehaviorSubject<UnlockedCard> = new BehaviorSubject<UnlockedCard>({
-		level: 1,
-		quality: 1,
-		id: "id",
-    time: (new Date()).toISOString(),
-		userId: "userId",
-		card: {
-      collectorId: "collectorId",
-			cardInfo: {
-				id: "id",
-				userId: "userId",
-				name: "",
-        time: (new Date()).toISOString(),
-        state: CardState.Created,
-        updateCard: null,
-			},
-			cardType: this.cardTypeDefault
-		},
-		cardEffect: {
-			id: 0,
-			image: this.httpService.apiUrl("/effect/Effect1.gif"),
-			opacity: 1.0,
-		},
-		cardFrame: null,
+	private readonly cardSubject: BehaviorSubject<Card> = new BehaviorSubject<Card>({
+    collectorId: "collectorId",
+    cardInfo: {
+      id: "id",
+      userId: "userId",
+      name: "",
+      time: (new Date()).toISOString(),
+      state: CardState.Created,
+      updateCard: null,
+    },
+    cardType: this.cardTypeDefault
 	});
 
-	public readonly card$: Observable<UnlockedCard>;
+	public readonly card$: Observable<Card>;
 	public readonly config$: Observable<CardConfig>;
 
 	public readonly formGroup$: Observable<CollectorUpdateCardFormGroup>;
@@ -109,21 +94,19 @@ export class CollectorUpdateCardComponent extends SubscriptionManagerComponent {
         type: new FormControl<CardType | null>(null, {
           validators: [ Validators.required ],
         }),
-      }))
+      })),
+      shareReplay(1)
     );
 
 		this.registerSubscription(this.formGroup$.pipe(
-        switchMap(formGroup => formGroup.valueChanges)
+        switchMap(formGroup => formGroup.controls.name.valueChanges)
       ).subscribe(value => {
         const current = this.cardSubject.getValue();
         this.cardSubject.next({
           ...current,
-          card: {
-            ...current.card,
-            cardInfo: {
-              ...current.card.cardInfo,
-              name: value.name ?? current.card.cardInfo.name
-            }
+          cardInfo: {
+            ...current.cardInfo,
+            name: value ?? current.cardInfo.name
           }
         });
 		  })
@@ -155,18 +138,12 @@ export class CollectorUpdateCardComponent extends SubscriptionManagerComponent {
 		if(cardType != null) {
 			this.cardSubject.next({
 				...current,
-				card: {
-					...current.card,
-					cardType
-				}
+        cardType
 			});
 		} else {
 			this.cardSubject.next({
 				...current,
-				card: {
-					...current.card,
-					cardType: this.cardTypeDefault
-				}
+        cardType: this.cardTypeDefault
 			});
 		}
 	}

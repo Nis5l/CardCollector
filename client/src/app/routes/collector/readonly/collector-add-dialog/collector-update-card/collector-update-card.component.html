@@ -1,25 +1,27 @@
 <div class="card-add-container" *ngVar="(card$ | async) as card">
-  <form *ngIf="(formGroup$ | async) as formGroup" [formGroup]="formGroup" (submit)="createCardRequest()">
-    <ng-container *ngVar="(config$ | async) as config">
-      @if (config) {
-        <mat-form-field>
-          <input matInput type="text" formControlName="name" placeholder="Name" [minlength]="config.nameLengthMin" [maxlength]="config.nameLengthMax"/>
-          <mat-error >Name has to be {{config.nameLengthMin}}-{{config.nameLengthMax}} characters</mat-error>
-        </mat-form-field>
-      }
-    </ng-container>
-    <cc-card-type-selector [cardState]="CardState.Created" formControlName="type" (cardType)="cardTypeChange($event)" [collectorId]="collectorId"></cc-card-type-selector>
-    <input #imageInput hidden="true" type="file" (change)="imageChange($event.target)" accept="image/jpeg,image/png"/>
-    <button matButton="outlined" type="button" (click)="imageInput.click()" [color]="formGroup.hasError('noImage') ? 'error' : 'text'"><mat-icon color="accent" svgIcon="add_a_photo"></mat-icon>Image</button>
-    <div class="request">
-      <div *ngVar="(error$ | async) as error" class="error">
-        @if (error != null) {
-          <mat-error>{{error}}</mat-error>
+  @if ((formGroup$ | async); as formGroup) {
+    <form [formGroup]="formGroup" (submit)="createCardRequest()">
+      <ng-container *ngVar="(config$ | async) as config">
+        @if (config) {
+          <mat-form-field>
+            <input matInput type="text" formControlName="name" placeholder="Name" [minlength]="config.nameLengthMin" [maxlength]="config.nameLengthMax"/>
+            <mat-error >Name has to be {{config.nameLengthMin}}-{{config.nameLengthMax}} characters</mat-error>
+          </mat-form-field>
         }
+      </ng-container>
+      <cc-card-type-selector [cardState]="CardState.Created" formControlName="type" (cardType)="cardTypeChange($event)" [collectorId]="collectorId"></cc-card-type-selector>
+      <input #imageInput hidden="true" type="file" (change)="imageChange($event.target)" accept="image/jpeg,image/png"/>
+      <button matButton="outlined" type="button" (click)="imageInput.click()" [color]="formGroup.hasError('noImage') ? 'error' : 'text'"><mat-icon color="accent" svgIcon="add_a_photo"></mat-icon>Image</button>
+      <div class="request">
+        <div *ngVar="(error$ | async) as error" class="error">
+          @if (error != null) {
+            <mat-error>{{error}}</mat-error>
+          }
+        </div>
+        <button matButton="outlined" type="submit" [disabled]="!formGroup.valid">Submit</button>
       </div>
-      <button matButton="outlined" type="submit" [disabled]="!formGroup.valid">Submit</button>
-    </div>
-  </form>
+    </form>
+  }
   @if (card != null) {
     <div class="card">
       <cc-card [card]="card" [cardImage]="cardImage$ | async"></cc-card>

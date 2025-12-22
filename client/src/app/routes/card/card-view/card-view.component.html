@@ -1,11 +1,15 @@
 <div class="card-view" *ngVar="(card$ | async) as card">
-  <button mat-icon-button class="back-button" (click)="goBack()" *ngIf="canGoBack()">
-    <mat-icon color="accent" svgIcon="arrow_top_left"></mat-icon>
-  </button>
+  @if (canGoBack()) {
+    <button mat-icon-button class="back-button" (click)="goBack()">
+      <mat-icon color="accent" svgIcon="arrow_top_left"></mat-icon>
+    </button>
+  }
 
-  <div class="loading" *ngIf="loading$ | async">
-    <cc-loading [observable]="loading$" [boolObservable]="true"></cc-loading>
-  </div>
+  @if (loading$ | async) {
+    <div class="loading">
+      <cc-loading [observable]="loading$" [boolObservable]="true"></cc-loading>
+    </div>
+  }
 
   @if (!(loading$ | async)) {
     @if (card != null) {

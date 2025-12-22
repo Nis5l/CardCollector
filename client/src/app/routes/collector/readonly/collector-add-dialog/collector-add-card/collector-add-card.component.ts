@@ -5,7 +5,7 @@ import { BehaviorSubject, Observable, shareReplay, switchMap, filter, map, start
 import type { HttpErrorResponse } from '@angular/common/http';
 
 import { CollectorAddCardService } from './collector-add-card.service';
-import type { UnlockedCard, CardType, Id, CardConfig } from '../../../../../shared/types';
+import type { Card, CardType, Id, CardConfig } from '../../../../../shared/types';
 import { CardState } from '../../../../../shared/types';
 import { SubscriptionManagerComponent } from '../../../../../shared/abstract';
 import { HttpService, LoadingService, CardService } from '../../../../../shared/services';
@@ -51,33 +51,20 @@ export class CollectorAddCardComponent extends SubscriptionManagerComponent {
     updateCardType: null
 	};
 
-	private readonly cardSubject: BehaviorSubject<UnlockedCard> = new BehaviorSubject<UnlockedCard>({
-		level: 1,
-		quality: 1,
-		id: "id",
-    time: (new Date()).toISOString(),
-		userId: "userId",
-		card: {
-      collectorId: "collectorId",
-			cardInfo: {
-				id: "id",
-				userId: "userId",
-				name: "",
-        time: (new Date()).toISOString(),
-        state: CardState.Created,
-        updateCard: null,
-			},
-			cardType: this.cardTypeDefault
-		},
-		cardEffect: {
-			id: 0,
-			image: this.httpService.apiUrl("/effect/Effect1.gif"),
-			opacity: 1.0,
-		},
-		cardFrame: null,
+	private readonly cardSubject: BehaviorSubject<Card> = new BehaviorSubject<Card>({
+    collectorId: "collectorId",
+    cardInfo: {
+      id: "id",
+      userId: "userId",
+      name: "",
+      time: (new Date()).toISOString(),
+      state: CardState.Created,
+      updateCard: null,
+    },
+    cardType: this.cardTypeDefault
 	});
 
-	public readonly card$: Observable<UnlockedCard>;
+	public readonly card$: Observable<Card>;
 	public readonly config$: Observable<CardConfig>;
 
 	public readonly formGroup$: Observable<CollectorAddCardFormGroup>;
@@ -108,21 +95,19 @@ export class CollectorAddCardComponent extends SubscriptionManagerComponent {
         type: new FormControl<CardType | null>(null, {
           validators: [ Validators.required ],
         }),
-      }))
+      })),
+      shareReplay(1)
     );
 
 		this.registerSubscription(this.formGroup$.pipe(
-        switchMap(formGroup => formGroup.valueChanges)
+        switchMap(formGroup => formGroup.controls.name.valueChanges)
       ).subscribe(value => {
         const current = this.cardSubject.getValue();
         this.cardSubject.next({
           ...current,
-          card: {
-            ...current.card,
-            cardInfo: {
-              ...current.card.cardInfo,
-              name: value.name ?? current.card.cardInfo.name
-            }
+          cardInfo: {
+            ...current.cardInfo,
+            name: value ?? current.cardInfo.name
           }
         });
 		  })
@@ -154,18 +139,12 @@ export class CollectorAddCardComponent extends SubscriptionManagerComponent {
 		if(cardType != null) {
 			this.cardSubject.next({
 				...current,
-				card: {
-					...current.card,
-					cardType
-				}
+        cardType
 			});
 		} else {
 			this.cardSubject.next({
 				...current,
-				card: {
-					...current.card,
-					cardType: this.cardTypeDefault
-				}
+        cardType: this.cardTypeDefault
 			});
 		}
 	}
@@ -173,8 +152,8 @@ export class CollectorAddCardComponent extends SubscriptionManagerComponent {
 	public createCardRequest(): void {
 		const data = this.cardSubject.getValue();
 		const cardData: CardRequestRequest = {
-			cardType: data.card.cardType.id,
-			name: data.card.cardInfo.name,
+			cardType: data.cardType.id,
+			name: data.cardInfo.name,
 		};
 		const image = this.imageSubject.getValue();
 		if(image == null) throw new Error("image not set");

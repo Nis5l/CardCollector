@@ -15,7 +15,6 @@ pub async fn notifications_route(collector_id: Option<Id>, sql: &State<Sql>, tok
 
     verify_user!(sql, &user_id, true);
     if let Some(ref collector_id) = collector_id {
-        println!("{}", collector_id);
         verify_collector!(sql, &collector_id);
     }
 

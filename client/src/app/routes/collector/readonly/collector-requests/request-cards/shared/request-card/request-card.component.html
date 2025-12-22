@@ -10,11 +10,13 @@
   </mat-card-content>
   <ng-container *ngVar="(vote$ | async) as vote">
     <ng-container *ngVar="(votes$ | async) as vots">
-      <mat-card-actions class="vote" *ngIf="vote != null && votes != null">
-        <button mat-icon-button [class.active-up]="vote == CardVote.Upvote" (click)="upvote(vote)"><mat-icon svgIcon="arrow_upward"></mat-icon></button>
+      @if (vote != null && votes != null) {
+        <mat-card-actions class="vote">
+          <button mat-icon-button [class.active-up]="vote == CardVote.Upvote" (click)="upvote(vote)"><mat-icon svgIcon="arrow_upward"></mat-icon></button>
           <span class="vote-count">{{ votes }}</span>
-        <button mat-icon-button [class.active-up]="vote == CardVote.Downvote" (click)="downvote(vote)"><mat-icon svgIcon="arrow_downward"></mat-icon></button>
-      </mat-card-actions>
+          <button mat-icon-button [class.active-up]="vote == CardVote.Downvote" (click)="downvote(vote)"><mat-icon svgIcon="arrow_downward"></mat-icon></button>
+        </mat-card-actions>
+      }
     </ng-container>
   </ng-container>
   @if (isOwnerModerator$ | async) {

@@ -13,9 +13,11 @@
           </div>
         }
       }
-      <div class="loading" *ngIf="cardLoading$ | async">
-        <cc-loading [observable]="cardLoading$" [boolObservable]="true"></cc-loading>
-      </div>
+      @if (cardLoading$ | async) {
+        <div class="loading">
+          <cc-loading [observable]="cardLoading$" [boolObservable]="true"></cc-loading>
+        </div>
+      }
     </div>
     <!-- hacky but works, maybe change -->
     <mat-divider vertical></mat-divider>
