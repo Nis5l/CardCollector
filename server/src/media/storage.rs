@@ -82,9 +82,7 @@ impl ImageStorage {
 
     /// Get file path for an image ID
     fn get_path(&self, image_id: &str) -> PathBuf {
-        let result = self.base_path.join(format!("{}.bin", image_id));
-        println!("{}", result.display());
-        result
+        self.base_path.join(format!("{}.bin", image_id))
     }
 }
 

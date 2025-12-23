@@ -12,16 +12,12 @@ pub async fn profile_image_get_route(
     sql: &State<Sql>,
     media_manager: &State<MediaManager>
 ) -> Result<(ContentType, Vec<u8>), Status> {
-    println!("1");
-
     // Check if user exists
     match user_sql::username_from_user_id(sql, &user_id).await {
         Ok(Some(_)) => (),
         Ok(None) => return Err(Status::NotFound),
         Err(_) => return Err(Status::InternalServerError)
     }
-
-    println!("2");
 
     // Get image hash from database
     let image_hash = match user_sql::get_profile_image(sql, &user_id).await {
@@ -31,16 +27,12 @@ pub async fn profile_image_get_route(
         },
         Err(_) => return Err(Status::InternalServerError)
     };
-
-    println!("3");
     
     // Get image through MediaManager with "profile" media type and "default" variant
     let (bytes, format) = media_manager
         .get_image("profile", &image_hash, None)
         .await
         .map_err(|_| Status::NotFound)?;
-
-    println!("4");
 
     // Parse Content-Type based on format
     let content_type = ContentType::parse_flexible(format.mime_type())
