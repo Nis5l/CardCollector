@@ -1,0 +1,19 @@
+<div class="i-understand-dialog">
+  <mat-toolbar class="header">
+    <button mat-icon-button (click)="cancel()">
+      <mat-icon color="accent" svgIcon="close"></mat-icon>
+    </button>
+  </mat-toolbar>
+  <div class="content">
+    <div class="text">
+      <p class="message">{{message}}</p>
+      <p>Type "{{understandText}}" to confirm.</p>
+    </div>
+    <div class="understand">
+      <mat-form-field>
+        <input matInput placeholder="{{understandText}}"  [formControl]="formControl" />
+      </mat-form-field>
+      <button matButton="outlined" (click)="confirm()" [disabled]="!formControl.valid">Confirm</button>
+    </div>
+  </div>
+</div>

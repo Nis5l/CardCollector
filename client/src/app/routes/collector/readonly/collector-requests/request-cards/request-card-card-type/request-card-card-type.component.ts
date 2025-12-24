@@ -1,10 +1,13 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { Observable, BehaviorSubject, combineLatest, switchMap, filter, startWith, Subject } from 'rxjs';
+import { Observable, BehaviorSubject, combineLatest, switchMap, filter, startWith, Subject, map, of as observableOf } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
 
 import type { CardType, Id } from '../../../../../../shared/types';
+import { CardState } from '../../../../../../shared/types';
 import { RequestCardCardTypeService } from './request-card-card-type.service';
 import { LoadingService, CardService } from '../../../../../../shared/services';
 import { SubscriptionManagerComponent } from '../../../../../../shared/abstract';
+import { IUnderstandDialogComponent } from '../../../../../../shared/dialogs';
 import type { VoteGetResponse } from './types';
 import type { CardVote } from '../shared/types';
 
@@ -47,10 +50,13 @@ export class RequestCardCardTypeComponent extends SubscriptionManagerComponent {
 
   public readonly voteResponse$: Observable<VoteGetResponse>;
 
+  public readonly title$: Observable<string>;
+
 	constructor(
 		private readonly requestCardCardTypeService: RequestCardCardTypeService,
 		private readonly loadingService: LoadingService,
     private readonly cardService: CardService,
+    private readonly matDialog: MatDialog,
 	) {
 		super();
 
@@ -58,9 +64,12 @@ export class RequestCardCardTypeComponent extends SubscriptionManagerComponent {
       filter((cardType): cardType is CardType => cardType != null)
     );
 
-    /* cardType$.pipe(
-      filter(cardType =>
-    ); */
+    this.title$ = cardType$.pipe(
+      map(cardType => {
+        if(cardType.state == CardState.Delete) return "Delete Card-Type";
+        return (cardType.updateCardType == null ? 'Create' : 'Update') + " Card-Type";
+      }),
+    );
 
     this.voteResponse$ = combineLatest([cardType$, this.refreshVoteSubject.pipe(startWith(0))]).pipe(
       switchMap(([cardType]) => this.requestCardCardTypeService.votes(cardType.id))
@@ -68,7 +77,10 @@ export class RequestCardCardTypeComponent extends SubscriptionManagerComponent {
 	}
 
 	public accept(): void {
-		this.registerSubscription(this.loadingService.waitFor(this.requestCardCardTypeService.accept(this.cardType.id)).subscribe({
+		this.registerSubscription((this.cardType.state === CardState.Delete ? IUnderstandDialogComponent.open(this.matDialog, "Deleting this Card-Type will delete all its Cards!") : observableOf(true)).pipe(
+      filter(result => result === true),
+      switchMap(() => this.loadingService.waitFor(this.requestCardCardTypeService.accept(this.cardType.id)))
+    ).subscribe({
 			next: () => this.onRemove.next(),
 			error: () => console.error("Error accepting Card-Type Request")
 		}));

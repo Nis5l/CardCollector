@@ -9,13 +9,13 @@ use crate::shared::Id;
 
 #[derive(Debug, Deserialize, Validate, JsonBody)]
 #[validate(context = config::Config)]
-pub struct CardTypeRequestCreateRequest {
+pub struct CardTypeCreateRequest {
     #[validate(custom(function="validate_collector_type_name", use_context))]
     pub name: String
 }
 
 #[derive(Debug, Serialize)]
-pub struct CardTypeRequestCreateResponse {
+pub struct CardTypeCreateResponse {
     pub id: Id
 }
 

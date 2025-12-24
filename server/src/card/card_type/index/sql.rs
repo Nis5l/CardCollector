@@ -7,6 +7,29 @@ use crate::shared::card::data::{CardType, CardTypeDb, CardState, CardTypeSortTyp
 pub async fn get_card_types(sql: &Sql, collector_id: &Id, mut name: String, sort_type: &CardTypeSortType, amount: u32, offset: u32, state: Option<CardState>) -> Result<Vec<CardType>, sqlx::Error> {
     name = util::escape_for_like(name);
 
+    if let Some(CardState::Delete) = state {
+        let query = "
+            SELECT d.dctid as ctid, d.uid, c.ctname, ? as ctstate, c.ctupdatectid
+            FROM deletecardtypes d
+            INNER JOIN cardtypes c ON c.ctid = d.ctid
+            WHERE c.coid = ? AND c.ctname LIKE CONCAT('%', ?, '%')
+            ORDER BY d.dcttime DESC
+            LIMIT ? OFFSET ?;
+        ";
+
+        let rows: Vec<CardTypeDb> = sqlx::query_as(query)
+            .bind(CardState::Delete as i32)
+            .bind(collector_id)
+            .bind(name)
+            .bind(amount)
+            .bind(offset)
+            .fetch_all(sql.pool())
+            .await?;
+
+        let result: Vec<CardType> = rows.into_iter().map(|ct_db| CardType::from((ct_db, None::<CardType>))).collect();
+        return Ok(result);
+    }
+
     let query = format!(
         "SELECT ctid, uid, ctname, ctstate, ctupdatectid
          FROM cardtypes
@@ -86,6 +109,22 @@ pub async fn get_card_types(sql: &Sql, collector_id: &Id, mut name: String, sort
 
 pub async fn get_card_type_count(sql: &Sql, collector_id: &Id, mut name: String, state: Option<CardState>) -> Result<u32, sqlx::Error> {
     name = util::escape_for_like(name);
+
+    if let Some(CardState::Delete) = state {
+        let query = "
+            SELECT COUNT(*)
+            FROM deletecardtypes d
+            INNER JOIN cardtypes c ON c.ctid = d.ctid
+            WHERE c.coid = ? AND c.ctname LIKE CONCAT('%', ?, '%')";
+
+        let (count, ): (i64, ) = sqlx::query_as(query)
+            .bind(collector_id)
+            .bind(name)
+            .fetch_one(sql.pool())
+            .await?;
+
+        return Ok(count as u32);
+    }
 
     let query = format!(
         "SELECT COUNT(*) FROM cardtypes

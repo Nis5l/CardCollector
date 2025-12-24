@@ -535,21 +535,27 @@ pub async fn get_cards(sql: &Sql, collector_id: &Id, mut name: String, sort_type
     Ok(result)
 }
 
-pub async fn get_card_type(sql: &Sql, collector_id: &Id, card_type_id: &Id) -> Result<CardType, sqlx::Error> {
+pub async fn get_card_type(sql: &Sql, collector_id: &Id, card_type_id: &Id) -> Result<Option<CardType>, sqlx::Error> {
     let query = "SELECT ctid, uid, ctname, ctstate, ctupdatectid
                  FROM cardtypes
                  WHERE ctid = ? AND coid=?;";
 
-    let card_type_db: CardTypeDb = sqlx::query_as(query)
+    let stmt = sqlx::query_as(query)
         .bind(card_type_id)
         .bind(collector_id)
         .fetch_one(sql.pool())
-        .await?;
+        .await;
+
+    if let Err(sqlx::Error::RowNotFound) = stmt {
+        return Ok(None);
+    }
+
+    let card_type_db: CardTypeDb = stmt?;
 
     let reference_db: Option<CardTypeDb> = match card_type_db.ctupdatectid {
         Some(ref id) => Some(sqlx::query_as(query).bind(id).bind(collector_id).fetch_one(sql.pool()).await?),
         None => None
     };
 
-    Ok(CardType::from((card_type_db, reference_db)))
+    Ok(Some(CardType::from((card_type_db, reference_db))))
 }

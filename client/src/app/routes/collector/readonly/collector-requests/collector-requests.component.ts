@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { SubscriptionManagerComponent } from '../../../../shared/abstract';
-import { switchMap, map, combineLatest as observableCombineLatest, Observable, BehaviorSubject, ReplaySubject, Subject, share } from 'rxjs';
+import { switchMap, map, combineLatest as observableCombineLatest, Observable, BehaviorSubject, ReplaySubject, Subject, share, forkJoin } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 
 import { CollectorService } from '../../shared';
@@ -49,8 +49,18 @@ export class CollectorRequestsComponent extends SubscriptionManagerComponent {
       })
     );
 
-    const cardTypes$ = observableCombineLatest([this.collectorId$, this.pageSubject.asObservable(), this.reloadSubject.asObservable()]).pipe(
-      switchMap(([id, page]) => this.cardService.getCardTypes(id, "", page, CardState.Requested, CardTypeSortType.Recent)),
+    const cardTypes$: Observable<CardTypeIndexResponse> = observableCombineLatest([this.collectorId$, this.pageSubject.asObservable(), this.reloadSubject.asObservable()]).pipe(
+      switchMap(([id, page]) => forkJoin([
+        this.cardService.getCardTypes(id, "", page, CardState.Requested, CardTypeSortType.Recent),
+        this.cardService.getCardTypes(id, "", page, CardState.Delete, CardTypeSortType.Recent)
+        ]).pipe(
+          map(([requested, deleted]) => ({
+            pageSize: requested.page + deleted.pageSize,
+            page: requested.page,
+            cardTypeCount: requested.cardTypeCount + deleted.cardTypeCount,
+            cardTypes: [ ...requested.cardTypes, ...deleted.cardTypes ]
+          }))
+      )),
       share()
     );
 

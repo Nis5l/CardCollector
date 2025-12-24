@@ -1,28 +1,30 @@
 @if (voteResponse$ | async; as voteResponse) {
-  <cc-request-card [title]="(cardType.updateCardType == null ? 'Create' : 'Update') + ' Card-Type'" [userId]="cardType.userId" [collectorId]="collectorId" [vote]="voteResponse.vote" [votes]="voteResponse.count" (onAccept)="accept()" (onDecline)="decline()" (onVote)="vote(cardType.id, $event)">
-    <ng-template #cardContent let-card>
-      <div class="name">
-        <span class="label">Name:</span>
-        <span>{{ card.name }}</span>
-      </div>
-    </ng-template>
-
-      @if (cardType.updateCardType == null) {
-        <div class="card-type-content">
-          <ng-container *ngTemplateOutlet="cardContent; context: { $implicit: cardType }"></ng-container>
+  @if (title$ | async; as title) {
+    <cc-request-card [title]="title" [userId]="cardType.userId" [collectorId]="collectorId" [vote]="voteResponse.vote" [votes]="voteResponse.count" (onAccept)="accept()" (onDecline)="decline()" (onVote)="vote(cardType.id, $event)">
+      <ng-template #cardContent let-card>
+        <div class="name">
+          <span class="label">Name:</span>
+          <span>{{ card.name }}</span>
         </div>
-      } @else {
-        <div class="card-type-content-update">
-          <div class="update">
-            <div class="old">
-              <ng-container *ngTemplateOutlet="cardContent; context: { $implicit: cardType.updateCardType }"></ng-container>
-            </div>
-            <mat-icon color="accent" svgIcon="arrow_right"></mat-icon>
-            <div class="new">
-              <ng-container *ngTemplateOutlet="cardContent; context: { $implicit: cardType }"></ng-container>
+      </ng-template>
+
+        @if (cardType.updateCardType == null) {
+          <div class="card-type-content">
+            <ng-container *ngTemplateOutlet="cardContent; context: { $implicit: cardType }"></ng-container>
+          </div>
+        } @else {
+          <div class="card-type-content-update">
+            <div class="update">
+              <div class="old">
+                <ng-container *ngTemplateOutlet="cardContent; context: { $implicit: cardType.updateCardType }"></ng-container>
+              </div>
+              <mat-icon color="accent" svgIcon="arrow_right"></mat-icon>
+              <div class="new">
+                <ng-container *ngTemplateOutlet="cardContent; context: { $implicit: cardType }"></ng-container>
+              </div>
             </div>
           </div>
-        </div>
-      }
-  </cc-request-card>
+        }
+    </cc-request-card>
+  }
 }

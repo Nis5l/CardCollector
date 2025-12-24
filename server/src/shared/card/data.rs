@@ -278,12 +278,15 @@ pub enum CardState {
     Requested = 0,
     #[field(value = "1")]
     Created = 1,
+    #[field(value = "2")]
+    Delete = 2, //NOTE: virtual, never used in DB
 }
 
 impl From<i32> for CardState {
     fn from(value: i32) -> Self {
         match value {
             0 => Self::Requested,
+            2 => Self::Delete,
             _ => Self::Created
         }
     }

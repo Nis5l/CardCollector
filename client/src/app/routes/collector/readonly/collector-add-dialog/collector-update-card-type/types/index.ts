@@ -1,2 +1,2 @@
-export type { CollectorCardTypeRequestRequest } from './collector-card-type-request-request.interface';
-export type { CollectorCardTypeRequestResponse } from './collector-card-type-request-response.interface';
+export type { CardTypeUpdateRequest } from './card-type-update-request.interface';
+export type { CardTypeUpdateResponse } from './card-type-update-response.interface';

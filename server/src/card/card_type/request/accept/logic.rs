@@ -15,14 +15,28 @@ pub async fn card_type_request_accept_route(card_type_id: Id, sql: &State<Sql>, 
     let user_id = &token.id;
 
     verify_user!(sql, user_id, true);
-    let collector_id = rjtry!(card::sql::get_card_type_collector_id(sql, &card_type_id).await);
-    verify_collector_owner_moderator!(sql, &collector_id, user_id);
 
-    let card_type = rjtry!(card::sql::get_card_type(sql, &collector_id, &card_type_id).await);
+    match rjtry!(sql::get_card_type_delete_request(sql, &card_type_id).await) {
+        Some(delete_card_type_id) => {
+            let collector_id = rjtry!(card::sql::get_card_type_collector_id(sql, &delete_card_type_id).await);
+            verify_collector_owner_moderator!(sql, &collector_id, user_id);
 
-    match card_type.update_card_type {
-        Some(ref card_type_reference) => rjtry!(sql::card_type_request_accept_update(sql, &card_type_reference.id, &card_type).await),
-        None => rjtry!(sql::card_type_request_accept(sql, &card_type_id).await),
+            rjtry!(sql::card_type_delete_request_accept(sql, &card_type_id, &delete_card_type_id).await);
+        },
+        None => {
+            let collector_id = rjtry!(card::sql::get_card_type_collector_id(sql, &card_type_id).await);
+            verify_collector_owner_moderator!(sql, &collector_id, user_id);
+
+            let card_type = match rjtry!(card::sql::get_card_type(sql, &collector_id, &card_type_id).await) {
+                Some(card_type) => card_type,
+                None => return ApiResponseErr::api_err(Status::NotFound, String::from("Card type not found"))
+            };
+
+            match card_type.update_card_type {
+                Some(ref card_type_reference) => rjtry!(sql::card_type_request_accept_update(sql, &card_type_reference.id, &card_type).await),
+                None => rjtry!(sql::card_type_request_accept(sql, &card_type_id).await),
+            }
+        }
     }
 
     ApiResponseErr::ok(Status::Ok, CardTypeRequestAcceptResponse { message: String::from("Card-Type request accepted") })

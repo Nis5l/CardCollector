@@ -3,13 +3,13 @@ import { Observable } from 'rxjs';
 
 import { HttpService } from '../../../../../shared/services';
 import type { Id } from '../../../../../shared/types';
-import { CollectorCardTypeRequestResponse, CollectorCardTypeRequestRequest } from './types';
+import { CardTypeCreateRequest, CardTypeCreateResponse } from './types';
 
 @Injectable()
 export class CollectorAddCardTypeService {
 	constructor(private readonly httpService: HttpService) {}
 
-	public createCollectorRequest(collectorId: Id, data: CollectorCardTypeRequestRequest): Observable<CollectorCardTypeRequestResponse> {
-		return this.httpService.post<CollectorCardTypeRequestRequest, CollectorCardTypeRequestResponse>(`/${collectorId}/card-type/request/create`, data);
+	public createCollectorRequest(collectorId: Id, data: CardTypeCreateRequest): Observable<CardTypeCreateResponse> {
+		return this.httpService.post<CardTypeCreateRequest, CardTypeCreateResponse>(`/${collectorId}/card-type/request/create`, data);
 	}
 }

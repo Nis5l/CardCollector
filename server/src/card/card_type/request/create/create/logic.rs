@@ -3,7 +3,7 @@ use rocket::State;
 use rocket::http::Status;
 
 use super::sql;
-use super::data::{CardTypeRequestCreateRequest, CardTypeRequestCreateResponse};
+use super::data::{CardTypeCreateRequest, CardTypeCreateResponse};
 use super::super::shared;
 use crate::shared::Id;
 use crate::config::Config;
@@ -12,7 +12,7 @@ use crate::{verify_collector, verify_user};
 use crate::shared::crypto::JwtToken;
 
 #[post("/<collector_id>/card-type/request/create", data="<data>")]
-pub async fn card_type_request_create_route(collector_id: Id, config: &State<Config>, sql: &State<Sql>, data: CardTypeRequestCreateRequest, token: JwtToken) -> ApiResponseErr<CardTypeRequestCreateResponse> {
+pub async fn card_type_request_create_route(collector_id: Id, config: &State<Config>, sql: &State<Sql>, data: CardTypeCreateRequest, token: JwtToken) -> ApiResponseErr<CardTypeCreateResponse> {
     let user_id = &token.id;
     verify_collector!(sql, &collector_id);
     verify_user!(sql, user_id, true);
@@ -28,5 +28,5 @@ pub async fn card_type_request_create_route(collector_id: Id, config: &State<Con
     let card_type_id = Id::new(config.id_length);
     rjtry!(sql::card_type_create_request_create(sql, &card_type_id, &collector_id, user_id, &data.name).await);
 
-    ApiResponseErr::ok(Status::Ok, CardTypeRequestCreateResponse { id: card_type_id })
+    ApiResponseErr::ok(Status::Ok, CardTypeCreateResponse { id: card_type_id })
 }
