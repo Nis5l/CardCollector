@@ -1,2 +1,2 @@
-export type { CardRequestRequest } from './card-request-request.interface';
-export type { CardRequestResponse } from './card-request-response.interface';
+export type { CardCreateRequest } from './card-create-request.interface';
+export type { CardCreateResponse } from './card-create-response.interface';

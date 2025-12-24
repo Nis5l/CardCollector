@@ -17,7 +17,6 @@ pub struct CardInfo {
     pub name: String,
     pub time: DateTime<Utc>,
     pub state: CardState,
-    pub update_card: Option<Box<CardInfo>>
 }
 
 #[derive(Debug, Serialize)]
@@ -58,6 +57,7 @@ pub struct Card {
     pub collector_id: Id,
     pub card_info: CardInfo,
     pub card_type: CardType,
+    pub update_card: Option<Box<Card>>
 }
 
 #[derive(Debug, Serialize)]
@@ -166,7 +166,6 @@ impl From<CardDb> for Card {
                 name: card.card_name,
                 time: card.card_time,
                 state: CardState::from(card.card_state),
-                update_card: None,
             },
             card_type: CardType {
                 id: card.type_id,
@@ -174,7 +173,8 @@ impl From<CardDb> for Card {
                 user_id: card.card_type_user_id,
                 update_card_type: None,
                 state: CardState::from(card.type_state)
-            }
+            },
+            update_card: None,
         }
     }
 }
@@ -183,7 +183,7 @@ impl Card {
     fn from_with_update<T: Into<Card>>(card_db: CardDb, update: Option<T>) -> Self {
         let mut card = Card::from(card_db);
         if let Some(update_card) = update {
-            card.card_info.update_card = Some(Box::new(update_card.into().card_info));
+            card.update_card = Some(Box::new(update_card.into()));
         }
         card
     }

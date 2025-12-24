@@ -31,34 +31,13 @@ pub async fn card_request_accept_update(sql: &Sql, card_id: &Id, update_card: &C
         .execute(&mut *transaction)
         .await?;
 
-    sqlx::query("DELETE FROM cardtypes
-                 WHERE ctid=?;")
+    sqlx::query("DELETE FROM cards
+                 WHERE cid=?;")
         .bind(&update_card.card_info.id)
         .execute(&mut *transaction)
         .await?;
 
     transaction.commit().await?;
-
-    Ok(())
-}
-
-pub async fn card_remove_duplicates(sql: &Sql, collector_id: &Id, card_id: &Id) -> Result<(), sqlx::Error> {
-    sqlx::query(
-        "DELETE FROM cards WHERE cards.cid IN (
-            SELECT cards.cid FROM cards, cardtypes
-            WHERE cards.ctid = cardtypes.ctid
-            AND cardtypes.coid = ?
-            AND cards.cid <> ?
-            AND cards.cname IN(
-                SELECT cname FROM cards
-                WHERE cid = ?
-            )
-         );")
-        .bind(collector_id)
-        .bind(card_id)
-        .bind(card_id)
-        .execute(sql.pool())
-        .await?;
 
     Ok(())
 }

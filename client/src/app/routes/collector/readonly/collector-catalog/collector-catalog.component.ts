@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable, map } from 'rxjs';
 
 import type { Id } from '../../../../shared/types';
+import { CardState } from '../../../../shared/types';
 import { SubscriptionManagerComponent } from '../../../../shared/abstract';
 
 @Component({
@@ -12,6 +13,7 @@ import { SubscriptionManagerComponent } from '../../../../shared/abstract';
     standalone: false
 })
 export class CollectorCatalogComponent extends SubscriptionManagerComponent {
+  public readonly CardState: typeof CardState = CardState;
   public readonly collectorId$: Observable<Id>;
 
   constructor(activatedRoute: ActivatedRoute) {

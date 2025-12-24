@@ -23,7 +23,7 @@
     @if (cardIndexResponse.cards.length > 0) {
       <div class="cards">
         @for (card of cardIndexResponse.cards; track card) {
-          <cc-card [card]="card" [click]="click" (onClick)="onClick.emit(card)"></cc-card>
+          <cc-card [card]="card" [click]="click" (clickEvent)="onClick.emit(card)"></cc-card>
         }
       </div>
     } @else {

@@ -6,4 +6,5 @@ export interface Card {
   collectorId: Id,
 	cardInfo: CardInfo,
 	cardType: CardType,
+  updateCard: Card | null | undefined,
 }

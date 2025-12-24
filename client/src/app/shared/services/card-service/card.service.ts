@@ -20,7 +20,7 @@ export class CardService {
 
 	public getCards(collectorId: string, search: string, page: number, state: CardState | null, sortType: CardSortType): Observable<CardIndexResponse> {
 		let params = new HttpParams().set('search', search).set('page', page).set('sort_type', sortType);
-    if (state != null) params.set('state', state)
+    if (state != null) params = params.set('state', state)
 		return this.httpService.get<CardIndexResponse>(`/${collectorId}/card`, params);
 	}
 

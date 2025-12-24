@@ -1,0 +1,15 @@
+@if (collectorId$ | async; as collectorId) {
+  <mat-form-field *ngVar="(card$ | async) as card" class="card-selector">
+    <mat-label>Card</mat-label>
+
+    <input [disabled]="card == null" (mousedown)="$event.preventDefault()" matInput [value]="card == null ? '' : card.cardInfo.name + ' - ' + card.cardType.name" readonly>
+
+    <button type="button" [disabled]="disabled" mat-icon-button matSuffix *ngIf="card" (click)="clearSelection()">
+      <mat-icon color="accent" svgIcon="close"></mat-icon>
+    </button>
+
+    <button type="button" [disabled]="disabled" mat-icon-button matSuffix *ngIf="!card" (click)="selectCard(collectorId)">
+      <mat-icon color="accent" svgIcon="add"></mat-icon>
+    </button>
+  </mat-form-field>
+}

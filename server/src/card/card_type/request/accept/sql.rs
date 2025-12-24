@@ -39,22 +39,3 @@ pub async fn card_type_request_accept_update(sql: &Sql, card_type_id: &Id, updat
 
     Ok(())
 }
-
-pub async fn card_type_remove_duplicates(sql: &Sql, collector_id: &Id, card_type_id: &Id) -> Result<(), sqlx::Error> {
-    sqlx::query(
-        "DELETE FROM cardtypes
-         WHERE coid = ? AND
-         ctid <> ? AND
-         ctname IN(
-             SELECT ctname
-             FROM cardtypes
-             WHERE ctid = ?
-         );")
-        .bind(collector_id)
-        .bind(card_type_id)
-        .bind(card_type_id)
-        .execute(sql.pool())
-        .await?;
-
-    Ok(())
-}

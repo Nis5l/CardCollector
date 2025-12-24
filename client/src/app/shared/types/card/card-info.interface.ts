@@ -7,5 +7,4 @@ export interface CardInfo {
     name: string,
     time: string,
     state: CardState,
-    updateCard: CardInfo | null | undefined
 }

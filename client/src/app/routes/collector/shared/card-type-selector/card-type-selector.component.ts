@@ -1,12 +1,12 @@
 import { Component, Input, Output, EventEmitter, forwardRef, Injector, AfterViewInit } from '@angular/core'
 import { ErrorStateMatcher } from '@angular/material/core';
 import { BehaviorSubject, Observable, filter, combineLatest as observableCombineLatest, switchMap, startWith, map, distinctUntilChanged } from 'rxjs'
+import { ControlValueAccessor, FormControl, NgControl, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { SubscriptionManagerComponent } from '../../../../shared/abstract';
 import { CardService } from '../../../../shared/services';
 import type { Id, CardType } from '../../../../shared/types';
 import { CardTypeSortType, CardState } from '../../../../shared/types';
-import { ControlValueAccessor, FormControl, NgControl, NG_VALUE_ACCESSOR, Validators } from '@angular/forms';
 
 @Component({
     selector: 'cc-card-type-selector',
@@ -22,9 +22,7 @@ import { ControlValueAccessor, FormControl, NgControl, NG_VALUE_ACCESSOR, Valida
     standalone: false
 })
 export class CardTypeSelectorComponent extends SubscriptionManagerComponent implements ControlValueAccessor, AfterViewInit {
-	@Output()
-	public readonly cardType: EventEmitter<CardType | null> = new EventEmitter<CardType | null>();
-
+  private readonly updateOptionsSubject: BehaviorSubject<string>;
 	public readonly formControl = new FormControl<string | CardType>('', {
 		nonNullable: true
 	});
@@ -79,26 +77,21 @@ export class CardTypeSelectorComponent extends SubscriptionManagerComponent impl
 			filter((collectorId): collectorId is Id => collectorId != null)
 		);
 
-		const formControlString = this.formControl.valueChanges.pipe(
-			startWith(""),
-			map(v => typeof v === "string" ? v : v.name),
-			distinctUntilChanged()
-		);
+    const value = this.formControl.value;
+    this.updateOptionsSubject = new BehaviorSubject(typeof value === "string" ? value : value.name);
 
     this.cardState$ = this.cardStateSubject.asObservable();
 
-		this.cardTypeOptions$ = observableCombineLatest([this.collectorId$, formControlString, this.cardState$]).pipe(
+		this.cardTypeOptions$ = observableCombineLatest([this.collectorId$, this.updateOptionsSubject, this.cardState$]).pipe(
 			switchMap(([collectorId, name, cardState]) => this.cardService.getCardTypes(collectorId, name, 0, cardState, CardTypeSortType.Name)),
 			map(({ cardTypes }) => cardTypes)
 		);
 
-		this.registerSubscription(observableCombineLatest([formControlString, this.cardType.pipe(distinctUntilChanged())]).subscribe(([name, cardType]) => {
-			if(cardType != null && name !== cardType.name) {
-				this.cardType.next(null);
-			}
-		}));
-		this.registerSubscription(this.cardType.pipe(distinctUntilChanged()).subscribe(cardType => {
-			this.onChange(cardType);
+		this.registerSubscription(this.formControl.valueChanges.pipe(
+      distinctUntilChanged()
+    ).subscribe(value => {
+      this.updateOptionsSubject.next(typeof value === "string" ? value : value.name);
+      this.onChange(typeof value === "string" ? null : value);
 		}));
 	}
 
@@ -109,16 +102,13 @@ export class CardTypeSelectorComponent extends SubscriptionManagerComponent impl
 		}
 	}
 
-	public onSelectionChange(cardType: CardType): void {
-		this.cardType.next(cardType);
-	}
-
 	public displayFn(cardType: CardType): string {
 		return cardType.name;
 	}
 
-	writeValue(cardType: CardType) {
-		this.cardType.next(cardType);
+	writeValue(cardType: CardType | null) {
+    this.formControl.setValue(cardType ?? "", { emitEvent: false });
+    this.updateOptionsSubject.next(cardType?.name ?? "");
 	}
 
 	registerOnChange(onChange: any) {
@@ -138,5 +128,6 @@ export class CardTypeSelectorComponent extends SubscriptionManagerComponent impl
 
 	setDisabledState(disabled: boolean) {
 		this.disabled = disabled;
+    this.formControl?.[disabled ? 'disable' : 'enable']({ emitEvent: false });
 	}
 }

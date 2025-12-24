@@ -5,5 +5,5 @@
       <mat-icon color="accent" svgIcon="close"></mat-icon>
     </button>
   </mat-toolbar>
-  <cc-card-list click="event" (onClick)="onCardSelect($event)"></cc-card-list>
+  <cc-card-list [cardState]="cardState" [collectorId]="collectorId" click="event" (onClick)="onCardSelect($event)"></cc-card-list>
 </div>

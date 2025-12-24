@@ -6,7 +6,7 @@ import type { PageEvent } from '@angular/material/paginator';
 import { CardService } from '../../services';
 import { SubscriptionManagerComponent } from '../../abstract';
 import type { Id, Card, CardIndexResponse } from '../../types';
-import { CardSortType } from '../../types';
+import { CardSortType, CardState } from '../../types';
 
 @Component({
     selector: "cc-card-list",
@@ -59,6 +59,16 @@ export class CardListComponent extends SubscriptionManagerComponent {
     return id;
   }
 
+  private readonly cardStateSubject: BehaviorSubject<CardState | null> = new BehaviorSubject<CardState | null>(null);
+  private readonly cardState$: Observable<CardState | null>;
+  @Input()
+  public set cardState(state: CardState | null | undefined) {
+    this.cardStateSubject.next(state ?? null);
+  }
+  public get cardState(): CardState | null {
+    return this.cardStateSubject.getValue();
+  }
+
   constructor(cardService: CardService) {
     super();
 
@@ -75,6 +85,7 @@ export class CardListComponent extends SubscriptionManagerComponent {
     this.collectorId$ = this.collectorIdSubject.asObservable().pipe(
       filter((collectorId): collectorId is Id => collectorId != null)
     );
+    this.cardState$ = this.cardStateSubject.asObservable();
 
     const loadingCardIndexResponse: CardIndexResponse = { cards: [], cardCount: 0, page: 0, pageSize: 0 };
     this.cardIndexResponseSubject = new BehaviorSubject(loadingCardIndexResponse);
@@ -88,13 +99,14 @@ export class CardListComponent extends SubscriptionManagerComponent {
           debounceTime(300),
           distinctUntilChanged()
       ),
-      sortTypeFormControl.valueChanges.pipe(startWith(sortTypeDefaultValue))
+      sortTypeFormControl.valueChanges.pipe(startWith(sortTypeDefaultValue)),
+      this.cardState$,
     ]).pipe(
       tap(() => {
         this.loadingSubject.next(true);
         this.cardIndexResponseSubject.next(loadingCardIndexResponse);
       }),
-      switchMap(([collectorId, page, search, sortType]) => cardService.getCards(collectorId, search, page, null, sortType).pipe(shareReplay()))
+      switchMap(([collectorId, page, search, sortType, cardState]) => cardService.getCards(collectorId, search, page, cardState, sortType).pipe(shareReplay()))
     ).subscribe(res => {
       this.loadingSubject.next(false);
       this.cardIndexResponseSubject.next(res);

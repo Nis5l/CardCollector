@@ -1,6 +1,6 @@
 import type { Id } from '../../../../../../shared/types';
 
-export interface CardRequestRequest {
+export interface CardUpdateRequest {
   cardId: Id,
   name: String,
   cardType: Id,

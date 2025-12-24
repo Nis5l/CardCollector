@@ -1,7 +1,8 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { BehaviorSubject, Observable, shareReplay, switchMap, filter, map, startWith } from 'rxjs';
+import { BehaviorSubject, Observable, startWith, shareReplay, switchMap, filter, map, combineLatest, distinctUntilChanged, EMPTY } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 
 import { CollectorUpdateCardService } from './collector-update-card.service';
 import type { Card, CardType, Id, CardConfig } from '../../../../../shared/types';
@@ -9,13 +10,15 @@ import { CardState } from '../../../../../shared/types';
 import { SubscriptionManagerComponent } from '../../../../../shared/abstract';
 import { HttpService, LoadingService, CardService } from '../../../../../shared/services';
 import { eventGetImage } from '../../../../../shared/utils';
+import type { CardUpdateRequest } from './types';
 
 type CollectorUpdateCardFormGroup = FormGroup<{
+    card: FormControl<Card | null>,
     name: FormControl<string>,
     type: FormControl<CardType | null>,
 }>;
 
-//TODO: card select popup, edit from there.
+//TODO: only valid if selection actually changed
 @Component({
     selector: "cc-collector-update-card",
     templateUrl: "./collector-update-card.component.html",
@@ -41,31 +44,14 @@ export class CollectorUpdateCardComponent extends SubscriptionManagerComponent {
 	}
 
 	private readonly imageSubject: BehaviorSubject<File | null> = new BehaviorSubject<File | null>(null);
+
+	private readonly cardSubject: BehaviorSubject<Card | null> = new BehaviorSubject<Card | null>(null);
+
 	public readonly cardImage$: Observable<string | SafeResourceUrl>;
-	private readonly cardTypeDefault: CardType = {
-		id: "id",
-		name: "",
-		userId: null,
-    state: CardState.Created,
-    updateCardType: null
-	};
-
-	private readonly cardSubject: BehaviorSubject<Card> = new BehaviorSubject<Card>({
-    collectorId: "collectorId",
-    cardInfo: {
-      id: "id",
-      userId: "userId",
-      name: "",
-      time: (new Date()).toISOString(),
-      state: CardState.Created,
-      updateCard: null,
-    },
-    cardType: this.cardTypeDefault
-	});
-
-	public readonly card$: Observable<Card>;
+	public readonly card$: Observable<Card | null>;
 	public readonly config$: Observable<CardConfig>;
 
+	public readonly cardFormControl: FormControl<Card | null> = new FormControl(null);
 	public readonly formGroup$: Observable<CollectorUpdateCardFormGroup>;
 
 	private readonly errorSubject: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
@@ -83,7 +69,10 @@ export class CollectorUpdateCardComponent extends SubscriptionManagerComponent {
 
 		this.formGroup$ = this.config$.pipe(
       map(config => new FormGroup({
-        name: new FormControl("", {
+        card: new FormControl<Card | null>(null, {
+          validators: [ Validators.required ],
+        }),
+        name: new FormControl({ value: "", disabled: true }, {
           nonNullable: true,
           validators: [
             Validators.required,
@@ -91,33 +80,56 @@ export class CollectorUpdateCardComponent extends SubscriptionManagerComponent {
             Validators.maxLength(config.nameLengthMax),
           ],
         }),
-        type: new FormControl<CardType | null>(null, {
+        type: new FormControl<CardType | null>({ value: null, disabled: true }, {
           validators: [ Validators.required ],
         }),
       })),
       shareReplay(1)
     );
 
-		this.registerSubscription(this.formGroup$.pipe(
-        switchMap(formGroup => formGroup.controls.name.valueChanges)
-      ).subscribe(value => {
-        const current = this.cardSubject.getValue();
+    this.registerSubscription(this.formGroup$.pipe(
+      switchMap(formGroup => formGroup.controls.card.valueChanges.pipe(
+        distinctUntilChanged((a, b) => a?.cardInfo.id === b?.cardInfo.id),
+        map(card => ({ card, formGroup }))
+      )),
+    ).subscribe(({ card, formGroup }) => {
+      [formGroup.controls.name, formGroup.controls.type].forEach(c => card == null ? c.disable() : c.enable());
+
+      formGroup.controls.name.setValue(card?.cardInfo.name ?? "", { emitEvent: false });
+      formGroup.controls.type.setValue(card?.cardType ?? null, { emitEvent: false });
+
+      this.cardSubject.next(card);
+    }));
+
+		this.card$ = this.cardSubject.asObservable().pipe(
+      //distinctUntilChanged()
+    );
+
+		this.registerSubscription(combineLatest([this.card$, this.formGroup$]).pipe(
+        filter((v): v is [Card, CollectorUpdateCardFormGroup] => v[0] != null),
+        switchMap(([card, formGroup]) => combineLatest([
+          formGroup.controls.name.valueChanges.pipe(startWith(card.cardInfo.name)),
+          formGroup.controls.type.valueChanges.pipe(startWith(card.cardType))
+        ]).pipe(
+          map(([name, type]) => ({ name, type, card }))
+        )),
+        filter(({ card, name, type }) => card.cardInfo.name !== name || type?.id !== card.cardType.id)
+      ).subscribe(({card, name, type}) => {
         this.cardSubject.next({
-          ...current,
+          ...card,
           cardInfo: {
-            ...current.cardInfo,
-            name: value ?? current.cardInfo.name
-          }
+            ...card.cardInfo,
+            name: name ?? card.cardInfo.name
+          },
+          cardType: type ?? { ...card.cardType, name: "" }
         });
 		  })
     );
 
-		this.card$ = this.cardSubject.asObservable();
-
 		this.cardImage$ = this.imageSubject.asObservable().pipe(
 			filter((image): image is File => image != null),
 			map(image => this.domSanitizer.bypassSecurityTrustResourceUrl(URL.createObjectURL(image))),
-			startWith(this.httpService.apiUrl("/card/card-image")),
+			//startWith(this.httpService.apiUrl("/card/card-image")),
 		);
 
 		this.error$ = this.errorSubject.asObservable();
@@ -133,38 +145,24 @@ export class CollectorUpdateCardComponent extends SubscriptionManagerComponent {
 		this.imageSubject.next(image);
 	}
 
-	public cardTypeChange(cardType: CardType | null): void {
-		const current = this.cardSubject.getValue();
-		if(cardType != null) {
-			this.cardSubject.next({
-				...current,
-        cardType
-			});
-		} else {
-			this.cardSubject.next({
-				...current,
-        cardType: this.cardTypeDefault
-			});
-		}
-	}
+	public cardUpdateRequest(): void {
+    const card = this.cardSubject.getValue();
+    if(card == null) throw new Error("card not set");
 
-	public createCardRequest(): void {
-		const data = this.cardSubject.getValue();
-    return;
-		/* const cardData: CardRequestRequest = {
-			cardType: data.card.cardType.id,
-			name: data.card.cardInfo.name,
+		const req: CardUpdateRequest = {
+      cardId: card.cardInfo.id,
+			cardType: card.cardType.id,
+			name: card.cardInfo.name,
 		};
 		const image = this.imageSubject.getValue();
-		if(image == null) throw new Error("image not set");
 
-		this.loadingService.waitFor(this.collectorAddCardService.updateCardRequest(cardData).pipe(
-			switchMap(({ id }) => this.cardService.setCardImage(id, image))
+		this.loadingService.waitFor(this.collectorAddCardService.updateCardRequest(req).pipe(
+			switchMap(({ id }) => image ? this.cardService.setCardImage(id, image) : EMPTY)
 		)).subscribe({
-			next: () => { this.onClose.emit(); },
+			complete: () => { this.onClose.emit(); },
 			error: (err: HttpErrorResponse) => {
 				this.errorSubject.next(err.error?.error ?? "Creating card failed");
 			}
-		}) */
+		});
 	}
 }

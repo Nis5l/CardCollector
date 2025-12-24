@@ -29,12 +29,12 @@ export class LoadingService {
 			tap({
 				next: () => f(),
 				error: () => f(),
+				complete: () => f(),//console.log("complete")
 				subscribe:() => {
 					this.setLoading(true);
 					this.observables.add(o);
 				},
 				finalize: () => {},//console.log("finalize"),
-				complete: () => {}//console.log("complete")
 			})
 		);
 	}

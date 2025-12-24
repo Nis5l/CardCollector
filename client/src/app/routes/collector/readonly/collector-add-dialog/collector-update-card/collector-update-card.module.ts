@@ -10,7 +10,7 @@ import { CollectorUpdateCardComponent } from './collector-update-card.component'
 import { CollectorUpdateCardService } from './collector-update-card.service';
 import { CardTypeSelectorModule } from '../../../shared';
 import { HttpModule, LoadingModule } from '../../../../../shared/services';
-import { CardModule } from '../../../../../shared/components';
+import { CardModule, CardSelectorModule } from '../../../../../shared/components';
 import { NgVarModule } from '../../../../../shared/directives';
 
 const MATERIAL_MODULES = [
@@ -32,6 +32,7 @@ const MATERIAL_MODULES = [
 		NgVarModule,
 		LoadingModule,
 
+    CardSelectorModule,
 		CardTypeSelectorModule,
 	],
 	providers: [ CollectorUpdateCardService ],

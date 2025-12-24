@@ -10,7 +10,7 @@ use crate::shared::Id;
 #[derive(Debug, Deserialize, Validate, JsonBody)]
 #[serde(rename_all="camelCase")]
 #[validate(context = config::Config)]
-pub struct CardRequestRequest {
+pub struct CardUpdateRequest {
     pub card_id: Id,
     #[validate(custom(function="validate_card_name", use_context))]
     pub name: String,
@@ -18,7 +18,7 @@ pub struct CardRequestRequest {
 }
 
 #[derive(Debug, Serialize)]
-pub struct CardRequestResponse {
+pub struct CardUpdateResponse {
     pub id: Id,
 }
 

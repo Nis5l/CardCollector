@@ -4,13 +4,13 @@
     placeholder=""
     aria-label="Card-Type"
     matInput
-    [disabled]="disabled"
     [formControl]="formControl"
     [errorStateMatcher]="errorStateMatcher"
+    (blur)="markAsTouched()"
     [matAutocomplete]="auto">
   <mat-autocomplete
     #auto="matAutocomplete"
-    (optionSelected)="onSelectionChange($event.option.value)"
+    (optionSelected)="markAsTouched()"
     [displayWith]="displayFn"
     >
     @for (cardTypeOption of cardTypeOptions$ | async; track cardTypeOption) {

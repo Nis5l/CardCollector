@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { BehaviorSubject, Observable, shareReplay, switchMap, filter, map, startWith } from 'rxjs';
+import { BehaviorSubject, Observable, shareReplay, switchMap, filter, map, startWith, combineLatest } from 'rxjs';
 import type { HttpErrorResponse } from '@angular/common/http';
 
 import { CollectorAddCardService } from './collector-add-card.service';
@@ -10,7 +10,7 @@ import { CardState } from '../../../../../shared/types';
 import { SubscriptionManagerComponent } from '../../../../../shared/abstract';
 import { HttpService, LoadingService, CardService } from '../../../../../shared/services';
 import { eventGetImage } from '../../../../../shared/utils';
-import type { CardRequestRequest } from './types';
+import type { CardCreateRequest } from './types';
 
 type CollectorAddCardFormGroup = FormGroup<{
     name: FormControl<string>,
@@ -59,9 +59,9 @@ export class CollectorAddCardComponent extends SubscriptionManagerComponent {
       name: "",
       time: (new Date()).toISOString(),
       state: CardState.Created,
-      updateCard: null,
     },
-    cardType: this.cardTypeDefault
+    cardType: this.cardTypeDefault,
+    updateCard: null,
 	});
 
 	public readonly card$: Observable<Card>;
@@ -100,18 +100,18 @@ export class CollectorAddCardComponent extends SubscriptionManagerComponent {
     );
 
 		this.registerSubscription(this.formGroup$.pipe(
-        switchMap(formGroup => formGroup.controls.name.valueChanges)
-      ).subscribe(value => {
+        switchMap(formGroup => combineLatest([formGroup.controls.name.valueChanges, formGroup.controls.type.valueChanges]))
+      ).subscribe(([name, type]) => {
         const current = this.cardSubject.getValue();
         this.cardSubject.next({
           ...current,
           cardInfo: {
             ...current.cardInfo,
-            name: value ?? current.cardInfo.name
-          }
-        });
-		  })
-    );
+            name: name ?? current.cardInfo.name
+          },
+          cardType: type == null ? this.cardTypeDefault : type,
+         });
+			}));
 
 		this.card$ = this.cardSubject.asObservable();
 
@@ -134,31 +134,15 @@ export class CollectorAddCardComponent extends SubscriptionManagerComponent {
 		this.imageSubject.next(image);
 	}
 
-	public cardTypeChange(cardType: CardType | null): void {
-		const current = this.cardSubject.getValue();
-		if(cardType != null) {
-			this.cardSubject.next({
-				...current,
-        cardType
-			});
-		} else {
-			this.cardSubject.next({
-				...current,
-        cardType: this.cardTypeDefault
-			});
-		}
-	}
-
-	public createCardRequest(): void {
-		const data = this.cardSubject.getValue();
-		const cardData: CardRequestRequest = {
-			cardType: data.cardType.id,
-			name: data.cardInfo.name,
+	public cardCreateRequest(card: Card): void {
+		const req: CardCreateRequest = {
+			cardType: card.cardType.id,
+			name: card.cardInfo.name,
 		};
 		const image = this.imageSubject.getValue();
 		if(image == null) throw new Error("image not set");
 
-		this.loadingService.waitFor(this.collectorAddCardService.createCardRequest(cardData).pipe(
+		this.loadingService.waitFor(this.collectorAddCardService.createCardRequest(req).pipe(
 			switchMap(({ id }) => this.cardService.setCardImage(id, image))
 		)).subscribe({
 			next: () => { this.onClose.emit(); },

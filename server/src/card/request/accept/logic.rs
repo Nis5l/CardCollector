@@ -26,20 +26,24 @@ pub async fn card_request_accept_route(card_id: Id, sql: &State<Sql>, token: Jwt
         None => return ApiResponseErr::api_err(Status::Conflict, String::from("Card not found"))
     };
 
-    match card.card_info.update_card {
+    match card.update_card {
         Some(ref card_reference) => {
-            rjtry!(sql::card_request_accept_update(sql, &card_reference.id, &card).await);
+            rjtry!(sql::card_request_accept_update(sql, &card_reference.card_info.id, &card).await);
 
-            let old_path = Path::new(&config.card_fs_base).join(card.card_info.id.to_string()).join("card-image");
-            let new_dir = Path::new(&config.card_fs_base).join(card_reference.id.to_string());
+            let old_dir = Path::new(&config.card_fs_base).join(card.card_info.id.to_string());
+            let old_path = old_dir.join("card-image");
+            let new_dir = Path::new(&config.card_fs_base).join(card_reference.card_info.id.to_string());
             let new_path = new_dir.join("card-image");
 
             if let Err(_) = fs::create_dir_all(&new_dir) {
                 return ApiResponseErr::api_err(Status::InternalServerError, String::from("Failed to create image directory"));
             }
+            if let Err(_) = fs::create_dir_all(&old_dir) {
+                return ApiResponseErr::api_err(Status::InternalServerError, String::from("Failed to create image directory"));
+            }
 
-            if old_path.exists() && old_path.is_file() {
-                if let Err(_) = fs::rename(&new_path, &old_path) {
+            if old_path.exists() && old_path.is_file() && !old_path.is_symlink() {
+                if let Err(_) = fs::rename(&old_path, &new_path) {
                     return ApiResponseErr::api_err(Status::InternalServerError, String::from("Failed to move card image"));
                 }
             }
@@ -47,8 +51,6 @@ pub async fn card_request_accept_route(card_id: Id, sql: &State<Sql>, token: Jwt
         }
         None => rjtry!(sql::card_request_accept(sql, &card_id).await),
     }
-
-    rjtry!(sql::card_remove_duplicates(sql, &collector_id, &card_id).await);
 
     ApiResponseErr::ok(Status::Ok, CardRequestAcceptResponse { message: String::from("Card request accepted") })
 }

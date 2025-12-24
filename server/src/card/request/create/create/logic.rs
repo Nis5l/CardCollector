@@ -8,12 +8,12 @@ use crate::sql::Sql;
 use crate::shared::Id;
 use crate::shared::card;
 use crate::verify_user;
-use super::data::{CardRequestResponse, CardRequestRequest};
+use super::data::{CardCreateResponse, CardCreateRequest};
 use super::sql;
 use super::super::shared;
 
 #[post("/card/request/create", data="<data>")]
-pub async fn card_request_create_route(data: CardRequestRequest, token: JwtToken, config: &State<Config>, sql: &State<Sql>) -> ApiResponseErr<CardRequestResponse> {
+pub async fn card_request_create_route(data: CardCreateRequest, token: JwtToken, config: &State<Config>, sql: &State<Sql>) -> ApiResponseErr<CardCreateResponse> {
     let user_id = &token.id;
     verify_user!(sql, user_id, true);
 
@@ -34,5 +34,5 @@ pub async fn card_request_create_route(data: CardRequestRequest, token: JwtToken
     let card_id = Id::new(config.id_length);
     rjtry!(sql::create_card_request(sql, &card_id, &data.name, &data.card_type, user_id).await);
 
-    ApiResponseErr::ok(Status::Ok, CardRequestResponse { id: card_id })
+    ApiResponseErr::ok(Status::Ok, CardCreateResponse { id: card_id })
 }

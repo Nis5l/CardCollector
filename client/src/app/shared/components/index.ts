@@ -10,3 +10,4 @@ export { InventoryModule, InventoryComponent } from './inventory';
 export { UserCardModule } from './user-card';
 export { UserListModule } from './user-list';
 export { CardListModule } from './card-list';
+export { CardSelectorComponent, CardSelectorModule } from './card-selector';

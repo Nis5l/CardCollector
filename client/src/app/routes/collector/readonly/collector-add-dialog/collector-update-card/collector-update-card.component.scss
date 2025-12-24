@@ -1,7 +1,7 @@
 @import '../../../../../../screen.scss';
 
 //TODO: both this and the other are fine for now but still disgusting, maybe one day
-.card-add-container {
+.card-update-container {
   padding: 30px;
 	width: auto;
 	display: flex;
@@ -41,6 +41,7 @@
 	}
 
 	.card {
+    width: 300px;
 		display: flex;
 		flex: 1;
 		//margin: 20px;
