@@ -10,7 +10,7 @@ use crate::shared::card::data::Card;
 #[get("/card/<card_id>")]
 pub async fn card_route(card_id: Id, sql: &State<Sql>) -> ApiResponseErr<Card> {
     let collector_id = rjtry!(card::sql::get_card_collector_id(sql, &card_id).await);
-    let card_opt = rjtry!(card::sql::get_card(sql, &collector_id, &card_id).await);
+    let card_opt = rjtry!(card::sql::get_card(sql, Some(&collector_id), &card_id).await);
 
     match card_opt {
         None => ApiResponseErr::api_err(Status::NotFound, format!("Card with id {} not found", card_id)),

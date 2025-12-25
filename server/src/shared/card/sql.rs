@@ -1,4 +1,5 @@
 use sqlx::mysql::MySqlQueryResult;
+use validator::ValidateRequired;
 use std::collections::{HashSet, HashMap};
 
 use crate::sql::Sql;
@@ -391,8 +392,8 @@ pub fn order_by_string_from_card_sort_type(sort_type: &CardSortType) -> &str {
     }
 }
 
-pub async fn get_card(sql: &Sql, collector_id: &Id, card_id: &Id) -> Result<Option<Card>, sqlx::Error> {
-    let query = "SELECT
+pub async fn get_card(sql: &Sql, collector_id: Option<&Id>, card_id: &Id) -> Result<Option<Card>, sqlx::Error> {
+    let query = format!("SELECT
                  cards.cid,
                  cards.uid AS cuid,
                  cards.cname,
@@ -408,19 +409,25 @@ pub async fn get_card(sql: &Sql, collector_id: &Id, card_id: &Id) -> Result<Opti
                  FROM cards, cardtypes
                  WHERE
                  cards.ctid = cardtypes.ctid
-                 AND cards.cid=?
-                 AND cardtypes.coid=?;";
+                 AND cards.cid=?");
 
-    let stmt = sqlx::query_as(query).bind(card_id).bind(collector_id).fetch_one(sql.pool()).await;
+    let query_one = format!("{} {}", &query, if collector_id.is_some() { "AND cardtypes.coid=?;" } else { "" });
+    let mut stmt = sqlx::query_as(&query_one).bind(card_id);
 
-    if let Err(sqlx::Error::RowNotFound) = stmt {
+    if let Some(cid) = collector_id {
+        stmt = stmt.bind(cid);
+    }
+
+    let res = stmt.fetch_one(sql.pool()).await;
+
+    if let Err(sqlx::Error::RowNotFound) = res {
         return Ok(None);
     }
 
-    let card_db: CardDb = stmt?;
+    let card_db: CardDb = res?;
 
     let reference_db: Option<CardDb> = match card_db.cupdatecid {
-        Some(ref id) => Some(sqlx::query_as(query).bind(id).bind(collector_id).fetch_one(sql.pool()).await?),
+        Some(ref id) => Some(sqlx::query_as(&query).bind(id).fetch_one(sql.pool()).await?),
         None => None
     };
 
