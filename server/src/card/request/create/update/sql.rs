@@ -4,7 +4,7 @@ use crate::shared::card::data::CardState;
 
 pub async fn create_card_update_request(sql: &Sql, card_id: &Id, name: &str, card_type: &Id, user_id: &Id, card_id_reference: &Id) -> Result<(), sqlx::Error> {
     sqlx::query("INSERT INTO cards
-                 (cid, cname, ctid, uid, cstate, cupdatectid)
+                 (cid, cname, ctid, uid, cstate, cupdatecid)
                  VALUES (?, ?, ?, ?, ?, ?);")
         .bind(card_id)
         .bind(name)
