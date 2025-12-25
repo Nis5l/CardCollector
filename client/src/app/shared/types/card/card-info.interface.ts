@@ -3,7 +3,7 @@ import { CardState } from './card-state.enum';
 
 export interface CardInfo {
     id: Id,
-	userId: Id,
+	  userId: Id | null | undefined,
     name: string,
     time: string,
     state: CardState,

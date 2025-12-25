@@ -6,5 +6,6 @@ export interface CardType {
   name: string,
   userId: Id | null | undefined,
   state: CardState,
+  time: string,
   updateCardType: CardType | null | undefined,
 }

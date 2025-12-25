@@ -32,6 +32,7 @@ pub struct CardTypeDb {
     pub ctname: String,
     pub uid: Id,
     pub ctstate: i32,
+    pub cttime: DateTime<Utc>,
     pub ctupdatectid: Option<Id>
 }
 
@@ -42,6 +43,7 @@ pub struct CardType {
     pub name: String,
     pub user_id: Id,
     pub state: CardState,
+    pub time: DateTime<Utc>,
     pub update_card_type: Option<Box<CardType>>
 }
 
@@ -51,6 +53,24 @@ pub struct CardEffect {
     pub opacity: f32
 }
 
+#[derive(Debug, Serialize, FromRow)]
+#[serde(rename_all="camelCase")]
+pub struct CardDb {
+    pub cid: Id,
+    pub cuid: Id,
+    pub cname: String,
+    pub ctime: DateTime<Utc>,
+    pub cupdatecid: Option<Id>,
+    pub cstate: i32,
+
+    pub ctid: Id,
+    pub ctuid: Id,
+    pub ctstate: i32,
+    pub ctname: String,
+    pub cttime: DateTime<Utc>,
+    pub coid: Id,
+}
+
 #[derive(Debug, Serialize, Clone)]
 #[serde(rename_all="camelCase")]
 pub struct Card {
@@ -58,6 +78,35 @@ pub struct Card {
     pub card_info: CardInfo,
     pub card_type: CardType,
     pub update_card: Option<Box<Card>>
+}
+
+#[derive(Debug, Serialize, FromRow)]
+#[serde(rename_all="camelCase")]
+pub struct UnlockedCardDb {
+    pub cuuid: Id,
+    pub cuid: Id,
+    pub culevel: i32,
+    pub cuquality: i32,
+    pub cutime: DateTime<Utc>,
+
+    pub cid: Id,
+    pub ccuid: Id, //NOTE: unlucky cuid and card uid overlap
+    pub cname: String,
+    pub ctime: DateTime<Utc>,
+    pub cstate: i32,
+
+    pub ctid: Id,
+    pub ctuid: Id,
+    pub ctname: String,
+    pub ctstate: i32,
+    pub cttime: DateTime<Utc>,
+    pub coid: Id,
+
+    pub cfid: Option<IdInt>,
+    pub cfname: Option<String>,
+
+    pub ceid: Option<IdInt>,
+    pub ceopacity: Option<f32>
 }
 
 #[derive(Debug, Serialize)]
@@ -75,6 +124,69 @@ pub struct UnlockedCard {
     pub card: Card,
 }
 
+#[derive(Debug, Serialize)]
+pub struct UnlockedCardCreateData {
+    pub card_id: Id,
+    pub frame_id: Option<IdInt>,
+    pub quality: i32,
+    pub level: i32
+}
+
+#[derive(Debug, FromFormField, Serialize_repr)]
+#[repr(i32)]
+pub enum CardTypeSortType {
+    Name = 0,
+    Recent = 1
+}
+
+#[derive(Debug, Clone, Serialize_repr, FromFormField)]
+#[repr(i32)]
+pub enum CardState {
+    #[field(value = "0")]
+    Requested = 0,
+    #[field(value = "1")]
+    Created = 1,
+    #[field(value = "2")]
+    Delete = 2, //NOTE: virtual, never used in DB
+}
+
+#[derive(Debug, FromFormField, Serialize_repr)]
+#[repr(i32)]
+pub enum SortType {
+    Name = 0,
+    Level = 1,
+    Recent = 2,
+    CardType = 3
+}
+
+#[derive(Debug, FromFormField, Serialize_repr)]
+#[repr(i32)]
+pub enum CardSortType {
+    Name = 0,
+    CardType = 1,
+    Recent = 2
+}
+
+pub struct InventoryOptions {
+    pub user_id: Id,
+    pub collector_id: Id,
+    pub count: u32,
+    pub offset: u32,
+    pub search: String,
+    pub exclude_uuids: Vec<Id>,
+    pub sort_type: SortType,
+    pub level: Option<i32>,
+    pub card_id: Option<Id>
+}
+
+#[derive(Debug, Clone, Copy, FromFormField, Serialize_repr)]
+#[repr(i32)]
+pub enum CardVote {
+    Neutral = 0,
+    Upvote = 1,
+    Downvote = -1,
+}
+
 impl From<CardTypeDb> for CardType {
     fn from(card_type_db: CardTypeDb) -> Self {
         CardType {
@@ -82,6 +194,7 @@ impl From<CardTypeDb> for CardType {
             user_id: card_type_db.uid,
             name: card_type_db.ctname,
             state: CardState::from(card_type_db.ctstate),
+            time: card_type_db.cttime,
             update_card_type: None
         }
     }
@@ -122,35 +235,35 @@ impl From<(CardTypeDb, Option<CardTypeDb>)> for CardType {
 }
 
 impl From<UnlockedCardDb> for UnlockedCard {
-    fn from(card: UnlockedCardDb) -> Self {
+    fn from(unlocked_card_db: UnlockedCardDb) -> Self {
         UnlockedCard {
-            id: card.id,
-            user_id: card.user_id,
-            level: card.level,
-            quality: card.quality,
-            time: card.time,
-            card_frame: match (card.frame_id, card.frame_name) {
+            id: unlocked_card_db.cuid,
+            user_id: unlocked_card_db.cuuid,
+            level: unlocked_card_db.culevel,
+            quality: unlocked_card_db.cuquality,
+            time: unlocked_card_db.cutime,
+            card_frame: match (unlocked_card_db.cfid, unlocked_card_db.cfname) {
                 (Some(id), Some(name)) => Some(CardFrame { id, name }),
                 _ => None
             },
-            card_effect: match (card.effect_id, card.effect_opacity) {
+            card_effect: match (unlocked_card_db.ceid, unlocked_card_db.ceopacity) {
                 (Some(id), Some(opacity)) => Some(CardEffect { id, opacity }),
                 _ => None
             },
             card: Card::from(CardDb {
-                card_type_user_id: card.card_type_user_id,
-                card_id: card.card_id,
-                collector_id: card.collector_id,
-                card_name: card.card_name,
-                card_user_id: card.card_user_id,
-                card_time: card.card_time,
-                update_card: None,
-                type_state: card.type_state,
-                card_state: card.card_state,
+                ctuid: unlocked_card_db.ctuid,
+                cid: unlocked_card_db.cid,
+                cname: unlocked_card_db.cname,
+                cuid: unlocked_card_db.ccuid,
+                cstate: unlocked_card_db.cstate,
+                cupdatecid: None,
 
-                type_id: card.type_id,
-                type_name: card.type_name,
-                type_time: card.type_time
+                ctime: unlocked_card_db.ctime,
+                ctstate: unlocked_card_db.ctstate,
+                ctid: unlocked_card_db.ctid,
+                ctname: unlocked_card_db.ctname,
+                cttime: unlocked_card_db.cttime,
+                coid: unlocked_card_db.coid,
             })
         }
     }
@@ -159,21 +272,22 @@ impl From<UnlockedCardDb> for UnlockedCard {
 impl From<CardDb> for Card {
     fn from(card: CardDb) -> Self {
         Card {
-            collector_id: card.collector_id,
+            collector_id: card.coid,
             card_info: CardInfo {
-                id: card.card_id,
-                user_id: card.card_user_id,
-                name: card.card_name,
-                time: card.card_time,
-                state: CardState::from(card.card_state),
+                id: card.cid,
+                user_id: card.cuid,
+                name: card.cname,
+                time: card.ctime,
+                state: CardState::from(card.cstate),
             },
-            card_type: CardType {
-                id: card.type_id,
-                name: card.type_name,
-                user_id: card.card_type_user_id,
-                update_card_type: None,
-                state: CardState::from(card.type_state)
-            },
+            card_type: CardType::from(CardTypeDb {
+                ctid: card.ctid,
+                ctname: card.ctname,
+                uid: card.ctuid,
+                cttime: card.cttime,
+                ctstate: card.ctstate,
+                ctupdatectid: None
+            }),
             update_card: None,
         }
     }
@@ -213,75 +327,6 @@ impl From<(CardDb, Option<CardDb>)> for Card {
     }
 }
 
-
-#[derive(Debug, Serialize, FromRow)]
-#[serde(rename_all="camelCase")]
-#[sqlx(rename_all = "camelCase")]
-pub struct UnlockedCardDb {
-    pub id: Id,
-    pub user_id: Id,
-    pub collector_id: Id,
-    pub level: i32,
-    pub quality: i32,
-    pub time: DateTime<Utc>,
-
-    pub card_type_user_id: Id,
-    pub card_id: Id,
-    pub card_user_id: Id,
-    pub card_name: String,
-    pub card_time: DateTime<Utc>,
-    pub card_state: i32,
-
-    pub type_id: Id,
-    pub type_name: String,
-    pub type_state: i32,
-    pub type_time: DateTime<Utc>,
-
-    pub frame_id: Option<IdInt>,
-    pub frame_name: Option<String>,
-
-    pub effect_id: Option<IdInt>,
-    pub effect_opacity: Option<f32>
-}
-
-#[derive(Debug, Serialize, FromRow)]
-#[serde(rename_all="camelCase")]
-#[sqlx(rename_all = "camelCase")]
-pub struct CardDb {
-    pub card_type_user_id: Id,
-    pub card_id: Id,
-    pub card_user_id: Id,
-    pub collector_id: Id,
-    pub card_name: String,
-    pub card_time: DateTime<Utc>,
-    pub update_card: Option<Id>,
-    pub card_state: i32,
-
-    pub type_state: i32,
-    pub type_id: Id,
-    pub type_name: String,
-    pub type_time: DateTime<Utc>,
-}
-
-#[derive(Debug, Serialize)]
-pub struct UnlockedCardCreateData {
-    pub card_id: Id,
-    pub frame_id: Option<IdInt>,
-    pub quality: i32,
-    pub level: i32
-}
-
-#[derive(Debug, Clone, Serialize_repr, FromFormField)]
-#[repr(i32)]
-pub enum CardState {
-    #[field(value = "0")]
-    Requested = 0,
-    #[field(value = "1")]
-    Created = 1,
-    #[field(value = "2")]
-    Delete = 2, //NOTE: virtual, never used in DB
-}
-
 impl From<i32> for CardState {
     fn from(value: i32) -> Self {
         match value {
@@ -299,15 +344,6 @@ impl<'de> Deserialize<'de> for CardState {
 
             Ok(CardState::from(i))
        }
-}
-
-#[derive(Debug, FromFormField, Serialize_repr)]
-#[repr(i32)]
-pub enum SortType {
-    Name = 0,
-    Level = 1,
-    Recent = 2,
-    CardType = 3
 }
 
 impl Default for SortType {
@@ -336,14 +372,6 @@ impl<'de> Deserialize<'de> for SortType {
        }
 }
 
-#[derive(Debug, FromFormField, Serialize_repr)]
-#[repr(i32)]
-pub enum CardSortType {
-    Name = 0,
-    CardType = 1,
-    Recent = 2
-}
-
 impl Default for CardSortType {
     fn default() -> Self {
         Self::Name
@@ -369,13 +397,6 @@ impl<'de> Deserialize<'de> for CardSortType {
        }
 }
 
-#[derive(Debug, FromFormField, Serialize_repr)]
-#[repr(i32)]
-pub enum CardTypeSortType {
-    Name = 0,
-    Recent = 1
-}
-
 impl Default for CardTypeSortType {
     fn default() -> Self {
         Self::Name
@@ -398,26 +419,6 @@ impl<'de> Deserialize<'de> for CardTypeSortType {
 
             Ok(CardTypeSortType::from(i))
        }
-}
-
-pub struct InventoryOptions {
-    pub user_id: Id,
-    pub collector_id: Id,
-    pub count: u32,
-    pub offset: u32,
-    pub search: String,
-    pub exclude_uuids: Vec<Id>,
-    pub sort_type: SortType,
-    pub level: Option<i32>,
-    pub card_id: Option<Id>
-}
-
-#[derive(Debug, Clone, Copy, FromFormField, Serialize_repr)]
-#[repr(i32)]
-pub enum CardVote {
-    Neutral = 0,
-    Upvote = 1,
-    Downvote = -1,
 }
 
 impl From<i32> for CardVote {

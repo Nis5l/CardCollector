@@ -1,16 +1,25 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { SubscriptionManagerComponent } from '../../../../shared/abstract';
-import { switchMap, map, combineLatest as observableCombineLatest, Observable, BehaviorSubject, ReplaySubject, Subject, share, forkJoin } from 'rxjs';
+import { switchMap, map, combineLatest as observableCombineLatest, tap, Observable, BehaviorSubject, ReplaySubject, Subject, shareReplay, forkJoin, startWith } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 
 import { CollectorService } from '../../shared';
 import { CollectorAddDialogComponent } from '../collector-add-dialog';
 
-import type { Id, CardIndexResponse, CardTypeIndexResponse } from '../../../../shared/types';
+import type { Id, CardIndexResponse, CardTypeIndexResponse, Card, CardType } from '../../../../shared/types';
 import { CardSortType, CardTypeSortType, CardState } from '../../../../shared/types';
 import { CardService } from '../../../../shared/services';
 import type { PageEvent } from '@angular/material/paginator';
+
+type CombinedRequest = { kind: 'card', data: Card } | { kind: 'cardType', data: CardType };
+
+interface CombinedRequestIndex {
+  pageSize: number,
+  page: number,
+  count: number,
+  requests: CombinedRequest[]
+}
 
 @Component({
     selector: "cc-collector-requests",
@@ -20,15 +29,20 @@ import type { PageEvent } from '@angular/material/paginator';
 })
 export class CollectorRequestsComponent extends SubscriptionManagerComponent {
   public readonly collectorId$: Observable<Id>;
-  public readonly loading$: Observable<unknown>;
+  public readonly loadingSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  public readonly loading$: Observable<boolean>;
 
   private readonly pageSubject: BehaviorSubject<number> = new BehaviorSubject<number>(0);
 
   private readonly reloadSubject: Subject<void> = new Subject();
-  private readonly cardTypeIndexSubject: ReplaySubject<CardTypeIndexResponse> = new ReplaySubject<CardTypeIndexResponse>(1);
-  public readonly cardTypeIndex$: Observable<CardTypeIndexResponse>;
-  private readonly cardIndexSubject: ReplaySubject<CardIndexResponse> = new ReplaySubject<CardIndexResponse>(1);
-  public readonly cardIndex$: Observable<CardIndexResponse>;
+  private readonly defaultCombinedRequestIndex: CombinedRequestIndex = {
+    count: 0,
+    page: 0,
+    pageSize: 0,
+    requests: []
+  };
+  private readonly combinedRequestIndexSubject: BehaviorSubject<CombinedRequestIndex> = new BehaviorSubject(this.defaultCombinedRequestIndex);
+  public readonly combinedRequestIndex$: Observable<CombinedRequestIndex>;
 
   constructor(
     private readonly cardService: CardService,
@@ -36,6 +50,7 @@ export class CollectorRequestsComponent extends SubscriptionManagerComponent {
     private readonly matDialog: MatDialog,
   ){
     super();
+
     const params$ = this.activatedRoute.parent?.params ?? this.activatedRoute.params;
 
     this.collectorId$ = params$.pipe(
@@ -49,7 +64,8 @@ export class CollectorRequestsComponent extends SubscriptionManagerComponent {
       })
     );
 
-    const cardTypes$: Observable<CardTypeIndexResponse> = observableCombineLatest([this.collectorId$, this.pageSubject.asObservable(), this.reloadSubject.asObservable()]).pipe(
+    const cardTypes$: Observable<CardTypeIndexResponse> = observableCombineLatest([this.collectorId$, this.pageSubject.asObservable(), this.reloadSubject.asObservable().pipe(startWith(0))]).pipe(
+      tap(() => this.loadingSubject.next(true)),
       switchMap(([id, page]) => forkJoin([
         this.cardService.getCardTypes(id, "", page, CardState.Requested, CardTypeSortType.Recent),
         this.cardService.getCardTypes(id, "", page, CardState.Delete, CardTypeSortType.Recent)
@@ -61,10 +77,11 @@ export class CollectorRequestsComponent extends SubscriptionManagerComponent {
             cardTypes: [ ...requested.cardTypes, ...deleted.cardTypes ]
           }))
       )),
-      share()
+      shareReplay(1)
     );
 
-    const cards$: Observable<CardIndexResponse> = observableCombineLatest([this.collectorId$, this.pageSubject.asObservable(), this.reloadSubject.asObservable()]).pipe(
+    const cards$: Observable<CardIndexResponse> = observableCombineLatest([this.collectorId$, this.pageSubject.asObservable(), this.reloadSubject.asObservable().pipe(startWith(0))]).pipe(
+      tap(() => this.loadingSubject.next(true)),
       switchMap(([id, page]) => forkJoin([
         this.cardService.getCards(id, "", page, CardState.Requested, CardSortType.Recent),
         this.cardService.getCards(id, "", page, CardState.Delete, CardSortType.Recent)
@@ -76,15 +93,52 @@ export class CollectorRequestsComponent extends SubscriptionManagerComponent {
           cards: [ ...requested.cards, ...deleted.cards ]
         }))
     )),
-      share()
+      shareReplay(1)
     );
-    this.loading$ = observableCombineLatest([cardTypes$, cards$]).pipe();
-    this.registerSubscription(cardTypes$.subscribe(cardTypeIndex => this.cardTypeIndexSubject.next(cardTypeIndex)));
-    this.registerSubscription(cards$.subscribe(cardIndex => this.cardIndexSubject.next(cardIndex)));
 
-    this.cardTypeIndex$ = this.cardTypeIndexSubject.asObservable();
-    this.cardIndex$ = this.cardIndexSubject.asObservable();
-    this.reload();
+    const combinedRequests$ = observableCombineLatest([
+      cardTypes$,
+      cards$
+    ]).pipe(
+      map(([cardTypeRes, cardRes]) => {
+        const requests: CombinedRequest[] = [
+          ...cardTypeRes.cardTypes.map(ct => ({
+            kind: 'cardType' as const,
+            data: ct
+          })),
+          ...cardRes.cards.map(c => ({
+            kind: 'card' as const,
+            data: c
+          }))
+        ].sort((a, b) => {
+          const aTime =
+            a.kind === 'cardType'
+              ? new Date(a.data.time).getTime()
+              : new Date(a.data.cardInfo.time).getTime();
+
+          const bTime =
+            b.kind === 'cardType'
+              ? new Date(b.data.time).getTime()
+              : new Date(b.data.cardInfo.time).getTime();
+
+          return bTime - aTime; // recent DESC
+        });
+
+        return {
+          page: cardRes.page, //NOTE: should always match, if not throw error or display something atleast? I guess best would be displaying something and important log... TODO
+          count: cardRes.cardCount + cardTypeRes.cardTypeCount,
+          pageSize: cardRes.pageSize + cardTypeRes.pageSize,
+          requests
+        };
+      }),
+      tap(() => this.loadingSubject.next(false)),
+      shareReplay(1)
+    );
+
+    this.loading$ = this.loadingSubject.asObservable();
+
+    this.registerSubscription(combinedRequests$.subscribe(combinedRequests => this.combinedRequestIndexSubject.next(combinedRequests)));
+    this.combinedRequestIndex$ = this.combinedRequestIndexSubject.asObservable();
   }
 
 	public openAddDialog(collectorId: Id): void {
@@ -97,6 +151,7 @@ export class CollectorRequestsComponent extends SubscriptionManagerComponent {
 
 	public reload(): void {
 		this.reloadSubject.next();
+    this.combinedRequestIndexSubject.next(this.defaultCombinedRequestIndex);
 	}
 
   public changePage(page: PageEvent): void {

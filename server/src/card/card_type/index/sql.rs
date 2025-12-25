@@ -16,7 +16,7 @@ pub async fn get_card_types(sql: &Sql, collector_id: &Id, mut name: String, sort
 
     if let Some(CardState::Delete) = state {
         let query = format!("
-            SELECT deletecardtypes.dctid as ctid, deletecardtypes.uid, cardtypes.ctname, ? as ctstate, cardtypes.ctupdatectid
+            SELECT deletecardtypes.dctid as ctid, deletecardtypes.uid, deletecardtypes.dcttime as cttime, cardtypes.ctname, ? as ctstate, cardtypes.ctupdatectid
             FROM deletecardtypes, cardtypes
             WHERE
             cardtypes.ctid = deletecardtypes.ctid
@@ -40,7 +40,7 @@ pub async fn get_card_types(sql: &Sql, collector_id: &Id, mut name: String, sort
     }
 
     let query = format!(
-        "SELECT ctid, uid, ctname, ctstate, ctupdatectid
+        "SELECT ctid, uid, cttime, ctname, ctstate, ctupdatectid
          FROM cardtypes
          WHERE ctname LIKE CONCAT('%', ?, '%') AND
          coid = ?
@@ -76,7 +76,7 @@ pub async fn get_card_types(sql: &Sql, collector_id: &Id, mut name: String, sort
 
     let update_card_types_map: HashMap<Id, CardType> = if !card_type_reference_ids.is_empty() {
         let query = format!(
-            "SELECT ctid, uid, ctname, ctstate, ctupdatectid
+            "SELECT ctid, cttime, uid, ctname, ctstate, ctupdatectid
              FROM cardtypes
              WHERE ctid IN ({})",
             card_type_reference_ids.iter().map(|_| "?").collect::<Vec<_>>().join(",")

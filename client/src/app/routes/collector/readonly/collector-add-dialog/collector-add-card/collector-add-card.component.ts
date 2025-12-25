@@ -48,6 +48,7 @@ export class CollectorAddCardComponent extends SubscriptionManagerComponent {
 		name: "",
 		userId: null,
     state: CardState.Created,
+    time: (new Date()).toISOString(),
     updateCardType: null
 	};
 

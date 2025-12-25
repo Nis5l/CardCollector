@@ -106,26 +106,26 @@ pub async fn get_unlocked_cards(sql: &Sql, card_unlocked_ids: Vec<Id>, user_id: 
 
     let query = format!(
         "SELECT
-         cardunlocks.cuid AS id,
-         cardunlocks.uid AS userId,
-         cardunlocks.culevel AS level,
-         cardunlocks.cuquality AS quality,
-         cardunlocks.cutime AS time,
-         cards.cid AS cardId,
-         cards.uid AS cardUserId,
-         cards.cname AS cardName,
-         cards.ctime AS cardTime,
-         cards.cstate AS cardState,
-         cardtypes.ctid AS typeId,
-         cardtypes.ctname AS typeName,
-         cardtypes.uid AS cardTypeUserId,
-         cardtypes.coid AS collectorId,
-         cardtypes.ctstate AS typeState,
-         cardtypes.cttime AS typeTime,
-         cardframes.cfid AS frameId,
-         cardframes.cfname AS frameName,
-         cardeffects.ceid AS effectId,
-         cardeffects.ceopacity AS effectOpacity
+         cardunlocks.cuid,
+         cardunlocks.uid AS cuuid,
+         cardunlocks.culevel,
+         cardunlocks.cuquality,
+         cardunlocks.cutime,
+         cards.cid,
+         cards.uid AS ccuid,
+         cards.cname,
+         cards.ctime,
+         cards.cstate,
+         cardtypes.ctid,
+         cardtypes.ctname,
+         cardtypes.uid AS ctuid,
+         cardtypes.coid,
+         cardtypes.ctstate,
+         cardtypes.cttime,
+         cardframes.cfid,
+         cardframes.cfname,
+         cardeffects.ceid,
+         cardeffects.ceopacity
          FROM (cardunlocks, cards, cardtypes)
          LEFT JOIN cardframes ON cardframes.cfid = cardunlocks.cfid
          LEFT JOIN cardeffects ON cardeffects.ceid = cardunlocks.culevel
@@ -246,26 +246,26 @@ pub async fn get_inventory(sql: &Sql, options: &InventoryOptions) -> Result<Vec<
 
     let query = format!(
         "SELECT
-         cardunlocks.cuid AS id,
-         cardunlocks.uid AS userId,
-         cardunlocks.culevel AS level,
-         cardunlocks.cuquality AS quality,
-         cardunlocks.cutime AS time,
-         cards.cid AS cardId,
-         cards.uid AS cardUserId,
-         cards.cname AS cardName,
-         cards.ctime AS cardTime,
-         cards.cstate AS cardState,
-         cardtypes.ctid AS typeId,
-         cardtypes.ctname AS typeName,
-         cardtypes.uid AS cardTypeUserId,
-         cardtypes.coid AS collectorId,
-         cardtypes.ctstate AS typeState,
-         cardtypes.cttime AS typeTime,
-         cardframes.cfid AS frameId,
-         cardframes.cfname AS frameName,
-         cardeffects.ceid AS effectId,
-         cardeffects.ceopacity AS effectOpacity
+         cardunlocks.cuid,
+         cardunlocks.uid AS cuuid,
+         cardunlocks.culevel,
+         cardunlocks.cuquality,
+         cardunlocks.cutime,
+         cards.cid,
+         cards.uid AS ccuid,
+         cards.cname,
+         cards.ctime,
+         cards.cstate,
+         cardtypes.ctid,
+         cardtypes.ctname,
+         cardtypes.uid AS ctuid,
+         cardtypes.coid,
+         cardtypes.ctstate,
+         cardtypes.cttime,
+         cardframes.cfid,
+         cardframes.cfname,
+         cardeffects.ceid,
+         cardeffects.ceopacity
          FROM (cardunlocks, cards, cardtypes)
          LEFT JOIN cardframes ON cardframes.cfid = cardunlocks.cfid
          LEFT JOIN cardeffects ON cardeffects.ceid = cardunlocks.culevel
@@ -393,18 +393,18 @@ pub fn order_by_string_from_card_sort_type(sort_type: &CardSortType) -> &str {
 
 pub async fn get_card(sql: &Sql, collector_id: &Id, card_id: &Id) -> Result<Option<Card>, sqlx::Error> {
     let query = "SELECT
-                 cards.cid AS cardId,
-                 cards.uid AS cardUserId,
-                 cards.cname AS cardName,
-                 cards.ctime AS cardTime,
-                 cards.cupdatectid AS updateCard,
-                 cards.cstate AS cardState,
-                 cardtypes.ctid AS typeId,
-                 cardtypes.ctname AS typeName,
-                 cardtypes.coid AS collectorId,
-                 cardtypes.uid AS cardTypeUserId,
-                 cardtypes.ctstate AS typeState,
-                 cardtypes.cttime AS typeTime
+                 cards.cid,
+                 cards.uid AS cuid,
+                 cards.cname,
+                 cards.ctime,
+                 cards.cupdatecid,
+                 cards.cstate,
+                 cardtypes.ctid,
+                 cardtypes.ctname,
+                 cardtypes.coid,
+                 cardtypes.uid AS ctuid,
+                 cardtypes.ctstate,
+                 cardtypes.cttime
                  FROM cards, cardtypes
                  WHERE
                  cards.ctid = cardtypes.ctid
@@ -419,7 +419,7 @@ pub async fn get_card(sql: &Sql, collector_id: &Id, card_id: &Id) -> Result<Opti
 
     let card_db: CardDb = stmt?;
 
-    let reference_db: Option<CardDb> = match card_db.update_card {
+    let reference_db: Option<CardDb> = match card_db.cupdatecid {
         Some(ref id) => Some(sqlx::query_as(query).bind(id).bind(collector_id).fetch_one(sql.pool()).await?),
         None => None
     };
@@ -435,18 +435,18 @@ pub async fn get_cards(sql: &Sql, collector_id: &Id, mut name: String, sort_type
     if let Some(CardState::Delete) = state {
         let query = format!(
                "SELECT
-                deletecards.dcid AS cardId,
-                deletecards.uid AS cardUserId,
-                cards.cname AS cardName,
-                deletecards.dctime AS cardTime,
-                cards.cupdatectid AS updateCard,
-                ? AS cardState,
-                cardtypes.ctid AS typeId,
-                cardtypes.ctname AS typeName,
-                cardtypes.coid AS collectorId,
-                cardtypes.uid AS cardTypeUserId,
-                cardtypes.ctstate AS typeState,
-                cardtypes.cttime AS typeTime
+                deletecards.dcid AS cid,
+                deletecards.uid AS cuid,
+                cards.cname,
+                deletecards.dctime AS ctime,
+                cards.cupdatecid,
+                ? AS cstate,
+                cardtypes.ctid,
+                cardtypes.ctname,
+                cardtypes.coid,
+                cardtypes.uid AS ctuid,
+                cardtypes.ctstate,
+                cardtypes.cttime
                 FROM deletecards, cards, cardtypes
                 WHERE cards.cid = deletecards.cid
                 AND cards.ctid = cardtypes.ctid
@@ -477,18 +477,18 @@ pub async fn get_cards(sql: &Sql, collector_id: &Id, mut name: String, sort_type
 
     let query = format!(
         "SELECT
-         cards.cid AS cardId,
-         cards.uid AS cardUserId,
-         cards.cname AS cardName,
-         cards.ctime AS cardTime,
-         cards.cupdatectid AS updateCard,
-         cards.cstate AS cardState,
-         cardtypes.ctid AS typeId,
-         cardtypes.ctname AS typeName,
-         cardtypes.coid AS collectorId,
-         cardtypes.uid AS cardTypeUserId,
-         cardtypes.ctstate AS typeState,
-         cardtypes.cttime AS typeTime
+         cards.cid,
+         cards.uid AS cuid,
+         cards.cname,
+         cards.ctime,
+         cards.cupdatecid,
+         cards.cstate,
+         cardtypes.ctid,
+         cardtypes.ctname,
+         cardtypes.coid,
+         cardtypes.uid AS ctuid,
+         cardtypes.ctstate,
+         cardtypes.cttime
          FROM cards, cardtypes
          WHERE
          cards.ctid = cardtypes.ctid
@@ -520,7 +520,7 @@ pub async fn get_cards(sql: &Sql, collector_id: &Id, mut name: String, sort_type
 
     let card_reference_ids: Vec<Id> = cards_db
         .iter()
-        .filter_map(|ct| ct.update_card.clone())
+        .filter_map(|c| c.cupdatecid.clone())
         .collect::<HashSet<_>>()
         .into_iter()
         .collect();
@@ -528,18 +528,18 @@ pub async fn get_cards(sql: &Sql, collector_id: &Id, mut name: String, sort_type
     let update_card_map: HashMap<Id, Card> = if !card_reference_ids.is_empty() {
         let query = format!(
             "SELECT
-             cards.cid AS cardId,
-             cards.uid AS cardUserId,
-             cards.cname AS cardName,
-             cards.ctime AS cardTime,
-             cards.cupdatectid AS updateCard,
-             cards.cstate AS cardState,
-             cardtypes.ctid AS typeId,
-             cardtypes.ctname AS typeName,
-             cardtypes.coid AS collectorId,
-             cardtypes.uid AS cardTypeUserId,
-             cardtypes.ctstate AS typeState,
-             cardtypes.cttime AS typeTime
+             cards.cid,
+             cards.uid AS cuid,
+             cards.cname,
+             cards.ctime,
+             cards.cupdatecid,
+             cards.cstate,
+             cardtypes.ctid,
+             cardtypes.ctname,
+             cardtypes.coid,
+             cardtypes.uid AS ctuid,
+             cardtypes.ctstate,
+             cardtypes.cttime
              FROM cards, cardtypes
              WHERE
              cards.ctid = cardtypes.ctid
@@ -568,7 +568,7 @@ pub async fn get_cards(sql: &Sql, collector_id: &Id, mut name: String, sort_type
         .into_iter()
         .map(|c_db| {
             let update_card = c_db
-                .update_card.as_ref()
+                .cupdatecid.as_ref()
                 .and_then(|id| update_card_map.get(id).cloned());
 
             Card::from((c_db, update_card))
@@ -579,7 +579,7 @@ pub async fn get_cards(sql: &Sql, collector_id: &Id, mut name: String, sort_type
 }
 
 pub async fn get_card_type(sql: &Sql, collector_id: &Id, card_type_id: &Id) -> Result<Option<CardType>, sqlx::Error> {
-    let query = "SELECT ctid, uid, ctname, ctstate, ctupdatectid
+    let query = "SELECT ctid, uid, ctname, cttime, ctstate, ctupdatectid
                  FROM cardtypes
                  WHERE ctid = ? AND coid=?;";
 

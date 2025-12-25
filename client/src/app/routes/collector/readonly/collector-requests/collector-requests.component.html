@@ -1,19 +1,33 @@
 @if (collectorId$ | async; as collectorId) {
   <div class="request-container">
-    <cc-loading [observable]="loading$"></cc-loading>
-    <ng-container *ngVar="(cardTypeIndex$ | async) as cardTypeRes">
-      <ng-container *ngVar="(cardIndex$ | async) as cardRes">
-        @if (cardTypeRes != null && cardRes != null) {
-          @for (cardType of cardTypeRes.cardTypes; track cardType) {
-            <cc-request-card-card-type (onRemove)="reload()" [cardType]="cardType" [collectorId]="collectorId"></cc-request-card-card-type>
+    @if (combinedRequestIndex$ | async; as combinedRequestIndex) {
+      @if (!(loading$ | async)) {
+        @if (combinedRequestIndex.requests.length > 0) {
+          @for (request of combinedRequestIndex.requests; track request) {
+            @if (request.kind === "cardType") {
+              <cc-request-card-card-type (onRemove)="reload()" [cardType]="request.data" [collectorId]="collectorId"></cc-request-card-card-type>
+            } @else if (request.kind === "card") {
+              <cc-request-card-card (onRemove)="reload()" [card]="request.data" [collectorId]="collectorId"></cc-request-card-card>
+            }
           }
-          @for (card of cardRes.cards; track card) {
-            <cc-request-card-card (onRemove)="reload()" [card]="card" [collectorId]="collectorId"></cc-request-card-card>
-          }
-          <mat-paginator [length]="cardTypeRes.cardTypeCount + cardRes.cardCount" [pageSize]="cardTypeRes.pageSize + cardRes.pageSize" (page)="changePage($event)"></mat-paginator>
+        } @else {
+          <div class="empty">
+            <div class="empty-content">
+              <mat-icon color="accent" svgIcon="credit_card_off"></mat-icon>
+              <p>No requests found</p>
+            </div>
+          </div>
         }
-      </ng-container>
-    </ng-container>
+      }
+
+      @if (loading$ | async) {
+        <div class="loading">
+          <cc-loading [observable]="loading$" [boolObservable]="true"></cc-loading>
+        </div>
+      }
+
+      <mat-paginator [length]="combinedRequestIndex.count" [pageSize]="combinedRequestIndex.pageSize" (page)="changePage($event)"></mat-paginator>
+    }
   </div>
   <button class="floating-button-br" mat-fab aria-label="Add" (click)="openAddDialog(collectorId)">
     <mat-icon color="accent" svgIcon="add"></mat-icon>
