@@ -28,8 +28,7 @@ For production docker-compose is used.
 ## TODO:
   Fix Theme. \
   Fix Notifications. \
-  Friend list with link to trade under collector and same for collectors in friends. \
+  Friend list with link to trade under collector and same for collectors in friends. ? \
   Sidebar theme. \
   Notifications style \
-  Update Card Request \
-  Pull times from db and display
+  display times
