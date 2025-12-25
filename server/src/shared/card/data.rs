@@ -136,7 +136,8 @@ pub struct UnlockedCardCreateData {
 #[repr(i32)]
 pub enum CardTypeSortType {
     Name = 0,
-    Recent = 1
+    Recent = 1,
+    Votes = 2,
 }
 
 #[derive(Debug, Clone, Serialize_repr, FromFormField)]
@@ -153,7 +154,7 @@ pub enum SortType {
     Name = 0,
     Level = 1,
     Recent = 2,
-    CardType = 3
+    CardType = 3,
 }
 
 #[derive(Debug, FromFormField, Serialize_repr)]
@@ -161,7 +162,8 @@ pub enum SortType {
 pub enum CardSortType {
     Name = 0,
     CardType = 1,
-    Recent = 2
+    Recent = 2,
+    Votes = 3,
 }
 
 pub struct InventoryOptions {
@@ -390,6 +392,7 @@ impl From<i32> for CardSortType {
         match value {
             1 => Self::CardType,
             2 => Self::Recent,
+            3 => Self::Votes,
             _ => Self::Name,
         }
     }
@@ -414,6 +417,7 @@ impl From<i32> for CardTypeSortType {
     fn from(value: i32) -> Self {
         match value {
             1 => Self::Recent,
+            2 => Self::Votes,
             _ => Self::Name,
         }
     }

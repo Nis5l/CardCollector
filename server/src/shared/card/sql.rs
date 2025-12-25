@@ -388,7 +388,8 @@ pub fn order_by_string_from_card_sort_type(sort_type: &CardSortType) -> &str {
              cards.cname,
              cards.ctime DESC",
         CardSortType::Recent => 
-            "cards.ctime DESC"
+            "cards.ctime DESC",
+        CardSortType::Votes => "(SELECT CAST(COALESCE(SUM(ctvtype), 0) AS SIGNED) FROM cardvotes WHERE cardvotes.cid = cards.cid) DESC"
     }
 }
 

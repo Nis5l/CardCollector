@@ -8,6 +8,7 @@ fn order_by_string_from_card_type_sort_type(sort_type: &CardTypeSortType) -> &st
     match sort_type {
         CardTypeSortType::Name => "cardtypes.ctname,\ncardtypes.cttime DESC",
         CardTypeSortType::Recent => "cardtypes.cttime DESC",
+        CardTypeSortType::Votes => "(SELECT CAST(COALESCE(SUM(ctvtype), 0) AS SIGNED) FROM cardtypevotes WHERE cardtypevotes.ctid = cardtypes.ctid) DESC"
     }
 }
 

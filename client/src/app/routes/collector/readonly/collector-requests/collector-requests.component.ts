@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { SubscriptionManagerComponent } from '../../../../shared/abstract';
 import { switchMap, map, combineLatest as observableCombineLatest, tap, Observable, BehaviorSubject, ReplaySubject, Subject, shareReplay, forkJoin, startWith } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
+import { FormControl, FormGroup } from '@angular/forms';
 
 import { CollectorService } from '../../shared';
 import { CollectorAddDialogComponent } from '../collector-add-dialog';
@@ -44,12 +45,39 @@ export class CollectorRequestsComponent extends SubscriptionManagerComponent {
   private readonly combinedRequestIndexSubject: BehaviorSubject<CombinedRequestIndex> = new BehaviorSubject(this.defaultCombinedRequestIndex);
   public readonly combinedRequestIndex$: Observable<CombinedRequestIndex>;
 
+  //TODO: not working rn, cant sort client side
+  /* public readonly sortTypes: { text: string, value: { card: CardSortType, cardType: CardTypeSortType } }[] = [
+    {
+      text: "Recent",
+      value: {
+        card: CardSortType.Recent,
+        cardType: CardTypeSortType.Recent,
+      }
+    },
+    {
+      text: "Votes",
+      value: {
+        card: CardSortType.Votes,
+        cardType: CardTypeSortType.Votes,
+      }
+    },
+  ];
+
+  public readonly formGroup; */
+
   constructor(
     private readonly cardService: CardService,
     private readonly activatedRoute: ActivatedRoute,
     private readonly matDialog: MatDialog,
   ){
     super();
+
+    /* const defaultSortType = this.sortTypes[0].value;
+    const sortTypeFormControl = new FormControl(defaultSortType, { nonNullable: true });
+
+    this.formGroup = new FormGroup({
+      sortType: sortTypeFormControl
+    }); */
 
     const params$ = this.activatedRoute.parent?.params ?? this.activatedRoute.params;
 
@@ -64,49 +92,26 @@ export class CollectorRequestsComponent extends SubscriptionManagerComponent {
       })
     );
 
-    const cardTypes$: Observable<CardTypeIndexResponse> = observableCombineLatest([this.collectorId$, this.pageSubject.asObservable(), this.reloadSubject.asObservable().pipe(startWith(0))]).pipe(
+    const combinedRequests$ = observableCombineLatest([
+      this.collectorId$,
+      this.pageSubject.asObservable(),
+      //sortTypeFormControl.valueChanges.pipe(startWith(defaultSortType)),
+      this.reloadSubject.asObservable().pipe(startWith(0)),
+    ]).pipe(
       tap(() => this.loadingSubject.next(true)),
       switchMap(([id, page]) => forkJoin([
         this.cardService.getCardTypes(id, "", page, CardState.Requested, CardTypeSortType.Recent),
-        this.cardService.getCardTypes(id, "", page, CardState.Delete, CardTypeSortType.Recent)
-        ]).pipe(
-          map(([requested, deleted]) => ({
-            pageSize: requested.page + deleted.pageSize,
-            page: requested.page,
-            cardTypeCount: requested.cardTypeCount + deleted.cardTypeCount,
-            cardTypes: [ ...requested.cardTypes, ...deleted.cardTypes ]
-          }))
-      )),
-      shareReplay(1)
-    );
-
-    const cards$: Observable<CardIndexResponse> = observableCombineLatest([this.collectorId$, this.pageSubject.asObservable(), this.reloadSubject.asObservable().pipe(startWith(0))]).pipe(
-      tap(() => this.loadingSubject.next(true)),
-      switchMap(([id, page]) => forkJoin([
+        this.cardService.getCardTypes(id, "", page, CardState.Delete, CardTypeSortType.Recent),
         this.cardService.getCards(id, "", page, CardState.Requested, CardSortType.Recent),
         this.cardService.getCards(id, "", page, CardState.Delete, CardSortType.Recent)
-    ]).pipe(
-        map(([requested, deleted]) => ({
-          pageSize: requested.page + deleted.pageSize,
-          page: requested.page,
-          cardCount: requested.cardCount + deleted.cardCount,
-          cards: [ ...requested.cards, ...deleted.cards ]
-        }))
-    )),
-      shareReplay(1)
-    );
-
-    const combinedRequests$ = observableCombineLatest([
-      cardTypes$,
-      cards$
-    ]).pipe(
-      map(([cardTypeRes, cardRes]) => {
+      ])),
+      map(([reqCardType, delCardType, reqCard, delCard]) => {
         const requests: CombinedRequest[] = [
-          ...cardTypeRes.cardTypes.map(ct => ({
+          ...[...reqCardType.cardTypes, ...delCardType.cardTypes].map(ct => ({
             kind: 'cardType' as const,
             data: ct
           })),
-          ...cardRes.cards.map(c => ({
+          ...[...reqCard.cards, ...delCard.cards].map(c => ({
             kind: 'card' as const,
             data: c
           }))
@@ -125,9 +130,9 @@ export class CollectorRequestsComponent extends SubscriptionManagerComponent {
         });
 
         return {
-          page: cardRes.page, //NOTE: should always match, if not throw error or display something atleast? I guess best would be displaying something and important log... TODO
-          count: cardRes.cardCount + cardTypeRes.cardTypeCount,
-          pageSize: cardRes.pageSize + cardTypeRes.pageSize,
+          page: reqCardType.page, //NOTE: should always match, if not throw error or display something atleast? I guess best would be displaying something and important log... TODO
+          count: reqCardType.cardTypeCount + delCardType.cardTypeCount + reqCard.cardCount + delCard.cardCount,
+          pageSize: reqCardType.pageSize + delCardType.pageSize + reqCard.pageSize + delCard.pageSize,
           requests
         };
       }),

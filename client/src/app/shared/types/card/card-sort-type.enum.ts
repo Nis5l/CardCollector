@@ -1,5 +1,6 @@
 export enum CardSortType {
     Name = 0,
     CardType = 1,
-    Recent = 2
+    Recent = 2,
+    Votes = 3,
 }
