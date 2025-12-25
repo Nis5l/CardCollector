@@ -1,0 +1,43 @@
+{
+  "name": "collector",
+  "description": "Collector images - square format",
+  "defaultVariant": "default",
+  "variants": {
+    "thumbnail": {
+      "description": "Small collector preview",
+      "effects": [
+        {
+          "id": "resize_square",
+          "params": { "size": 150 }
+        },
+        {
+          "id": "webp",
+          "params": { "quality": 85 }
+        }
+      ],
+      "metadata": {
+        "width": 150,
+        "height": 150
+      },
+      "breakpoint": null
+    },
+    "default": {
+      "description": "Standard collector image",
+      "effects": [
+        {
+          "id": "resize_square",
+          "params": { "size": 500 }
+        },
+        {
+          "id": "webp",
+          "params": { "quality": 95 }
+        }
+      ],
+      "metadata": {
+        "width": 500,
+        "height": 500
+      },
+      "breakpoint": 768
+    }
+  }
+}

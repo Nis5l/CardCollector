@@ -1,48 +1,49 @@
-use std::path::Path;
 use rocket::State;
-use rocket::{fs::NamedFile, http::Status};
+use rocket::http::{Status, ContentType};
 
-use crate::config::Config;
 use crate::sql::Sql;
+use crate::media::MediaManager;
 use crate::shared::Id;
 use crate::shared::card;
-use crate::shared::image::ImageResponse;
 
 //NOTE: this collides with /card/unlocked/<card_unlocked_id>
 #[get("/card/<card_id>/card-image", rank=1)]
-pub async fn card_image_get_route(card_id: Id, sql: &State<Sql>, config: &State<Config>) -> ImageResponse {
+pub async fn card_image_get_route(card_id: Id, sql: &State<Sql>, media_manager: &State<MediaManager>) -> Result<(ContentType, Vec<u8>), Status> {
     //NOTE: check card_id to avoid path traversal attacks or similar
     let (card_id, fallback_card_id): (Id, Option<Id>) = match card::sql::get_card(sql, None, &card_id).await {
         Ok(Some(card)) => (card.card_info.id, card.update_card.as_ref().map(|boxed| boxed.card_info.id.clone())),
         Ok(None) => match card::sql::get_card_delete_request(sql, &card_id).await {
             Ok(Some(card_id)) => (card_id, None),
-            Ok(None) => return ImageResponse::api_err(Status::NotFound, format!("card with id {} not found", card_id)),
-            Err(_) => return ImageResponse::api_err(Status::InternalServerError, String::from("database error"))
+            Ok(None) => return Err(Status::NotFound),
+            Err(_) => return Err(Status::InternalServerError)
         },
-        Err(_) => return ImageResponse::api_err(Status::InternalServerError, String::from("database error"))
+        Err(_) => return Err(Status::InternalServerError)
     };
 
-    let path = Path::new(&config.card_fs_base);
 
-    let file = match NamedFile::open(path.join(card_id.to_string()).join("card-image")).await {
-        Ok(file) => file,
-        Err(_) => {
-            let file = match fallback_card_id {
-                Some(fallback_card_id) => match NamedFile::open(path.join(fallback_card_id.to_string()).join("card-image")).await {
-                    Ok(file) => Some(file),
-                    Err(_) => None,
-                },
-                None => None
-            };
-            match file {
-                Some(file) => file,
-                None => match NamedFile::open(path.join("card-image-default")).await {
-                    Ok(file) => file,
-                    Err(_) => return ImageResponse::api_err(Status::InternalServerError, String::from("default image not found"))
-                }
-            }
-        }
+    // Get image hash from database
+    let image_hash = match card::sql::get_card_image(sql, &card_id).await {
+        Ok(Some(hash)) => hash,
+        Ok(None) => match fallback_card_id {
+            Some(fallback_card_id) => match card::sql::get_card_image(sql, &fallback_card_id).await {
+                Ok(Some(hash)) => hash,
+                Ok(None) => String::from("card-image-default"),
+                Err(_) => return Err(Status::InternalServerError)
+            },
+            None => String::from("card-image-default")
+        },
+        Err(_) => return Err(Status::InternalServerError)
     };
 
-    ImageResponse::ok(Status::Ok, file)
+    // Get image through MediaManager with "card" media type
+    let (bytes, format) = media_manager
+        .get_image("card", &image_hash, None)
+        .await
+        .map_err(|_| Status::NotFound)?;
+
+    // Parse Content-Type based on format
+    let content_type = ContentType::parse_flexible(format.mime_type())
+        .unwrap_or(ContentType::Binary);
+
+    Ok((content_type, bytes))
 }

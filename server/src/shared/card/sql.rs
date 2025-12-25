@@ -643,3 +643,32 @@ pub async fn get_card_type_delete_request(sql: &Sql, delete_card_type_id: &Id) -
 
     Ok(Some(id))
 }
+
+pub async fn set_card_image(sql: &Sql, card_id: &Id, image_hash: &str) -> Result<(), sqlx::Error> {
+    sqlx::query(
+        "UPDATE cards
+         SET cimage=?
+         WHERE cid=?;")
+        .bind(image_hash)
+        .bind(card_id)
+        .execute(sql.pool())
+        .await?;
+
+    Ok(())
+}
+
+pub async fn get_card_image(sql: &Sql, card_id: &Id) -> Result<Option<String>, sqlx::Error> {
+    let stmt: Result<(Option<String>,), sqlx::Error> = sqlx::query_as(
+        "SELECT cimage
+         FROM cards
+         WHERE cid=?;")
+        .bind(card_id)
+        .fetch_one(sql.pool())
+        .await;
+
+    if let Err(sqlx::Error::RowNotFound) = stmt {
+        return Ok(None)
+    }
+
+    Ok(stmt?.0)
+}

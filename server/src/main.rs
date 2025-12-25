@@ -25,6 +25,7 @@ mod trade;
 mod admin;
 mod collector;
 mod scripts;
+mod media;
 
 #[get("/")]
 fn index() -> &'static str {
@@ -50,6 +51,26 @@ async fn rocket() -> _ {
         println!("-{}", file);
         sql::setup_db(&sql, file).await.expect("Failed setting up database");
     }
+
+    // Initialize Media Manager
+    println!("Initializing Media Manager...");
+    use std::sync::Arc;
+    use media::{EffectRegistry, FilesystemCache, ImageStorage, MediaManager};
+
+    let effect_registry = EffectRegistry::new();
+    println!("- Registered {} effects", effect_registry.effect_ids().len());
+
+    let media_types = media::config::load_media_types(&config.media_types_dir, &effect_registry)
+        .expect("Failed to load media type configurations");
+    println!("- Loaded {} media types", media_types.len());
+
+    let cache = Arc::new(FilesystemCache::new(&config.media_cache_dir));
+    let storage = Arc::new(ImageStorage::new(&config.media_storage_dir));
+
+    storage.init().await.expect("Failed to initialize image storage");
+
+    let media_manager = MediaManager::new(effect_registry, media_types, cache, storage);
+    println!("Media Manager initialized successfully");
 
     /*
     let allowed_origins = AllowedOrigins::all();
@@ -182,8 +203,10 @@ async fn rocket() -> _ {
         .mount(format!("/{}", &config.effect_image_base), FileServer::from(relative!("static/effect")))
         .mount(format!("/{}", &config.achievements_image_base), FileServer::from(relative!("static/achievements")))
         .mount(format!("/{}", &config.badges_image_base), FileServer::from(relative!("static/badges")))
+        .mount("/", media::routes::routes())
         .register("/", vec![rocketjson::error::get_catcher()])
         .attach(AdHoc::config::<config::Config>())
         .attach(cors::CORS)
         .manage(sql)
+        .manage(media_manager)
 }

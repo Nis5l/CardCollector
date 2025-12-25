@@ -81,3 +81,61 @@ pub async fn get_collector_setting<T>(sql: &Sql, collector_id: &Id, setting: Col
 
     Ok(pack_cooldown)
 }
+
+pub async fn set_collector_image(sql: &Sql, collector_id: &Id, image_hash: &str) -> Result<(), sqlx::Error> {
+    sqlx::query(
+        "UPDATE collectors
+         SET coimage=?
+         WHERE coid=?;")
+        .bind(image_hash)
+        .bind(collector_id)
+        .execute(sql.pool())
+        .await?;
+
+    Ok(())
+}
+
+pub async fn get_collector_image(sql: &Sql, collector_id: &Id) -> Result<Option<String>, sqlx::Error> {
+    let stmt: Result<(Option<String>,), sqlx::Error> = sqlx::query_as(
+        "SELECT coimage
+         FROM collectors
+         WHERE coid=?;")
+        .bind(collector_id)
+        .fetch_one(sql.pool())
+        .await;
+
+    if let Err(sqlx::Error::RowNotFound) = stmt {
+        return Ok(None)
+    }
+
+    Ok(stmt?.0)
+}
+
+pub async fn set_collector_banner(sql: &Sql, collector_id: &Id, banner_hash: &str) -> Result<(), sqlx::Error> {
+    sqlx::query(
+        "UPDATE collectors
+         SET cobanner=?
+         WHERE coid=?;")
+        .bind(banner_hash)
+        .bind(collector_id)
+        .execute(sql.pool())
+        .await?;
+
+    Ok(())
+}
+
+pub async fn get_collector_banner(sql: &Sql, collector_id: &Id) -> Result<Option<String>, sqlx::Error> {
+    let stmt: Result<(Option<String>,), sqlx::Error> = sqlx::query_as(
+        "SELECT cobanner
+         FROM collectors
+         WHERE coid=?;")
+        .bind(collector_id)
+        .fetch_one(sql.pool())
+        .await;
+
+    if let Err(sqlx::Error::RowNotFound) = stmt {
+        return Ok(None)
+    }
+
+    Ok(stmt?.0)
+}
