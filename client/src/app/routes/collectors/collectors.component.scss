@@ -2,17 +2,19 @@
 
 .collectors-wrapper {
   form {
-    width: 100%;
     display: flex;
+    gap: 30px;
+    flex-direction: row;
+    margin: 10px;
     align-items: center;
 
-    mat-form-field {
-      width: min(100%, 400px);
-    }
-
+    // mat-form-field {
+    //   width: min(100%, 400px);
+    // }
     button {
       margin-bottom: 15px;
     }
+
   }
 
   .loading, .empty {
@@ -53,10 +55,6 @@
       }
     }
   }
-
-	.new-collector {
-		margin-left: 30px;
-	}
 
   cc-loading {
     margin: 30px;

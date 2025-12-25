@@ -2,9 +2,9 @@ use crate::sql::Sql;
 use crate::shared::util;
 use crate::shared::Id;
 use crate::shared::user::data::{UserVerified, UserDb, User};
-use super::data::UsersSortType;
+use super::data::UserSortType;
 
-pub async fn get_users(sql: &Sql, mut username: String, exclude_ids: &Vec<Id>, sort_type: UsersSortType, amount: u32, offset: u32) -> Result<Vec<User>, sqlx::Error> {
+pub async fn get_users(sql: &Sql, mut username: String, exclude_ids: &Vec<Id>, sort_type: UserSortType, amount: u32, offset: u32) -> Result<Vec<User>, sqlx::Error> {
     username = util::escape_for_like(username);
 
      let mut query = String::from("SELECT uid, uusername, uranking, utime
@@ -23,9 +23,9 @@ pub async fn get_users(sql: &Sql, mut username: String, exclude_ids: &Vec<Id>, s
     }
 
     let order_by = match sort_type {
-        UsersSortType::Name => "users.uusername",
-        UsersSortType::Recent => "users.utime DESC",
-        UsersSortType::MostCards => "(SELECT COUNT(*) FROM cardunlocks WHERE cardunlocks.uid = users.uid) DESC"
+        UserSortType::Name => "users.uusername",
+        UserSortType::Recent => "users.utime DESC",
+        UserSortType::MostCards => "(SELECT COUNT(*) FROM cardunlocks WHERE cardunlocks.uid = users.uid) DESC"
     };
 
     query.push_str(&format!(" ORDER BY {}", order_by));

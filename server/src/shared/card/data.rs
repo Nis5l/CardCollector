@@ -334,6 +334,16 @@ impl From<i32> for CardState {
     }
 }
 
+impl From<Option<i32>> for CardState {
+    fn from(value: Option<i32>) -> Self {
+        match value {
+            Some(0) => Self::Requested,
+            Some(2) => Self::Delete,
+            _ => Self::Created
+        }
+    }
+}
+
 impl<'de> Deserialize<'de> for CardState {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
        where D: serde::Deserializer<'de> {

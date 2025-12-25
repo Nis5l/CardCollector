@@ -243,7 +243,7 @@ CREATE TABLE IF NOT EXISTS packtimes (
         uid VARCHAR(13) NOT NULL,
         coid VARCHAR(13) NOT NULL,
         ptlastopened DATETIME,
-        PRIMARY KEY (uid),
+        PRIMARY KEY (uid, coid),
         FOREIGN KEY (uid) REFERENCES users(uid)
 		ON DELETE CASCADE,
         FOREIGN KEY(coid) REFERENCES collectors(coid)

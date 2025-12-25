@@ -4,13 +4,14 @@ import { Observable } from 'rxjs';
 
 import { HttpService } from '../../shared/services';
 import type { CollectorsIndexResponse } from './types';
+import { CollectorSortType } from './types';
 
 @Injectable()
 export class CollectorsService {
 	constructor(private readonly httpService: HttpService) {}
 
-	public getCollectors(search: string, page: number): Observable<CollectorsIndexResponse> {
-		const params = new HttpParams().set('search', search).set('page', page);
+	public getCollectors(search: string, page: number, collectorSortType: CollectorSortType): Observable<CollectorsIndexResponse> {
+		const params = new HttpParams().set('search', search).set('page', page).set('sort_type', collectorSortType);
 
 		return this.httpService.get("/collector", params);
 	}
