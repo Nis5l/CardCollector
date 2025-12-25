@@ -55,7 +55,6 @@ export class RequestCardCardTypeComponent extends SubscriptionManagerComponent {
 	constructor(
 		private readonly requestCardCardTypeService: RequestCardCardTypeService,
 		private readonly loadingService: LoadingService,
-    private readonly cardService: CardService,
     private readonly matDialog: MatDialog,
 	) {
 		super();

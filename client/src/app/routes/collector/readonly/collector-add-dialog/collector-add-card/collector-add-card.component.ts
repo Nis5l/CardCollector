@@ -147,7 +147,7 @@ export class CollectorAddCardComponent extends SubscriptionManagerComponent {
 		)).subscribe({
 			next: () => { this.onClose.emit(); },
 			error: (err: HttpErrorResponse) => {
-				this.errorSubject.next(err.error?.error ?? "Creating card failed");
+				this.errorSubject.next(err.error?.error ?? "Creating request failed");
 			}
 		})
 	}

@@ -58,9 +58,8 @@ export class CollectorUpdateCardComponent extends SubscriptionManagerComponent {
 	public readonly error$: Observable<string | null>;
 
 	constructor(
-		private readonly httpService: HttpService,
 		private readonly domSanitizer: DomSanitizer,
-		private readonly collectorAddCardService: CollectorUpdateCardService,
+		private readonly collectorUpdateCardService: CollectorUpdateCardService,
 		private readonly cardService: CardService,
 		private readonly loadingService: LoadingService,
 	) {
@@ -129,7 +128,6 @@ export class CollectorUpdateCardComponent extends SubscriptionManagerComponent {
 		this.cardImage$ = this.imageSubject.asObservable().pipe(
 			filter((image): image is File => image != null),
 			map(image => this.domSanitizer.bypassSecurityTrustResourceUrl(URL.createObjectURL(image))),
-			//startWith(this.httpService.apiUrl("/card/card-image")),
 		);
 
 		this.error$ = this.errorSubject.asObservable();
@@ -156,12 +154,12 @@ export class CollectorUpdateCardComponent extends SubscriptionManagerComponent {
 		};
 		const image = this.imageSubject.getValue();
 
-		this.loadingService.waitFor(this.collectorAddCardService.updateCardRequest(req).pipe(
+		this.loadingService.waitFor(this.collectorUpdateCardService.updateCardRequest(req).pipe(
 			switchMap(({ id }) => image ? this.cardService.setCardImage(id, image) : EMPTY)
 		)).subscribe({
 			complete: () => { this.onClose.emit(); },
 			error: (err: HttpErrorResponse) => {
-				this.errorSubject.next(err.error?.error ?? "Creating card failed");
+				this.errorSubject.next(err.error?.error ?? "Creating request failed");
 			}
 		});
 	}

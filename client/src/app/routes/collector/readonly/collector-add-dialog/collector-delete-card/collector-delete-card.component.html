@@ -1,0 +1,20 @@
+<div class="card-delete-container" *ngVar="(card$ | async) as card">
+  @if (collectorId$ | async; as cid) {
+    <form [formGroup]="formGroup" (submit)="cardDeleteRequest()">
+      <cc-card-selector formControlName="card" [collectorId]="cid"></cc-card-selector>
+      <div class="request">
+        <div *ngVar="(error$ | async) as error" class="error">
+          @if (error != null) {
+            <mat-error>{{error}}</mat-error>
+          }
+        </div>
+        <button matButton="outlined" type="submit" [disabled]="!formGroup.valid">Submit</button>
+      </div>
+    </form>
+  }
+  <div class="card">
+    @if (card != null) {
+      <cc-card [card]="card"></cc-card>
+    }
+  </div>
+</div>

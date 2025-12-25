@@ -84,7 +84,7 @@ export class CollectorUpdateCardTypeComponent {
 		this.loadingService.waitFor(this.collectorUpdateCardTypeService.updateCollectorRequest(collectorId, { name, cardTypeId: type.id })).subscribe({
 			next: () => { this.onClose.emit() },
 			error: (err: HttpErrorResponse) => {
-				this.errorSubject.next(err.error?.error ?? "Updating type failed");
+				this.errorSubject.next(err.error?.error ?? "Creating request failed");
 			}
 		})
 	}

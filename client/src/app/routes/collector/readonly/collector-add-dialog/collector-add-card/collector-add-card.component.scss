@@ -26,6 +26,8 @@
 		flex: 1;
 		flex-direction: column;
     gap: 20px;
+    min-width: 0;
+    margin-bottom: 10px;
 
 		.request {
 			margin-top: auto;
@@ -41,8 +43,10 @@
 	}
 
 	.card {
+    width: 300px;
+    height: 440px;
 		display: flex;
-		flex: 1;
+    flex: 0 0 300px;
 		//margin: 20px;
 		justify-content: center;
 		align-items: center;

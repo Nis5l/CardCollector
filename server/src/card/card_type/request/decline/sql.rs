@@ -13,3 +13,13 @@ pub async fn card_type_request_decline(sql: &Sql, card_type_id: &Id) -> Result<(
 
     Ok(())
 }
+
+pub async fn delete_card_type_request_decline(sql: &Sql, card_type_id: &Id) -> Result<(), sqlx::Error> {
+    sqlx::query("DELETE FROM deletecardtypes
+                 WHERE dctid=?;")
+        .bind(card_type_id)
+        .execute(sql.pool())
+        .await?;
+
+    Ok(())
+}

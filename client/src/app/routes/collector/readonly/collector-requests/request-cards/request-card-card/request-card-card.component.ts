@@ -1,10 +1,13 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { Observable, BehaviorSubject, combineLatest, switchMap, filter, startWith, Subject } from 'rxjs';
+import { Observable, BehaviorSubject, combineLatest, switchMap, filter, startWith, Subject, map, of as observableOf } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
 
 import { RequestCardCardService } from './request-card-card.service';
 import type { Card, Id } from '../../../../../../shared/types';
+import { CardState } from '../../../../../../shared/types';
 import { SubscriptionManagerComponent } from '../../../../../../shared/abstract';
 import { LoadingService } from '../../../../../../shared/services';
+import { IUnderstandDialogComponent } from '../../../../../../shared/dialogs';
 import type { VoteGetResponse } from './types';
 import type { CardVote } from '../shared/types';
 
@@ -44,13 +47,23 @@ export class RequestCardCardComponent extends SubscriptionManagerComponent {
 
   public readonly voteResponse$: Observable<VoteGetResponse>;
 
+  public readonly title$: Observable<string>;
+
 	constructor(
 		private readonly loadingService: LoadingService,
-		private readonly requestCardCardService: RequestCardCardService
+		private readonly requestCardCardService: RequestCardCardService,
+    private readonly matDialog: MatDialog,
 	) {
 		super();
     const card$: Observable<Card> = this.cardSubject.asObservable().pipe(
       filter((card): card is Card => card != null)
+    );
+
+    this.title$ = card$.pipe(
+      map(card => {
+        if(card.cardInfo.state == CardState.Delete) return "Delete Card";
+        return (card.updateCard == null ? 'Create' : 'Update') + " Card";
+      }),
     );
 
     this.voteResponse$ = combineLatest([card$, this.refreshVoteSubject.pipe(startWith(0))]).pipe(
@@ -59,7 +72,10 @@ export class RequestCardCardComponent extends SubscriptionManagerComponent {
 	}
 
 	public accept(): void {
-		this.registerSubscription(this.loadingService.waitFor(this.requestCardCardService.accept(this.card.cardInfo.id)).subscribe({
+		this.registerSubscription((this.card.cardInfo.state === CardState.Delete ? IUnderstandDialogComponent.open(this.matDialog, "Deleting this Card will remove it from all inventories!") : observableOf(true)).pipe(
+      filter(result => result === true),
+      switchMap(() => this.loadingService.waitFor(this.requestCardCardService.accept(this.card.cardInfo.id)))
+    ).subscribe({
 			next: () => this.onRemove.next(),
 			error: () => console.error("Error accepting Card Request")
 		}));

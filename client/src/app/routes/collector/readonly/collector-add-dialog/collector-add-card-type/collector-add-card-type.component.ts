@@ -74,7 +74,7 @@ export class CollectorAddCardTypeComponent {
 		this.loadingService.waitFor(this.collectorAddCardTypeService.createCollectorRequest(collectorId, formGroup.getRawValue())).subscribe({
 			next: () => { this.onClose.emit() },
 			error: (err: HttpErrorResponse) => {
-				this.errorSubject.next(err.error?.error ?? "Creating type failed");
+				this.errorSubject.next(err.error?.error ?? "Creating request failed");
 			}
 		})
 	}

@@ -40,23 +40,6 @@ pub async fn card_type_request_accept_update(sql: &Sql, card_type_id: &Id, updat
     Ok(())
 }
 
-pub async fn get_card_type_delete_request(sql: &Sql, delete_card_type_id: &Id) -> Result<Option<Id>, sqlx::Error> {
-    let stmt = sqlx::query_as("SELECT ctid
-                                      FROM deletecardtypes
-                                      WHERE dctid=?;")
-        .bind(delete_card_type_id)
-        .fetch_one(sql.pool())
-        .await;
-
-    if let Err(sqlx::Error::RowNotFound) = stmt {
-        return Ok(None);
-    }
-
-    let (id, ): (Id, ) = stmt?;
-
-    Ok(Some(id))
-}
-
 pub async fn card_type_delete_request_accept(sql: &Sql, delete_card_type_id: &Id, card_type_id: &Id) -> Result<(), sqlx::Error> {
     let mut transaction = sql.pool().begin().await?;
 

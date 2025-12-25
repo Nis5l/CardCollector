@@ -432,6 +432,49 @@ pub async fn get_cards(sql: &Sql, collector_id: &Id, mut name: String, sort_type
 
     let order_by = order_by_string_from_card_sort_type(sort_type);
 
+    if let Some(CardState::Delete) = state {
+        let query = format!(
+               "SELECT
+                deletecards.dcid AS cardId,
+                deletecards.uid AS cardUserId,
+                cards.cname AS cardName,
+                deletecards.dctime AS cardTime,
+                cards.cupdatectid AS updateCard,
+                ? AS cardState,
+                cardtypes.ctid AS typeId,
+                cardtypes.ctname AS typeName,
+                cardtypes.coid AS collectorId,
+                cardtypes.uid AS cardTypeUserId,
+                cardtypes.ctstate AS typeState,
+                cardtypes.cttime AS typeTime
+                FROM deletecards, cards, cardtypes
+                WHERE cards.cid = deletecards.cid
+                AND cards.ctid = cardtypes.ctid
+                AND cardtypes.coid = ?
+                AND (cards.cname LIKE CONCAT('%', ?, '%') OR cardtypes.ctname LIKE CONCAT('%', ?, '%'))
+                ORDER BY {}
+                LIMIT ? OFFSET ?;",
+            order_by
+        );
+
+        let rows: Vec<CardDb> = sqlx::query_as(&query)
+            .bind(CardState::Delete as i64)
+            .bind(collector_id)
+            .bind(&name)
+            .bind(&name)
+            .bind(amount)
+            .bind(offset)
+            .fetch_all(sql.pool())
+            .await?;
+
+        let result = rows
+            .into_iter()
+            .map(|c_db| Card::from((c_db, None::<Card>)))
+            .collect();
+
+        return Ok(result);
+    }
+
     let query = format!(
         "SELECT
          cards.cid AS cardId,
@@ -558,4 +601,38 @@ pub async fn get_card_type(sql: &Sql, collector_id: &Id, card_type_id: &Id) -> R
     };
 
     Ok(Some(CardType::from((card_type_db, reference_db))))
+}
+
+pub async fn get_card_delete_request(sql: &Sql, delete_card_id: &Id) -> Result<Option<Id>, sqlx::Error> {
+    let stmt = sqlx::query_as("SELECT cid
+                                      FROM deletecards
+                                      WHERE dcid=?;")
+        .bind(delete_card_id)
+        .fetch_one(sql.pool())
+        .await;
+
+    if let Err(sqlx::Error::RowNotFound) = stmt {
+        return Ok(None);
+    }
+
+    let (id, ): (Id, ) = stmt?;
+
+    Ok(Some(id))
+}
+
+pub async fn get_card_type_delete_request(sql: &Sql, delete_card_type_id: &Id) -> Result<Option<Id>, sqlx::Error> {
+    let stmt = sqlx::query_as("SELECT ctid
+                                      FROM deletecardtypes
+                                      WHERE dctid=?;")
+        .bind(delete_card_type_id)
+        .fetch_one(sql.pool())
+        .await;
+
+    if let Err(sqlx::Error::RowNotFound) = stmt {
+        return Ok(None);
+    }
+
+    let (id, ): (Id, ) = stmt?;
+
+    Ok(Some(id))
 }

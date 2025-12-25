@@ -1,25 +1,27 @@
 @if (voteResponse$ | async; as voteResponse) {
-  <cc-request-card [title]="(card.updateCard == null ? 'Create' : 'Update') + ' Card'" [userId]="card.cardInfo.userId" [collectorId]="collectorId" [vote]="voteResponse.vote" [votes]="voteResponse.count" (onAccept)="accept()" (onDecline)="decline()" (onVote)="vote(card.cardInfo.id, $event)">
-    <ng-template #cardContent let-c>
-      <cc-card [card]="c"></cc-card>
-    </ng-template>
+  @if (title$ | async; as title) {
+    <cc-request-card [title]="title" [userId]="card.cardInfo.userId" [collectorId]="collectorId" [vote]="voteResponse.vote" [votes]="voteResponse.count" (onAccept)="accept()" (onDecline)="decline()" (onVote)="vote(card.cardInfo.id, $event)">
+      <ng-template #cardContent let-c>
+        <cc-card [card]="c"></cc-card>
+      </ng-template>
 
-    @if (card.updateCard == null) {
-      <div class="card-create">
-        <ng-container *ngTemplateOutlet="cardContent; context: { $implicit: card }"></ng-container>
-      </div>
-    } @else {
-      <div class="card-update">
-        <div class="update">
-          <div class="old">
-            <ng-container *ngTemplateOutlet="cardContent; context: { $implicit: card.updateCard }"></ng-container>
-          </div>
-          <mat-icon color="accent" svgIcon="arrow_right"></mat-icon>
-          <div class="new">
-            <ng-container *ngTemplateOutlet="cardContent; context: { $implicit: card }"></ng-container>
+      @if (card.updateCard == null) {
+        <div class="card-create">
+          <ng-container *ngTemplateOutlet="cardContent; context: { $implicit: card }"></ng-container>
+        </div>
+      } @else {
+        <div class="card-update">
+          <div class="update">
+            <div class="old">
+              <ng-container *ngTemplateOutlet="cardContent; context: { $implicit: card.updateCard }"></ng-container>
+            </div>
+            <mat-icon color="accent" svgIcon="arrow_right"></mat-icon>
+            <div class="new">
+              <ng-container *ngTemplateOutlet="cardContent; context: { $implicit: card }"></ng-container>
+            </div>
           </div>
         </div>
-      </div>
-    }
-  </cc-request-card>
+      }
+    </cc-request-card>
+  }
 }

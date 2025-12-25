@@ -64,8 +64,18 @@ export class CollectorRequestsComponent extends SubscriptionManagerComponent {
       share()
     );
 
-    const cards$ = observableCombineLatest([this.collectorId$, this.pageSubject.asObservable(), this.reloadSubject.asObservable()]).pipe(
-      switchMap(([id, page]) => this.cardService.getCards(id, "", page, CardState.Requested, CardSortType.Recent)),
+    const cards$: Observable<CardIndexResponse> = observableCombineLatest([this.collectorId$, this.pageSubject.asObservable(), this.reloadSubject.asObservable()]).pipe(
+      switchMap(([id, page]) => forkJoin([
+        this.cardService.getCards(id, "", page, CardState.Requested, CardSortType.Recent),
+        this.cardService.getCards(id, "", page, CardState.Delete, CardSortType.Recent)
+    ]).pipe(
+        map(([requested, deleted]) => ({
+          pageSize: requested.page + deleted.pageSize,
+          page: requested.page,
+          cardCount: requested.cardCount + deleted.cardCount,
+          cards: [ ...requested.cards, ...deleted.cards ]
+        }))
+    )),
       share()
     );
     this.loading$ = observableCombineLatest([cardTypes$, cards$]).pipe();

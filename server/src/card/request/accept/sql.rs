@@ -41,3 +41,25 @@ pub async fn card_request_accept_update(sql: &Sql, card_id: &Id, update_card: &C
 
     Ok(())
 }
+
+pub async fn card_delete_request_accept(sql: &Sql, delete_card_id: &Id, card_id: &Id) -> Result<(), sqlx::Error> {
+    let mut transaction = sql.pool().begin().await?;
+
+    sqlx::query("DELETE FROM cards
+                 WHERE cid=?
+                 AND cstate=?;")
+        .bind(&card_id)
+        .bind(CardState::Created as i32)
+        .execute(&mut *transaction)
+        .await?;
+
+    sqlx::query("DELETE FROM deletecards
+                 WHERE dcid=?;")
+        .bind(&delete_card_id)
+        .execute(&mut *transaction)
+        .await?;
+
+    transaction.commit().await?;
+
+    Ok(())
+}

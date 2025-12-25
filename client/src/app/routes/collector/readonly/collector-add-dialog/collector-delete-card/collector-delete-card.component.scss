@@ -1,7 +1,7 @@
 @import '../../../../../../screen.scss';
 
 //TODO: both this and the other are fine for now but still disgusting, maybe one day
-.card-update-container {
+.card-delete-container {
   padding: 30px;
 	width: auto;
 	display: flex;
@@ -45,8 +45,8 @@
 	.card {
     width: 300px;
     height: 440px;
-		display: flex;
     flex: 0 0 300px;
+		display: flex;
 		//margin: 20px;
 		justify-content: center;
 		align-items: center;

@@ -11,6 +11,7 @@ import { CollectorAddCardTypeModule } from './collector-add-card-type';
 import { CollectorAddDialogComponent } from './collector-add-dialog.component';
 import { CollectorUpdateCardTypeModule } from './collector-update-card-type';
 import { CollectorDeleteCardTypeModule } from './collector-delete-card-type';
+import { CollectorDeleteCardModule } from './collector-delete-card';
 
 const MATERIAL_MODULES = [
 	MatTabsModule,
@@ -25,6 +26,7 @@ const MATERIAL_MODULES = [
 
 		CollectorAddCardModule,
     CollectorUpdateCardModule,
+    CollectorDeleteCardModule,
 		CollectorAddCardTypeModule,
     CollectorUpdateCardTypeModule,
     CollectorDeleteCardTypeModule,

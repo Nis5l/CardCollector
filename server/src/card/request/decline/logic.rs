@@ -16,10 +16,21 @@ pub async fn card_request_decline_route(card_id: Id, sql: &State<Sql>, token: Jw
     let user_id = &token.id;
 
     verify_user!(sql, user_id, true);
-    let collector_id = rjtry!(card::sql::get_card_collector_id(sql, &card_id).await);
-    verify_collector_owner_moderator!(sql, &collector_id, user_id);
 
-    rjtry!(sql::card_request_decline(sql, &card_id).await);
+    match rjtry!(card::sql::get_card_delete_request(sql, &card_id).await) {
+        Some(delete_card_id) => {
+            let collector_id = rjtry!(card::sql::get_card_collector_id(sql, &delete_card_id).await);
+            verify_collector_owner_moderator!(sql, &collector_id, user_id);
+
+            rjtry!(sql::delete_card_request_decline(sql, &card_id).await);
+        },
+        None => {
+            let collector_id = rjtry!(card::sql::get_card_collector_id(sql, &card_id).await);
+            verify_collector_owner_moderator!(sql, &collector_id, user_id);
+
+            rjtry!(sql::card_request_decline(sql, &card_id).await);
+        }
+    }
 
     ApiResponseErr::ok(Status::Ok, CardRequestDeclineResponse { message: String::from("Card request declined") })
 }

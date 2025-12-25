@@ -29,7 +29,7 @@
     <mat-tab label="Delete">
       <mat-tab-group mat-stretch-tabs >
         <mat-tab label="Card">
-          <cc-collector-update-card [collectorId]="collectorId" (onClose)="close()"></cc-collector-update-card>
+          <cc-collector-delete-card [collectorId]="collectorId" (onClose)="close()"></cc-collector-delete-card>
         </mat-tab>
         <mat-tab label="Type">
           <cc-collector-delete-card-type [collectorId]="collectorId" (onClose)="close()"></cc-collector-delete-card-type>

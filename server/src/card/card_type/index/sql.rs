@@ -4,20 +4,29 @@ use crate::sql::Sql;
 use crate::shared::{util, Id};
 use crate::shared::card::data::{CardType, CardTypeDb, CardState, CardTypeSortType};
 
+fn order_by_string_from_card_type_sort_type(sort_type: &CardTypeSortType) -> &str {
+    match sort_type {
+        CardTypeSortType::Name => "cardtypes.ctname,\ncardtypes.cttime DESC",
+        CardTypeSortType::Recent => "cardtypes.cttime DESC",
+    }
+}
+
 pub async fn get_card_types(sql: &Sql, collector_id: &Id, mut name: String, sort_type: &CardTypeSortType, amount: u32, offset: u32, state: Option<CardState>) -> Result<Vec<CardType>, sqlx::Error> {
     name = util::escape_for_like(name);
 
     if let Some(CardState::Delete) = state {
-        let query = "
-            SELECT d.dctid as ctid, d.uid, c.ctname, ? as ctstate, c.ctupdatectid
-            FROM deletecardtypes d
-            INNER JOIN cardtypes c ON c.ctid = d.ctid
-            WHERE c.coid = ? AND c.ctname LIKE CONCAT('%', ?, '%')
-            ORDER BY d.dcttime DESC
+        let query = format!("
+            SELECT deletecardtypes.dctid as ctid, deletecardtypes.uid, cardtypes.ctname, ? as ctstate, cardtypes.ctupdatectid
+            FROM deletecardtypes, cardtypes
+            WHERE
+            cardtypes.ctid = deletecardtypes.ctid
+            AND cardtypes.coid = ?
+            AND cardtypes.ctname LIKE CONCAT('%', ?, '%')
+            ORDER BY {}
             LIMIT ? OFFSET ?;
-        ";
+        ", order_by_string_from_card_type_sort_type(sort_type));
 
-        let rows: Vec<CardTypeDb> = sqlx::query_as(query)
+        let rows: Vec<CardTypeDb> = sqlx::query_as(&query)
             .bind(CardState::Delete as i32)
             .bind(collector_id)
             .bind(name)
@@ -43,10 +52,7 @@ pub async fn get_card_types(sql: &Sql, collector_id: &Id, mut name: String, sort
                 Some(_) => "AND ctstate = ?",
                 None => ""
             },
-             match sort_type {
-                CardTypeSortType::Name => "ctname,\ncttime DESC",
-                CardTypeSortType::Recent => "cttime DESC",
-            }
+            order_by_string_from_card_type_sort_type(sort_type)
         );
 
     let mut stmt = sqlx::query_as(&query)
@@ -113,9 +119,10 @@ pub async fn get_card_type_count(sql: &Sql, collector_id: &Id, mut name: String,
     if let Some(CardState::Delete) = state {
         let query = "
             SELECT COUNT(*)
-            FROM deletecardtypes d
-            INNER JOIN cardtypes c ON c.ctid = d.ctid
-            WHERE c.coid = ? AND c.ctname LIKE CONCAT('%', ?, '%')";
+            FROM deletecardtypes, cardtypes
+            WHERE cardtypes.ctid = deletecardtypes.ctid
+            AND cardtypes.coid = ?
+            AND cardtypes.ctname LIKE CONCAT('%', ?, '%')";
 
         let (count, ): (i64, ) = sqlx::query_as(query)
             .bind(collector_id)

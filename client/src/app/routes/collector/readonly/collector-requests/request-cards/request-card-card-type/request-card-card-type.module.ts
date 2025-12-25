@@ -6,7 +6,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { RequestCardCardTypeComponent } from './request-card-card-type.component';
 import { RequestCardCardTypeService } from './request-card-card-type.service';
 import { RequestCardModule } from '../shared';
-import { HttpModule, CardServiceModule } from '../../../../../../shared/services';
+import { HttpModule } from '../../../../../../shared/services';
 import { IUnderstandDialogModule } from '../../../../../../shared/dialogs';
 
 const MATERIAL_MODULES = [
@@ -22,7 +22,6 @@ const MATERIAL_MODULES = [
 
 		HttpModule,
 
-    CardServiceModule,
 		RequestCardModule,
     IUnderstandDialogModule,
 	],
