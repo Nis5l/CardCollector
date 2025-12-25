@@ -142,11 +142,8 @@ pub enum CardTypeSortType {
 #[derive(Debug, Clone, Serialize_repr, FromFormField)]
 #[repr(i32)]
 pub enum CardState {
-    #[field(value = "0")]
     Requested = 0,
-    #[field(value = "1")]
     Created = 1,
-    #[field(value = "2")]
     Delete = 2, //NOTE: virtual, never used in DB
 }
 

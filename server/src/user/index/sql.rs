@@ -2,8 +2,9 @@ use crate::sql::Sql;
 use crate::shared::util;
 use crate::shared::Id;
 use crate::shared::user::data::{UserVerified, UserDb, User};
+use super::data::UsersSortType;
 
-pub async fn get_users(sql: &Sql, mut username: String, exclude_ids: &Vec<Id>, amount: u32, offset: u32) -> Result<Vec<User>, sqlx::Error> {
+pub async fn get_users(sql: &Sql, mut username: String, exclude_ids: &Vec<Id>, sort_type: UsersSortType, amount: u32, offset: u32) -> Result<Vec<User>, sqlx::Error> {
     username = util::escape_for_like(username);
 
      let mut query = String::from("SELECT uid, uusername, uranking, utime
@@ -20,6 +21,14 @@ pub async fn get_users(sql: &Sql, mut username: String, exclude_ids: &Vec<Id>, a
 
         query.push_str(&format!(" AND uid NOT IN ({})", placeholders));
     }
+
+    let order_by = match sort_type {
+        UsersSortType::Name => "users.uusername",
+        UsersSortType::Recent => "users.utime DESC",
+        UsersSortType::MostCards => "(SELECT COUNT(*) FROM cardunlocks WHERE cardunlocks.uid = users.uid) DESC"
+    };
+
+    query.push_str(&format!(" ORDER BY {}", order_by));
 
     query.push_str(" LIMIT ? OFFSET ?");
 

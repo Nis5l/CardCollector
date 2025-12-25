@@ -7,6 +7,7 @@ import { UserListService } from './user-list.service';
 import type { UsersResponse } from './types';
 import { SubscriptionManagerComponent } from '../../abstract';
 import type { Id, User } from '../../types';
+import { UserSortType } from '../../types';
 
 @Component({
     selector: "cc-user-list",
@@ -21,8 +22,8 @@ export class UserListComponent extends SubscriptionManagerComponent {
   @Output()
   public readonly onClick: EventEmitter<User> = new EventEmitter<User>();
 
-  public excludeIdsSubject: BehaviorSubject<Id[]> = new BehaviorSubject<Id[]>([]);
-  public excludeIds$: Observable<Id[]>;
+  public readonly excludeIdsSubject: BehaviorSubject<Id[]> = new BehaviorSubject<Id[]>([]);
+  public readonly excludeIds$: Observable<Id[]>;
 
   @Input()
   public set excludeIds(ids: Id[] | null | undefined) {
@@ -32,6 +33,21 @@ export class UserListComponent extends SubscriptionManagerComponent {
   public get excludeIds(): Id[] {
     return this.excludeIdsSubject.getValue();
   }
+
+  public readonly sortTypes: { text: string, value: UserSortType }[] = [
+    {
+      text: "Name",
+      value: UserSortType.Name,
+    },
+    {
+      text: "Recent",
+      value: UserSortType.Recent,
+    },
+    {
+      text: "Most Cards",
+      value: UserSortType.MostCards,
+    },
+  ];
 
   private readonly pageSubject: BehaviorSubject<number> = new BehaviorSubject<number>(0);
 
@@ -49,8 +65,12 @@ export class UserListComponent extends SubscriptionManagerComponent {
     const searchFormControl = new FormControl("", {
       nonNullable: true,
     });
+
+    const defaultSortType = this.sortTypes[0].value;
+    const sortTypeFormControl = new FormControl(defaultSortType, { nonNullable: true });
     this.formGroup = new FormGroup({
       search: searchFormControl,
+      sortType: sortTypeFormControl
     });
 
     this.loading$ = this.loadingSubject.asObservable();
@@ -66,12 +86,13 @@ export class UserListComponent extends SubscriptionManagerComponent {
 				debounceTime(500),
 				distinctUntilChanged(),
       ),
-      this.excludeIds$
+      this.excludeIds$,
+      sortTypeFormControl.valueChanges.pipe(startWith(defaultSortType)),
     ]).pipe(
-      switchMap(([page, search, excludeIds]) => {
+      switchMap(([page, search, excludeIds, sortType]) => {
         this.loadingSubject.next(true);
         this.usersResponseSubject.next(this.defaultUsersResponse);
-        return this.usersService.getUsers(search, page, excludeIds);
+        return this.usersService.getUsers(search, page, excludeIds, sortType);
       }),
       tap(() => this.loadingSubject.next(false))
     ).subscribe(usersResponse => this.usersResponseSubject.next(usersResponse)));

@@ -5,6 +5,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 
 import { UserListComponent } from './user-list.component';
 import { UserListService } from './user-list.service';
@@ -17,6 +18,7 @@ const MATERIAL_MODULES = [
 	MatPaginatorModule,
 	MatInputModule,
   MatPaginatorModule,
+  MatSelectModule,
   MatIconModule,
 ];
 

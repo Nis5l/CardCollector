@@ -3,6 +3,16 @@
     <mat-form-field class="search-field">
       <input matInput type="text" formControlName="search" placeholder="Search" />
     </mat-form-field>
+    <mat-form-field>
+      <mat-label>Sort Type</mat-label>
+      <mat-select formControlName="sortType">
+        @for (sortType of sortTypes; track sortType) {
+          <mat-option [value]="sortType.value">
+            {{sortType.text}}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
   </form>
   @if (loading$ | async) {
     <div class="loading">

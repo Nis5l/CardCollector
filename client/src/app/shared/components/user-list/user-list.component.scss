@@ -7,15 +7,10 @@
 }
 
 .search {
-  width: min(100%, 400px);
-
-  @media (max-width: $breakpoint-sm) {
-    width: 100%;
-  }
-
-  mat-form-field {
-    width: 100%;
-  }
+  display: flex;
+  gap: 30px;
+  flex-direction: row;
+  margin: 10px;
 }
 
 .loading, .empty {
