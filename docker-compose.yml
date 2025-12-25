@@ -39,6 +39,7 @@ services:
       - caddy_net
     volumes:
       - ./server/static:/server/static
+      - ./server/media:/server/media
 
   client:
     build: client/

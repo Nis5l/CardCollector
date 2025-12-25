@@ -36,6 +36,8 @@ COPY --from=builder /server/target/release/card_collector ./card_collector
 COPY ./Config.json ./Config.json
 COPY ./sqlfiles/ ./sqlfiles/
 COPY ./static/ ./static/
+COPY ./media/ ./media/
+COPY ./media-types/ ./media-types/
 
 ENV LD_LIBRARY_PATH=/usr/lib:$LD_LIBRARY_PATH
 
