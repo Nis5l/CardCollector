@@ -4,7 +4,7 @@ use rocket::http::Status;
 
 use super::sql;
 use super::data::{CardTypeRequestVoteRequest, CardTypeRequestVoteResponse};
-use crate::shared::Id;
+use crate::shared::{card, Id};
 use crate::sql::Sql;
 use crate::verify_user;
 use crate::shared::crypto::JwtToken;
@@ -14,7 +14,10 @@ pub async fn card_type_request_vote_post_route(card_type_id: Id, sql: &State<Sql
     let user_id = &token.id;
 
     verify_user!(sql, user_id, true);
-    rjtry!(sql::vote(sql, user_id, &card_type_id, data.vote).await);
+    match rjtry!(card::sql::get_card_type_delete_request(sql, &card_type_id).await) {
+        Some(_) => rjtry!(sql::vote_delete(sql, user_id, &card_type_id, data.vote).await),
+        None => rjtry!(sql::vote(sql, user_id, &card_type_id, data.vote).await),
+    }
 
     ApiResponseErr::ok(Status::Ok, CardTypeRequestVoteResponse { message: String::from("Vote cast") })
 }

@@ -315,3 +315,25 @@ CREATE TABLE IF NOT EXISTS collectormoderators (
 	PRIMARY KEY (uid, coid),
 	FOREIGN KEY (uid) REFERENCES users (uid)
 ) ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS deletecardvotes (
+        uid VARCHAR(13) NOT NULL,
+		dcid VARCHAR(13) NOT NULL,
+		dcvtype INT NOT NULL,
+        PRIMARY KEY (uid, dcid),
+        FOREIGN KEY (uid) REFERENCES users(uid)
+		ON DELETE CASCADE,
+        FOREIGN KEY (dcid) REFERENCES deletecards(dcid)
+		ON DELETE CASCADE
+) ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS deletecardtypevotes (
+        uid VARCHAR(13) NOT NULL,
+		dctid VARCHAR(13) NOT NULL,
+		dctvtype INT NOT NULL,
+        PRIMARY KEY (uid, dctid),
+        FOREIGN KEY (uid) REFERENCES users(uid)
+		ON DELETE CASCADE,
+        FOREIGN KEY (dctid) REFERENCES deletecardtypes(dctid)
+		ON DELETE CASCADE
+) ENGINE = InnoDB;
