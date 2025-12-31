@@ -11,6 +11,10 @@
 		height: calc(100% - 60px);
 	}
 }
-.mat-toolbar cc-notifications{
-	margin-right: 10px;
+.mat-toolbar {
+  height: 60px;
+
+  cc-notifications{
+    margin-right: 10px;
+  }
 }
