@@ -389,7 +389,7 @@ pub fn order_by_string_from_card_sort_type(sort_type: &CardSortType) -> &str {
              cards.ctime DESC",
         CardSortType::Recent => 
             "cards.ctime DESC",
-        CardSortType::Votes => "(SELECT CAST(COALESCE(SUM(ctvtype), 0) AS SIGNED) FROM cardvotes WHERE cardvotes.cid = cards.cid) DESC"
+        CardSortType::Votes => "votes DESC"
     }
 }
 
@@ -406,7 +406,8 @@ pub async fn get_card(sql: &Sql, collector_id: Option<&Id>, card_id: &Id) -> Res
                  cardtypes.coid,
                  cardtypes.uid AS ctuid,
                  cardtypes.ctstate,
-                 cardtypes.cttime
+                 cardtypes.cttime,
+                 NULL as votes
                  FROM cards, cardtypes
                  WHERE
                  cards.ctid = cardtypes.ctid
@@ -435,10 +436,12 @@ pub async fn get_card(sql: &Sql, collector_id: Option<&Id>, card_id: &Id) -> Res
     return Ok(Some(Card::from((card_db, reference_db))));
 }
 
-pub async fn get_cards(sql: &Sql, collector_id: &Id, mut name: String, sort_type: &CardSortType, amount: u32, offset: u32, state: Option<CardState>) -> Result<Vec<Card>, sqlx::Error> {
+pub async fn get_cards(sql: &Sql, collector_id: &Id, mut name: String, sort_type: &CardSortType, amount: u32, offset: u32, state: Option<CardState>, include_votes: bool) -> Result<Vec<Card>, sqlx::Error> {
     name = util::escape_for_like(name);
 
     let order_by = order_by_string_from_card_sort_type(sort_type);
+
+    let votes_select = include_votes || *sort_type == CardSortType::Votes;
 
     if let Some(CardState::Delete) = state {
         let query = format!(
@@ -454,6 +457,7 @@ pub async fn get_cards(sql: &Sql, collector_id: &Id, mut name: String, sort_type
                 cardtypes.coid,
                 cardtypes.uid AS ctuid,
                 cardtypes.ctstate,
+                {}
                 cardtypes.cttime
                 FROM deletecards, cards, cardtypes
                 WHERE cards.cid = deletecards.cid
@@ -462,6 +466,7 @@ pub async fn get_cards(sql: &Sql, collector_id: &Id, mut name: String, sort_type
                 AND (cards.cname LIKE CONCAT('%', ?, '%') OR cardtypes.ctname LIKE CONCAT('%', ?, '%'))
                 ORDER BY {}
                 LIMIT ? OFFSET ?;",
+            if votes_select { "(SELECT CAST(COALESCE(SUM(dcvtype), 0) AS SIGNED) FROM deletecardvotes WHERE deletecardvotes.dcid = deletecards.dcid) as votes," } else { "NULL as votes," },
             order_by
         );
 
@@ -496,6 +501,7 @@ pub async fn get_cards(sql: &Sql, collector_id: &Id, mut name: String, sort_type
          cardtypes.coid,
          cardtypes.uid AS ctuid,
          cardtypes.ctstate,
+         {}
          cardtypes.cttime
          FROM cards, cardtypes
          WHERE
@@ -506,12 +512,14 @@ pub async fn get_cards(sql: &Sql, collector_id: &Id, mut name: String, sort_type
          ORDER BY
          {}
          LIMIT ? OFFSET ?;",
+        if votes_select { "(SELECT CAST(COALESCE(SUM(cvtype), 0) AS SIGNED) FROM cardvotes WHERE cardvotes.cid = cards.cid) as votes," } else { "NULL as votes," },
          match state {
             Some(_) => "AND cards.cstate = ?",
             None => ""
          },
          order_by
     );
+    println!("{:?}", query);
 
     let mut stmt = sqlx::query_as(&query)
          .bind(&name)
@@ -547,7 +555,8 @@ pub async fn get_cards(sql: &Sql, collector_id: &Id, mut name: String, sort_type
              cardtypes.coid,
              cardtypes.uid AS ctuid,
              cardtypes.ctstate,
-             cardtypes.cttime
+             cardtypes.cttime,
+             NULL as votes
              FROM cards, cardtypes
              WHERE
              cards.ctid = cardtypes.ctid
@@ -587,7 +596,7 @@ pub async fn get_cards(sql: &Sql, collector_id: &Id, mut name: String, sort_type
 }
 
 pub async fn get_card_type(sql: &Sql, collector_id: &Id, card_type_id: &Id) -> Result<Option<CardType>, sqlx::Error> {
-    let query = "SELECT ctid, uid, ctname, cttime, ctstate, ctupdatectid
+    let query = "SELECT ctid, uid, ctname, cttime, ctstate, ctupdatectid, NULL as votes
                  FROM cardtypes
                  WHERE ctid = ? AND coid=?;";
 

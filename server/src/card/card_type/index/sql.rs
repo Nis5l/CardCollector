@@ -8,16 +8,18 @@ fn order_by_string_from_card_type_sort_type(sort_type: &CardTypeSortType) -> &st
     match sort_type {
         CardTypeSortType::Name => "cardtypes.ctname,\ncardtypes.cttime DESC",
         CardTypeSortType::Recent => "cardtypes.cttime DESC",
-        CardTypeSortType::Votes => "(SELECT CAST(COALESCE(SUM(ctvtype), 0) AS SIGNED) FROM cardtypevotes WHERE cardtypevotes.ctid = cardtypes.ctid) DESC"
+        CardTypeSortType::Votes => "votes DESC"
     }
 }
 
-pub async fn get_card_types(sql: &Sql, collector_id: &Id, mut name: String, sort_type: &CardTypeSortType, amount: u32, offset: u32, state: Option<CardState>) -> Result<Vec<CardType>, sqlx::Error> {
+pub async fn get_card_types(sql: &Sql, collector_id: &Id, mut name: String, sort_type: &CardTypeSortType, amount: u32, offset: u32, state: Option<CardState>, include_votes: bool) -> Result<Vec<CardType>, sqlx::Error> {
     name = util::escape_for_like(name);
+
+    let votes_select = include_votes || *sort_type == CardTypeSortType::Votes;
 
     if let Some(CardState::Delete) = state {
         let query = format!("
-            SELECT deletecardtypes.dctid as ctid, deletecardtypes.uid, deletecardtypes.dcttime as cttime, cardtypes.ctname, ? as ctstate, cardtypes.ctupdatectid
+            SELECT deletecardtypes.dctid as ctid, deletecardtypes.uid, deletecardtypes.dcttime as cttime, cardtypes.ctname, ? as ctstate, {} cardtypes.ctupdatectid
             FROM deletecardtypes, cardtypes
             WHERE
             cardtypes.ctid = deletecardtypes.ctid
@@ -25,7 +27,9 @@ pub async fn get_card_types(sql: &Sql, collector_id: &Id, mut name: String, sort
             AND cardtypes.ctname LIKE CONCAT('%', ?, '%')
             ORDER BY {}
             LIMIT ? OFFSET ?;
-        ", order_by_string_from_card_type_sort_type(sort_type));
+        ",
+        if votes_select { "(SELECT CAST(COALESCE(SUM(dctvtype), 0) AS SIGNED) FROM deletecardtypevotes WHERE deletecardtypevotes.dctid = deletecardtypes.dctid) as votes," } else { "NULL as votes," },
+        order_by_string_from_card_type_sort_type(sort_type));
 
         let rows: Vec<CardTypeDb> = sqlx::query_as(&query)
             .bind(CardState::Delete as i32)
@@ -41,7 +45,7 @@ pub async fn get_card_types(sql: &Sql, collector_id: &Id, mut name: String, sort
     }
 
     let query = format!(
-        "SELECT ctid, uid, cttime, ctname, ctstate, ctupdatectid
+        "SELECT ctid, uid, cttime, ctname, ctstate, {} ctupdatectid
          FROM cardtypes
          WHERE ctname LIKE CONCAT('%', ?, '%') AND
          coid = ?
@@ -49,6 +53,7 @@ pub async fn get_card_types(sql: &Sql, collector_id: &Id, mut name: String, sort
          ORDER BY
          {}
          LIMIT ? OFFSET ?;",
+            if votes_select { "(SELECT CAST(COALESCE(SUM(ctvtype), 0) AS SIGNED) FROM cardtypevotes WHERE cardtypevotes.ctid = cardtypes.ctid) as votes," } else { "NULL as votes," },
              match state {
                 Some(_) => "AND ctstate = ?",
                 None => ""
@@ -77,7 +82,7 @@ pub async fn get_card_types(sql: &Sql, collector_id: &Id, mut name: String, sort
 
     let update_card_types_map: HashMap<Id, CardType> = if !card_type_reference_ids.is_empty() {
         let query = format!(
-            "SELECT ctid, cttime, uid, ctname, ctstate, ctupdatectid
+            "SELECT ctid, cttime, uid, ctname, ctstate, ctupdatectid, NULL as votes
              FROM cardtypes
              WHERE ctid IN ({})",
             card_type_reference_ids.iter().map(|_| "?").collect::<Vec<_>>().join(",")

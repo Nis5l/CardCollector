@@ -46,6 +46,7 @@ pub struct Config {
     pub inventory_page_amount: u32,
     pub flex_cards_amount: u32,
     pub card_type_page_amount: u32,
+    pub card_page_amount: u32,
 
     pub max_friends: u32,
     pub max_trades: u32,
@@ -139,6 +140,7 @@ impl Default for Config {
             inventory_page_amount: 20,
             flex_cards_amount: 9,
             card_type_page_amount: 10,
+            card_page_amount: 10,
 
             max_friends: 999,
             max_trades: 5,

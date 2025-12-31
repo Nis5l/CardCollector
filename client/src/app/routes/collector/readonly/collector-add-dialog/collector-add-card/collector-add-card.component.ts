@@ -49,7 +49,8 @@ export class CollectorAddCardComponent extends SubscriptionManagerComponent {
 		userId: null,
     state: CardState.Created,
     time: (new Date()).toISOString(),
-    updateCardType: null
+    updateCardType: null,
+    votes: null
 	};
 
 	private readonly cardSubject: BehaviorSubject<Card> = new BehaviorSubject<Card>({
@@ -63,6 +64,7 @@ export class CollectorAddCardComponent extends SubscriptionManagerComponent {
     },
     cardType: this.cardTypeDefault,
     updateCard: null,
+    votes: null,
 	});
 
 	public readonly card$: Observable<Card>;

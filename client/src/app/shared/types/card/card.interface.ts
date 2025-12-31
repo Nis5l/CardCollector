@@ -7,4 +7,5 @@ export interface Card {
 	cardInfo: CardInfo,
 	cardType: CardType,
   updateCard: Card | null | undefined,
+  votes: number | undefined | null,
 }

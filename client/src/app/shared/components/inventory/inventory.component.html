@@ -5,7 +5,7 @@
         <input matInput type="text" formControlName="search" placeholder="Search" />
       </mat-form-field>
       <mat-form-field>
-        <mat-label>Sort Type</mat-label>
+        <mat-label>Sort</mat-label>
         <mat-select formControlName="sortType">
           @for (sortType of sortTypes; track sortType) {
             <mat-option [value]="sortType.value">

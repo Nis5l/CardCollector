@@ -1,11 +1,22 @@
 @import "../../../../../screen.scss";
 
 .request-container {
-	margin: 20px;
-	display: flex;
-	gap: 30px;
-	justify-content: center;
-	flex-direction: column;
+	margin-top: 30px;
+  margin-bottom: 80px; //so floating button does not cover navigation
+
+  .requests {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .options {
+    display: flex;
+    gap: 30px;
+    flex-direction: row;
+    margin: 10px;
+  }
 
   .loading, .empty {
     height: 300px;

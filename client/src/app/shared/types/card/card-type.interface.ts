@@ -8,4 +8,5 @@ export interface CardType {
   state: CardState,
   time: string,
   updateCardType: CardType | null | undefined,
+  votes: number | undefined | null,
 }

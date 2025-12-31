@@ -1,15 +1,30 @@
 @if (collectorId$ | async; as collectorId) {
   <div class="request-container">
+    <form [formGroup]="formGroup" class="options">
+      <mat-form-field>
+        <mat-label>Sort</mat-label>
+        <mat-select formControlName="sortType">
+          @for (sortType of sortTypes; track sortType) {
+            <mat-option [value]="sortType.value">
+              {{sortType.text}}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </form>
+
     @if (combinedRequestIndex$ | async; as combinedRequestIndex) {
       @if (!(loading$ | async)) {
         @if (combinedRequestIndex.requests.length > 0) {
-          @for (request of combinedRequestIndex.requests; track request) {
-            @if (request.kind === "cardType") {
-              <cc-request-card-card-type (onRemove)="reload()" [cardType]="request.data" [collectorId]="collectorId"></cc-request-card-card-type>
-            } @else if (request.kind === "card") {
-              <cc-request-card-card (onRemove)="reload()" [card]="request.data" [collectorId]="collectorId"></cc-request-card-card>
+          <div class="requests">
+            @for (request of combinedRequestIndex.requests; track request) {
+                @if (request.kind === "cardType") {
+                  <cc-request-card-card-type (onRemove)="reload()" [cardType]="request.data" [collectorId]="collectorId"></cc-request-card-card-type>
+                } @else if (request.kind === "card") {
+                  <cc-request-card-card (onRemove)="reload()" [card]="request.data" [collectorId]="collectorId"></cc-request-card-card>
+                }
             }
-          }
+          </div>
         } @else {
           <div class="empty">
             <div class="empty-content">
@@ -26,7 +41,7 @@
         </div>
       }
 
-      <mat-paginator [length]="combinedRequestIndex.count" [pageSize]="combinedRequestIndex.pageSize" (page)="changePage($event)"></mat-paginator>
+      <mat-paginator [length]="combinedRequestIndex.count" [pageSize]="combinedRequestIndex.pageSize" (page)="changePage($event)" [hidePageSize]="true" [disabled]="!(combinedRequestIndex.hasMore)"></mat-paginator>
     }
   </div>
   <button class="floating-button-br" mat-fab aria-label="Add" (click)="openAddDialog(collectorId)">

@@ -19,6 +19,7 @@ interface CombinedRequestIndex {
   pageSize: number,
   page: number,
   count: number,
+  hasMore: boolean,
   requests: CombinedRequest[]
 }
 
@@ -40,13 +41,13 @@ export class CollectorRequestsComponent extends SubscriptionManagerComponent {
     count: 0,
     page: 0,
     pageSize: 0,
+    hasMore: false,
     requests: []
   };
   private readonly combinedRequestIndexSubject: BehaviorSubject<CombinedRequestIndex> = new BehaviorSubject(this.defaultCombinedRequestIndex);
   public readonly combinedRequestIndex$: Observable<CombinedRequestIndex>;
 
-  //TODO: not working rn, cant sort client side
-  /* public readonly sortTypes: { text: string, value: { card: CardSortType, cardType: CardTypeSortType } }[] = [
+  public readonly sortTypes: { text: string, value: { card: CardSortType, cardType: CardTypeSortType } }[] = [
     {
       text: "Recent",
       value: {
@@ -63,7 +64,7 @@ export class CollectorRequestsComponent extends SubscriptionManagerComponent {
     },
   ];
 
-  public readonly formGroup; */
+  public readonly formGroup;
 
   constructor(
     private readonly cardService: CardService,
@@ -72,12 +73,12 @@ export class CollectorRequestsComponent extends SubscriptionManagerComponent {
   ){
     super();
 
-    /* const defaultSortType = this.sortTypes[0].value;
+    const defaultSortType = this.sortTypes[0].value;
     const sortTypeFormControl = new FormControl(defaultSortType, { nonNullable: true });
 
     this.formGroup = new FormGroup({
       sortType: sortTypeFormControl
-    }); */
+    });
 
     const params$ = this.activatedRoute.parent?.params ?? this.activatedRoute.params;
 
@@ -95,47 +96,65 @@ export class CollectorRequestsComponent extends SubscriptionManagerComponent {
     const combinedRequests$ = observableCombineLatest([
       this.collectorId$,
       this.pageSubject.asObservable(),
-      //sortTypeFormControl.valueChanges.pipe(startWith(defaultSortType)),
+      sortTypeFormControl.valueChanges.pipe(startWith(defaultSortType)),
       this.reloadSubject.asObservable().pipe(startWith(0)),
     ]).pipe(
       tap(() => this.loadingSubject.next(true)),
-      switchMap(([id, page]) => forkJoin([
-        this.cardService.getCardTypes(id, "", page, CardState.Requested, CardTypeSortType.Recent),
-        this.cardService.getCardTypes(id, "", page, CardState.Delete, CardTypeSortType.Recent),
-        this.cardService.getCards(id, "", page, CardState.Requested, CardSortType.Recent),
-        this.cardService.getCards(id, "", page, CardState.Delete, CardSortType.Recent)
-      ])),
-      map(([reqCardType, delCardType, reqCard, delCard]) => {
-        const requests: CombinedRequest[] = [
-          ...[...reqCardType.cardTypes, ...delCardType.cardTypes].map(ct => ({
-            kind: 'cardType' as const,
-            data: ct
-          })),
-          ...[...reqCard.cards, ...delCard.cards].map(c => ({
-            kind: 'card' as const,
-            data: c
-          }))
-        ].sort((a, b) => {
-          const aTime =
-            a.kind === 'cardType'
-              ? new Date(a.data.time).getTime()
-              : new Date(a.data.cardInfo.time).getTime();
+      switchMap(([id, page, sort_type]) => forkJoin([
+          this.cardService.getCardTypes(id, "", page, CardState.Requested, sort_type.cardType),
+          this.cardService.getCardTypes(id, "", page, CardState.Delete, sort_type.cardType),
+          this.cardService.getCards(id, "", page, CardState.Requested, sort_type.card),
+          this.cardService.getCards(id, "", page, CardState.Delete, sort_type.card)
+        ]).pipe(
+          map(([reqCardType, delCardType, reqCard, delCard]) => {
+            const requests: CombinedRequest[] = [
+              ...[...reqCardType.cardTypes, ...delCardType.cardTypes].map(ct => ({
+                kind: 'cardType' as const,
+                data: ct
+              })),
+              ...[...reqCard.cards, ...delCard.cards].map(c => ({
+                kind: 'card' as const,
+                data: c
+              }))
+            ].sort((a, b) => {
+              if(sort_type.card == CardSortType.Recent && sort_type.cardType == CardTypeSortType.Recent) {
+                const aTime =
+                  a.kind === 'cardType'
+                    ? new Date(a.data.time).getTime()
+                    : new Date(a.data.cardInfo.time).getTime();
 
-          const bTime =
-            b.kind === 'cardType'
-              ? new Date(b.data.time).getTime()
-              : new Date(b.data.cardInfo.time).getTime();
+                const bTime =
+                  b.kind === 'cardType'
+                    ? new Date(b.data.time).getTime()
+                    : new Date(b.data.cardInfo.time).getTime();
 
-          return bTime - aTime; // recent DESC
-        });
+                return bTime - aTime;
+              }
 
-        return {
-          page: reqCardType.page, //NOTE: should always match, if not throw error or display something atleast? I guess best would be displaying something and important log... TODO
-          count: reqCardType.cardTypeCount + delCardType.cardTypeCount + reqCard.cardCount + delCard.cardCount,
-          pageSize: reqCardType.pageSize + delCardType.pageSize + reqCard.pageSize + delCard.pageSize,
-          requests
-        };
-      }),
+              if(sort_type.card == CardSortType.Votes && sort_type.cardType == CardTypeSortType.Votes) {
+                if(a.data.votes == null || b.data.votes == null) throw new Error("votes not set");
+                return b.data.votes - a.data.votes;
+              }
+
+              throw new Error("Invalid sort type");
+            });
+
+            const hasMore =
+              (reqCardType.page * reqCardType.pageSize + reqCardType.cardTypes.length) < reqCardType.cardTypeCount ||
+              (delCardType.page * delCardType.pageSize + delCardType.cardTypes.length) < delCardType.cardTypeCount ||
+              (reqCard.page * reqCard.pageSize + reqCard.cards.length) < reqCard.cardCount ||
+              (delCard.page * delCard.pageSize + delCard.cards.length) < delCard.cardCount;
+
+            return {
+              page: reqCardType.page, //NOTE: should always match, if not throw error or display something atleast? I guess best would be displaying something and important log... TODO
+              count: reqCardType.cardTypeCount + delCardType.cardTypeCount + reqCard.cardCount + delCard.cardCount,
+              pageSize: reqCardType.pageSize + delCardType.pageSize + reqCard.pageSize + delCard.pageSize, //TODO: find better paging fix
+              hasMore,
+              requests
+            };
+          })
+        ),
+      ),
       tap(() => this.loadingSubject.next(false)),
       shareReplay(1)
     );

@@ -33,7 +33,8 @@ pub struct CardTypeDb {
     pub uid: Id,
     pub ctstate: i32,
     pub cttime: DateTime<Utc>,
-    pub ctupdatectid: Option<Id>
+    pub ctupdatectid: Option<Id>,
+    pub votes: Option<i32>,
 }
 
 #[derive(Debug, Serialize, Clone, FromRow)]
@@ -44,7 +45,8 @@ pub struct CardType {
     pub user_id: Id,
     pub state: CardState,
     pub time: DateTime<Utc>,
-    pub update_card_type: Option<Box<CardType>>
+    pub update_card_type: Option<Box<CardType>>,
+    pub votes: Option<i32>,
 }
 
 #[derive(Debug, Serialize)]
@@ -69,6 +71,8 @@ pub struct CardDb {
     pub ctname: String,
     pub cttime: DateTime<Utc>,
     pub coid: Id,
+
+    pub votes: Option<i32>,
 }
 
 #[derive(Debug, Serialize, Clone)]
@@ -77,7 +81,8 @@ pub struct Card {
     pub collector_id: Id,
     pub card_info: CardInfo,
     pub card_type: CardType,
-    pub update_card: Option<Box<Card>>
+    pub update_card: Option<Box<Card>>,
+    pub votes: Option<i32>,
 }
 
 #[derive(Debug, Serialize, FromRow)]
@@ -132,7 +137,7 @@ pub struct UnlockedCardCreateData {
     pub level: i32
 }
 
-#[derive(Debug, FromFormField, Serialize_repr)]
+#[derive(Debug, FromFormField, Serialize_repr, PartialEq)]
 #[repr(i32)]
 pub enum CardTypeSortType {
     Name = 0,
@@ -148,7 +153,7 @@ pub enum CardState {
     Delete = 2, //NOTE: virtual, never used in DB
 }
 
-#[derive(Debug, FromFormField, Serialize_repr)]
+#[derive(Debug, FromFormField, Serialize_repr, PartialEq)]
 #[repr(i32)]
 pub enum SortType {
     Name = 0,
@@ -157,7 +162,7 @@ pub enum SortType {
     CardType = 3,
 }
 
-#[derive(Debug, FromFormField, Serialize_repr)]
+#[derive(Debug, FromFormField, Serialize_repr, PartialEq)]
 #[repr(i32)]
 pub enum CardSortType {
     Name = 0,
@@ -194,7 +199,8 @@ impl From<CardTypeDb> for CardType {
             name: card_type_db.ctname,
             state: CardState::from(card_type_db.ctstate),
             time: card_type_db.cttime,
-            update_card_type: None
+            update_card_type: None,
+            votes: card_type_db.votes,
         }
     }
 }
@@ -263,6 +269,8 @@ impl From<UnlockedCardDb> for UnlockedCard {
                 ctname: unlocked_card_db.ctname,
                 cttime: unlocked_card_db.cttime,
                 coid: unlocked_card_db.coid,
+
+                votes: None
             })
         }
     }
@@ -285,9 +293,11 @@ impl From<CardDb> for Card {
                 uid: card.ctuid,
                 cttime: card.cttime,
                 ctstate: card.ctstate,
-                ctupdatectid: None
+                ctupdatectid: None,
+                votes: None,
             }),
             update_card: None,
+            votes: card.votes
         }
     }
 }
