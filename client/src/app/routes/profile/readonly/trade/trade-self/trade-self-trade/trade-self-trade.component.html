@@ -4,10 +4,14 @@
     @if (tradeInfo != null) {
       <div class="wrap cards">
         @for (selfCard of tradeInfo.selfCards; track selfCard) {
-          <cc-card [card]="selfCard" click="event" (clickEvent)="removeCard(selfCard)"></cc-card>
+          <div class="card">
+            <cc-card [card]="selfCard" click="event" (clickEvent)="removeCard(selfCard)"></cc-card>
+          </div>
         }
         @for (friendCardSuggestion of tradeInfo.friendCardSuggestions; track friendCardSuggestion) {
-          <cc-card [card]="friendCardSuggestion" click="event" (clickEvent)="acceptSuggestion(friendCardSuggestion)" [suggestion]="true"></cc-card>
+          <div class="card">
+            <cc-card [card]="friendCardSuggestion" click="event" (clickEvent)="acceptSuggestion(friendCardSuggestion)" [suggestion]="true"></cc-card>
+          </div>
         }
       </div>
     }

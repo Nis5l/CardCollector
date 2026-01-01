@@ -12,16 +12,20 @@
         </div>
         <div class="card-frame">
           @if (level$ | async; as level) {
-            <div class="level">{{level}}</div>
+            <div class="level" #levelContainer>
+              <div [fittext]="true" [activateOnResize]="true" [activateOnInputEvents]="true" [modelToWatch]="level" [minFontSize]="1" #level>{{level}}</div>
+            </div>
           }
           @if (quality$ | async; as quality) {
-            <div class="quality">{{quality}}</div>
+            <div class="quality" #qualityContainer>
+              <div [fittext]="true" [activateOnResize]="true" [activateOnInputEvents]="true" [modelToWatch]="quality" [minFontSize]="1" #quality>{{quality}}</div>
+            </div>
           }
-          <div class="card-name" *ngIf="name$ | async as name">
-            <div [fittext]="true" [activateOnResize]="true" [activateOnInputEvents]="true" [modelToWatch]="name" [minFontSize]="1">{{name}}</div>
+          <div class="card-name" *ngIf="name$ | async as name" #cardNameContainer>
+            <div [fittext]="true" [activateOnResize]="true" [activateOnInputEvents]="true" [modelToWatch]="name" [minFontSize]="1" #cardName>{{name}}</div>
           </div>
 
-          <div class="card-type-name" *ngIf="type$ | async as type">
+          <div class="card-type-name" *ngIf="type$ | async as type" #cardType>
             <div [fittext]="true" [activateOnResize]="true" [activateOnInputEvents]="true" [modelToWatch]="type">{{type}}</div>
           </div>
 

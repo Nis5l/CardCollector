@@ -1,7 +1,15 @@
 .card{
+  display: flex;
+  width: 100%;
   .card-container{
     position: relative;
-    width: 300px;
+    width: 100%;
+    // max-width: 300px; // optional cap
+    // min-width: 250px; // prevents shrinking too much
+    // flex: 1 1 300px;
+    // max-width: 300px;
+    //min-width: 200px;
+    //width: 300px;
     //aspect-ratio: 330 / 516;
     aspect-ratio: 312 / 457;
     //margin: 10%;
@@ -84,18 +92,18 @@
     }
     .level {
       position: absolute;
+      width: 10%;
       color: #FFD700;
-      font-size: 25pt;
-      top: -3px;
-      left: -2px;
+      top: -3%;
+      left: 0;
       z-index: 1;
     }
     .quality {
       position: absolute;
+      width: 10%;
       color: #C0C0C0;
-      font-size: 25pt;
-      top: -3px;
-      right: 2px;
+      top: -3%;
+      right: 0;
       z-index: 1;
     }
 

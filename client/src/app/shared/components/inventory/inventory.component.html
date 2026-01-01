@@ -25,7 +25,9 @@
     @if (inventoryResponse.cards.length > 0) {
       <div class="cards">
         @for (card of inventoryResponse.cards; track card) {
-          <cc-card [card]="card" [click]="click" (clickEvent)="clickEvent.emit(card.id)"></cc-card>
+          <div class="card">
+            <cc-card [card]="card" [click]="click" (clickEvent)="clickEvent.emit(card.id)"></cc-card>
+          </div>
         }
       </div>
     } @else {

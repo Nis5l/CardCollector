@@ -69,6 +69,7 @@
       }
 
       cc-card {
+        width: 300px;
         position: fixed;
         margin-top: 165px;
         @media (max-width: $breakpoint-xl) {
@@ -82,6 +83,7 @@
       flex: 1;
       flex-direction: column;
       justify-content: center;
+      //align-items: center;
 
       @media (min-width: $breakpoint-xl) {
         margin: 30px 70px 0 70px;

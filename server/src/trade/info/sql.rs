@@ -14,7 +14,7 @@ pub async fn trade_cards(sql: &Sql, user_id: &Id, trade_id: &Id) -> Result<Vec<U
          cards.uid AS ccuid,
          cards.cname,
          cards.ctime,
-         cardtypes.cstate,
+         cards.cstate,
          cardtypes.ctid,
          cardtypes.ctname,
          cardtypes.uid AS ctuid,
@@ -24,7 +24,7 @@ pub async fn trade_cards(sql: &Sql, user_id: &Id, trade_id: &Id) -> Result<Vec<U
          cardframes.cfid,
          cardframes.cfname,
          cardeffects.ceid,
-         cardeffects.ceopacity AS effectOpacity
+         cardeffects.ceopacity
          FROM (tradecards, cardunlocks, cards, cardtypes)
          LEFT JOIN cardframes ON cardframes.cfid = cardunlocks.cfid
          LEFT JOIN cardeffects ON cardeffects.ceid = cardunlocks.culevel

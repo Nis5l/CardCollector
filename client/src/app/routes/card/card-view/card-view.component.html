@@ -13,7 +13,9 @@
 
   @if (!(loading$ | async)) {
     @if (card != null) {
-      <cc-card [card]="card"></cc-card>
+      <div class="card">
+        <cc-card [card]="card"></cc-card>
+      </div>
     } @else {
       <div class="empty">
         <div class="empty-content">

@@ -1,7 +1,8 @@
-import { Component, Input, EventEmitter, Output } from '@angular/core';
+import { Component, Input, EventEmitter, Output, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { Observable,  BehaviorSubject, timer, filter, map, combineLatest } from 'rxjs';
 import type { SafeResourceUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { Ng2FittextDirective } from 'ng2-fittext';
 
 import type { UnlockedCard, Card } from '../../types';
 import { SubscriptionManagerComponent } from '../../abstract';
@@ -17,7 +18,7 @@ function isCard(card: UnlockedCard | Card): card is Card {
     styleUrls: ['./card.component.scss'],
     standalone: false
 })
-export class CardComponent extends SubscriptionManagerComponent {
+export class CardComponent extends SubscriptionManagerComponent implements OnDestroy {
 	private readonly cardSubject: BehaviorSubject<UnlockedCard | Card | null> = new BehaviorSubject<UnlockedCard | Card | null>(null);
 	public readonly card$: Observable<UnlockedCard | Card>;
   @Output()
@@ -61,6 +62,26 @@ export class CardComponent extends SubscriptionManagerComponent {
 	public readonly level$: Observable<string>;
 	public readonly quality$: Observable<string>;
 	public readonly effectImage$: Observable<string>;
+
+  private fitTextObservers: Record<string, ResizeObserver> = {};
+  private lastParentWidths: Record<string, number> = {};
+  @ViewChild('cardType', { static: true, read: Ng2FittextDirective }) cardTypeFitText!: Ng2FittextDirective;
+  @ViewChild('cardName', { read: Ng2FittextDirective }) cardNameFitText!: Ng2FittextDirective;
+  @ViewChild('quality', { read: Ng2FittextDirective }) qualityFitText!: Ng2FittextDirective;
+  @ViewChild('level', { read: Ng2FittextDirective }) levelFitText!: Ng2FittextDirective;
+
+  @ViewChild('cardTypeContainer') set cardTypeRefSetter(el: ElementRef | undefined) {
+    this.registerFitTextObserver(el, this.cardTypeFitText, "type");
+  }
+  @ViewChild('cardNameContainer') set cardNameRefSetter(el: ElementRef | undefined) {
+    this.registerFitTextObserver(el, this.cardNameFitText, "name");
+  }
+  @ViewChild('levelContainer') set levelRefSetter(el: ElementRef | undefined) {
+    this.registerFitTextObserver(el, this.levelFitText, "level");
+  }
+  @ViewChild('qualityContainer') set qualityRefSetter(el: ElementRef | undefined) {
+    this.registerFitTextObserver(el, this.qualityFitText, "quality");
+  }
 
 	constructor(
     private readonly cardService: CardService,
@@ -108,6 +129,14 @@ export class CardComponent extends SubscriptionManagerComponent {
     );
 	}
 
+  override ngOnDestroy() {
+    super.ngOnDestroy();
+
+    for (const o of Object.values(this.fitTextObservers)) {
+      o.disconnect();
+    }
+  }
+
   public onClick(card: Card | UnlockedCard | null): void {
     if(this.turning === true) return;
     if(this.turn) {
@@ -135,5 +164,26 @@ export class CardComponent extends SubscriptionManagerComponent {
         this.clickEvent.emit();
       } break;
     }
+  }
+
+  private registerFitTextObserver(el: ElementRef | undefined, fitText: Ng2FittextDirective, observerTag: string): void {
+    if(el == null || fitText == null) return;
+
+    if(this.fitTextObservers[observerTag] != null) this.fitTextObservers[observerTag].disconnect();
+
+    this.fitTextObservers[observerTag] = new ResizeObserver(() => {
+      const currentWidth = el.nativeElement.offsetWidth;
+      const lastWidth = this.lastParentWidths[observerTag];
+      if (!lastWidth || Math.abs(currentWidth - lastWidth) / lastWidth > 0.1) {
+        fitText.onResize?.(new Event('resize'));
+        this.lastParentWidths[observerTag] = currentWidth;
+      }
+    });
+
+    if (!this.lastParentWidths[observerTag]) {
+      this.lastParentWidths[observerTag] = el.nativeElement.offsetWidth;
+    }
+
+    this.fitTextObservers[observerTag].observe(el.nativeElement);
   }
 }
