@@ -31,5 +31,4 @@ For production docker-compose is used.
   Friend list with link to trade under collector and same for collectors in friends. ? \
   Sidebar theme. \
   Notifications style \
-  display times \
-  Fix card display (CENTER)
+  display times
