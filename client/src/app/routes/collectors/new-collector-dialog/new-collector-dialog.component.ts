@@ -45,11 +45,11 @@ export class NewCollectorDialogComponent extends SubscriptionManagerComponent {
       map(config => new FormGroup({
           name: new FormControl("", {
             nonNullable: true,
-            validators: [ Validators.required, Validators.minLength(config.name.minLength), Validators.maxLength(config.name.maxLength) ]
+            validators: [ Validators.required, Validators.minLength(config.name.min), Validators.maxLength(config.name.max) ]
           }),
           description: new FormControl("", {
             nonNullable: true,
-            validators: [ Validators.required, Validators.minLength(config.description.minLength), Validators.maxLength(config.description.maxLength) ]
+            validators: [ Validators.required, Validators.minLength(config.description.min), Validators.maxLength(config.description.max) ]
           })
         })
        ),

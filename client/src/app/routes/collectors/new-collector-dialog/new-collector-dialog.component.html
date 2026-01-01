@@ -8,15 +8,15 @@
           <mat-icon color="accent" svgIcon="close"></mat-icon>
         </button>
       </mat-toolbar>
-      <form [formGroup]="formGroup" (submit)="onCreate(formGroup)">
+      <form [formGroup]="formGroup" (ngSubmit)="onCreate(formGroup)">
         <mat-form-field appearance="outline">
           <input matInput type="text" formControlName="name" placeholder="Name" />
-          <mat-error>Name has to be {{config.name.minLength}}-{{config.name.maxLength}} characters</mat-error>
+          <mat-error>Name has to be {{config.name.min}}-{{config.name.max}} characters</mat-error>
         </mat-form-field>
         <mat-form-field appearance="outline">
           <mat-label>Description</mat-label>
           <textarea matInput rows="4" formControlName="description"></textarea>
-          <mat-error>Description has to be {{config.description.minLength}}-{{config.description.maxLength}} characters</mat-error>
+          <mat-error>Description has to be {{config.description.min}}-{{config.description.max}} characters</mat-error>
         </mat-form-field>
 
         @if ((error$ | async); as error) {

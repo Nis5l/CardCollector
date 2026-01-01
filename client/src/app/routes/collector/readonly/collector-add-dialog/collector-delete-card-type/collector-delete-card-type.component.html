@@ -1,6 +1,6 @@
 @if (collectorId$ | async; as collectorId) {
   <div class="collector-delete-card-type">
-    <form [formGroup]="formGroup" (submit)="deleteCardTypeRequest(collectorId)">
+    <form [formGroup]="formGroup" (ngSubmit)="deleteCardTypeRequest(collectorId)">
       <cc-card-type-selector formControlName="type" [collectorId]="collectorId" [cardState]="CardState.Created"></cc-card-type-selector>
       <div class="create">
         @if ((error$ | async); as error) {

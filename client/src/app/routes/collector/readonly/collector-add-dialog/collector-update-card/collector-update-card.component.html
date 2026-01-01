@@ -2,7 +2,7 @@
   @if (config$ | async; as config) {
     @if (formGroup$ | async; as formGroup) {
       @if (collectorId$ | async; as cid) {
-        <form [formGroup]="formGroup" (submit)="cardUpdateRequest()">
+        <form [formGroup]="formGroup" (ngSubmit)="cardUpdateRequest()">
           <cc-card-selector formControlName="card" [collectorId]="cid"></cc-card-selector>
           <mat-form-field>
             <input matInput type="text" formControlName="name" placeholder="Name" [minlength]="config.nameLengthMin" [maxlength]="config.nameLengthMax"/>

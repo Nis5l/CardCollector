@@ -2,7 +2,7 @@
   @if (collectorId$ | async; as collectorId) {
     @if ((formGroup$ | async); as formGroup) {
       <div class="collector-add-card-type">
-        <form [formGroup]="formGroup" (submit)="createCardTypeRequest(collectorId, formGroup)">
+        <form [formGroup]="formGroup" (ngSubmit)="createCardTypeRequest(collectorId, formGroup)">
           <mat-form-field *ngVar="formGroup.controls.name as nameFormControl">
             <input matInput type="text" formControlName="name" placeholder="Name" [minlength]="config.nameLengthMin" [maxlength]="config.nameLengthMax" />
             @if (nameFormControl.hasError('required') || nameFormControl.hasError('minlength')) {

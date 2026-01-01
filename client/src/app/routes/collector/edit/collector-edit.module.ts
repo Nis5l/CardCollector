@@ -8,7 +8,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 
-
 import { CollectorEditComponent } from './collector-edit.component';
 import { CollectorServiceModule } from '../shared';
 import { HttpModule } from '../../../shared/services';
@@ -20,6 +19,7 @@ import {
 	CollectorOpenModule
 } from '../shared';
 import { ModeratorEditorModule } from './moderator-editor';
+import { SettingsEditorModule } from './settings-editor';
 
 const MATERIAL_MODULES = [
   MatFormFieldModule,
@@ -47,6 +47,7 @@ const MATERIAL_MODULES = [
 		CollectorOpenModule,
 
     ModeratorEditorModule,
+    SettingsEditorModule,
 	],
 	providers: [ ],
 	declarations: [ CollectorEditComponent ],

@@ -31,7 +31,7 @@ interface CombinedRequestIndex {
 })
 export class CollectorRequestsComponent extends SubscriptionManagerComponent {
   public readonly collectorId$: Observable<Id>;
-  public readonly loadingSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  private readonly loadingSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public readonly loading$: Observable<boolean>;
 
   private readonly pageSubject: BehaviorSubject<number> = new BehaviorSubject<number>(0);

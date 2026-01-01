@@ -2,7 +2,7 @@
   @if (collectorId$ | async; as collectorId) {
     @if ((formGroup$ | async); as formGroup) {
       <div class="collector-update-card-type">
-        <form [formGroup]="formGroup" (submit)="updateCardTypeRequest(collectorId, formGroup)">
+        <form [formGroup]="formGroup" (ngSubmit)="updateCardTypeRequest(collectorId, formGroup)">
           <cc-card-type-selector formControlName="type" [collectorId]="collectorId" [cardState]="CardState.Created"></cc-card-type-selector>
           <mat-form-field *ngVar="formGroup.controls.name as nameFormControl">
             <input matInput type="text" formControlName="name" placeholder="Name" [minlength]="config.nameLengthMin" [maxlength]="config.nameLengthMax" />

@@ -1,7 +1,7 @@
 <div class="wrap">
   <div class="login-wrapper">
     <mat-card appearance="outlined">
-      <form class="login" [formGroup]="formGroup" (submit)="login()">
+      <form class="login" [formGroup]="formGroup" (ngSubmit)="login()">
         <mat-form-field >
           <input matInput type="text" formControlName="username" placeholder="Username/Email" />
         </mat-form-field>

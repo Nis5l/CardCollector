@@ -182,7 +182,9 @@ async fn rocket() -> _ {
 
             collector::create::create_collector_route,
             collector::update::update_collector_route,
-            collector::config::get_collector_config_route,
+            collector::config::general::get_collector_general_config_route,
+            collector::config::get::get_collector_config_route,
+            collector::config::set::set_collector_config_route,
             collector::favorite::add::collector_favorite_add_route,
             collector::favorite::remove::collector_favorite_remove_route,
             collector::favorite::get::collector_favorite_get_route,

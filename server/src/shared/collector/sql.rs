@@ -58,10 +58,10 @@ pub async fn collector_is_moderator(sql: &Sql, collector_id: &Id, user_id: &Id) 
     Ok(count != 0)
 }
 
-pub async fn get_collector_setting<T>(sql: &Sql, collector_id: &Id, setting: CollectorSetting, pack_cooldown_fallback: T) -> Result<T, sqlx::Error>
+pub async fn get_collector_setting<T>(sql: &Sql, collector_id: &Id, setting: CollectorSetting, fallback: T) -> Result<T, sqlx::Error>
     where T: std::str::FromStr {
 
-    let pack_cooldown: Result<(String, ), sqlx::Error> = sqlx::query_as(
+    let value: Result<(String, ), sqlx::Error> = sqlx::query_as(
         "SELECT cosvalue
          FROM collectorsettings
          WHERE coid=?
@@ -71,10 +71,10 @@ pub async fn get_collector_setting<T>(sql: &Sql, collector_id: &Id, setting: Col
         .fetch_one(sql.pool())
         .await;
 
-    let pack_cooldown = match pack_cooldown {
-        Err(sqlx::Error::RowNotFound) => pack_cooldown_fallback,
+    let pack_cooldown = match value {
+        Err(sqlx::Error::RowNotFound) => fallback,
         Ok((pack_cooldown, )) => {
-            pack_cooldown.parse::<T>().unwrap_or(pack_cooldown_fallback)
+            pack_cooldown.parse::<T>().unwrap_or(fallback)
         },
         Err(err) => { return Err(err); }
     };

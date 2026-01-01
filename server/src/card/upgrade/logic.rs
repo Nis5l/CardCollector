@@ -8,7 +8,7 @@ use crate::shared::crypto::JwtToken;
 use crate::sql::Sql;
 use crate::shared::card::{self, data::{UnlockedCard, UnlockedCardCreateData, CardFrame}};
 use crate::config::Config;
-use crate::shared::Id;
+use crate::shared::{Id, collector, collector::CollectorSetting};
 use crate::verify_user;
 
 #[post("/card/upgrade", data="<data>")]
@@ -45,7 +45,10 @@ pub async fn upgrade_route(sql: &State<Sql>, token: JwtToken, data: UpgradeReque
                                            );
     }
 
-    let UpgradeCardsResult { create_card_data: new_card_data, success } = upgrade_cards(&card_one, &card_two, config);
+    let pack_quality_min = rjtry!(collector::get_collector_setting(sql, &card_one.card.collector_id, CollectorSetting::PackQualityMin, config.pack_quality_min).await);
+    let pack_quality_max = rjtry!(collector::get_collector_setting(sql, &card_one.card.collector_id, CollectorSetting::PackQualityMax, config.pack_quality_max).await);
+
+    let UpgradeCardsResult { create_card_data: new_card_data, success } = upgrade_cards(&card_one, &card_two, pack_quality_min, pack_quality_max);
 
     let new_card_uuid = Id::new(config.id_length);
     rjtry!(card::sql::add_card(sql, &user_id, &new_card_uuid, &card_one.card.collector_id, &new_card_data).await);
@@ -59,7 +62,7 @@ pub async fn upgrade_route(sql: &State<Sql>, token: JwtToken, data: UpgradeReque
     })
 }
 
-fn upgrade_cards(card_one: &UnlockedCard, card_two: &UnlockedCard, config: &Config) -> UpgradeCardsResult {
+fn upgrade_cards(card_one: &UnlockedCard, card_two: &UnlockedCard, pack_quality_min: i32, pack_quality_max: i32) -> UpgradeCardsResult {
     let upgrade_chance = ((card_one.quality + card_two.quality) * 10) as f32;
 
     let mut rng = rand::rng();
@@ -74,13 +77,13 @@ fn upgrade_cards(card_one: &UnlockedCard, card_two: &UnlockedCard, config: &Conf
     match success {
          true => {
             new_level = card_one.level + 1;
-			new_quality = rng.random_range(config.pack_quality_min..=config.pack_quality_max);
+			new_quality = rng.random_range(pack_quality_min..=pack_quality_max);
          },
          false => {
             new_level = card_one.level;
 		    new_quality = (((card_one.quality as f32 + card_two.quality as f32) / 2f32)
                             .round() as i32 + 1)
-                            .clamp(config.pack_quality_min, config.pack_quality_max);
+                            .clamp(pack_quality_min, pack_quality_max);
          }
     }
 

@@ -1,0 +1,51 @@
+@if ((collectorId$ | async); as collectorId) {
+  <div class="settings-editor-wrapper">
+    <div class="header">
+      <p class="title">Settings</p>
+      <button mat-icon-button matTooltip="Refresh settings" (click)="refresh()" [disabled]="!(formGroup$ | async)">
+        <mat-icon color="accent" svgIcon="refresh"></mat-icon>
+      </button>
+    </div>
+
+
+    @if (loading$ | async) {
+      <div class="loading">
+        <cc-loading [observable]="loading$" [boolObservable]="true"></cc-loading>
+      </div>
+    }
+
+    @if (config$ | async; as config) {
+      @if (!(loading$ | async)) {
+        <form *ngIf="formGroup$ | async as formGroup" [formGroup]="formGroup" class="list" (ngSubmit)="save(collectorId, formGroup)">
+          <div *ngFor="let key of objectKeys(settingKeys)">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>{{ settingKeys[key] }}</mat-label>
+
+              <input
+                matInput
+                type="number"
+                [formControlName]="key"
+                [attr.min]="config[key].min"
+                [attr.max]="config[key].max"
+                step="1"
+              />
+
+              <mat-error *ngIf="formGroup.get(key)?.invalid && formGroup.get(key)?.touched">
+                Value must be between {{ config[key].min }} and {{ config[key].max }}.
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <button
+            matButton="outlined"
+            color="primary"
+            type="submit"
+            [disabled]="formGroup.invalid || formGroup.pristine"
+          >
+            Save
+          </button>
+        </form>
+      }
+    }
+  </div>
+}

@@ -2,7 +2,7 @@
   @if (config$ | async; as config) {
     @if (formGroup$ | async; as formGroup) {
       @if (collectorId$ | async; as cid) {
-        <form [formGroup]="formGroup" (submit)="cardCreateRequest(card)">
+        <form [formGroup]="formGroup" (ngSubmit)="cardCreateRequest(card)">
           <mat-form-field>
             <input matInput type="text" formControlName="name" placeholder="Name" [minlength]="config.nameLengthMin" [maxlength]="config.nameLengthMax"/>
             <mat-error >Name has to be {{config.nameLengthMin}}-{{config.nameLengthMax}} characters</mat-error>

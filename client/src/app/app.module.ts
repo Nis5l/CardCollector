@@ -106,6 +106,7 @@ export class AppModule {
       'credit_card_off',
       'arrow_top_left',
       'arrow_right',
+      'refresh',
     ].forEach(icon => {
       iconRegistry.addSvgIcon(
         icon,

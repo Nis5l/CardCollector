@@ -3,7 +3,7 @@
     <div class="register-wrapper">
       @if ((config$ | async); as config) {
         <mat-card appearance="outlined">
-          <form class="register" [formGroup]="formGroup" (submit)="register(formGroup)">
+          <form class="register" [formGroup]="formGroup" (ngSubmit)="register(formGroup)">
             <mat-form-field *ngVar="formGroup.controls.username as usernameFormControl">
               <input matInput type="text" formControlName="username" placeholder="Username" />
               @if (usernameFormControl.hasError('required') || usernameFormControl.hasError('minlength')) {

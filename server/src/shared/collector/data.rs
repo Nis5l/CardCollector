@@ -50,8 +50,8 @@ pub enum CollectorSetting {
     PackAmount,
     PackQualityMin,
     PackQualityMax,
-    TradeCooldown,
-    TradeCardLimit
+    /* TradeCooldown,
+    TradeCardLimit */
 }
 
 impl std::string::ToString for CollectorSetting {
@@ -61,8 +61,8 @@ impl std::string::ToString for CollectorSetting {
             CollectorSetting::PackAmount => "pack_amount",
             CollectorSetting::PackQualityMin => "pack_quality_min",
             CollectorSetting::PackQualityMax => "pack_quality_max",
-            CollectorSetting::TradeCooldown => "trade_cooldown",
-            CollectorSetting::TradeCardLimit => "trade_card_limit"
+            /* CollectorSetting::TradeCooldown => "trade_cooldown",
+            CollectorSetting::TradeCardLimit => "trade_card_limit" */
         })
     }
 }

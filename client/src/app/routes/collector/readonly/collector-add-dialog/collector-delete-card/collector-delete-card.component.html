@@ -1,6 +1,6 @@
 <div class="card-delete-container" *ngVar="(card$ | async) as card">
   @if (collectorId$ | async; as cid) {
-    <form [formGroup]="formGroup" (submit)="cardDeleteRequest()">
+    <form [formGroup]="formGroup" (ngSubmit)="cardDeleteRequest()">
       <cc-card-selector formControlName="card" [collectorId]="cid"></cc-card-selector>
       <div class="request">
         <div *ngVar="(error$ | async) as error" class="error">

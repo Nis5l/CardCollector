@@ -51,11 +51,20 @@ pub struct Config {
     pub max_friends: u32,
     pub max_trades: u32,
 
+
     //seconds
     pub pack_cooldown: u32,
+    pub pack_cooldown_min: u32,
+    pub pack_cooldown_max: u32,
     pub pack_amount: u32,
+    pub pack_amount_min: u32,
+    pub pack_amount_max: u32,
     pub pack_quality_min: i32,
+    pub pack_quality_min_min: i32,
+    pub pack_quality_min_max: i32,
     pub pack_quality_max: i32,
+    pub pack_quality_max_min: i32,
+    pub pack_quality_max_max: i32,
 
     //seconds
     pub trade_cooldown: u32,
@@ -146,9 +155,17 @@ impl Default for Config {
             max_trades: 5,
 
             pack_cooldown: 30,
+            pack_cooldown_min: 10,
+            pack_cooldown_max: 2628000,
             pack_amount: 1,
+            pack_amount_min: 1,
+            pack_amount_max: 5,
             pack_quality_min: 1,
+            pack_quality_min_min: -5,
+            pack_quality_min_max: 4,
             pack_quality_max: 5,
+            pack_quality_max_min: 5,
+            pack_quality_max_max: 10,
 
             trade_cooldown: 60,
             trade_card_limit: 5,

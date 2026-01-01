@@ -4,7 +4,7 @@
       <div class="forgot-wrapper">
         @if ((formGroup$ | async); as formGroup) {
           <mat-card appearance="outlined">
-            <form class="forgot" [formGroup]="formGroup" (submit)="reset(key, formGroup)">
+            <form class="forgot" [formGroup]="formGroup" (ngSubmit)="reset(key, formGroup)">
               <mat-form-field>
                 <input matInput type="password" formControlName="password" placeholder="Password"/>
                 <mat-error>Password has to be {{config.password.minLength}}-{{config.password.maxLength}} characters</mat-error>
