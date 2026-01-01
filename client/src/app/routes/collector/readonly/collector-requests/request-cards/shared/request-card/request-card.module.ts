@@ -17,7 +17,7 @@ const MATERIAL_MODULES = [
 	MatButtonModule,
 	MatIconModule,
 	MatDividerModule,
-	MatDialogModule
+	MatDialogModule,
 ];
 
 @NgModule({

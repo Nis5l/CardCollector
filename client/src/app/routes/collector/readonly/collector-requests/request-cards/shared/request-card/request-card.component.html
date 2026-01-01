@@ -1,28 +1,36 @@
 <mat-card appearance="outlined" class="request-card">
-  <mat-card-header>
-    <mat-card-title>
-      <p class="title">{{title}}</p> <p class="seperator">-</p> <cc-user [userId]="userId$ | async"></cc-user>
-    </mat-card-title>
+  <div class="header">
+    <mat-card-header>
+      <mat-card-title>
+        <p class="title">{{title}}</p> <p class="seperator">-</p> <cc-user [userId]="userId$ | async"></cc-user>
+      </mat-card-title>
+    </mat-card-header>
     <mat-divider></mat-divider>
-  </mat-card-header>
+  </div>
   <mat-card-content>
     <ng-content></ng-content>
   </mat-card-content>
   <ng-container *ngVar="(vote$ | async) as vote">
     <ng-container *ngVar="(votes$ | async) as vots">
       @if (vote != null && votes != null) {
-        <mat-card-actions class="vote">
-          <button mat-icon-button [class.active-up]="vote == CardVote.Upvote" (click)="upvote(vote)"><mat-icon svgIcon="arrow_upward"></mat-icon></button>
-          <span class="vote-count">{{ votes }}</span>
-          <button mat-icon-button [class.active-up]="vote == CardVote.Downvote" (click)="downvote(vote)"><mat-icon svgIcon="arrow_downward"></mat-icon></button>
-        </mat-card-actions>
+        <div class="actions-wrapper">
+          <mat-divider></mat-divider>
+          <div class="actions">
+            <mat-card-actions class="vote">
+              <button mat-icon-button [class.active-up]="vote == CardVote.Upvote" (click)="upvote(vote)"><mat-icon svgIcon="arrow_upward"></mat-icon></button>
+              <span class="vote-count">{{ votes }}</span>
+              <button mat-icon-button [class.active-up]="vote == CardVote.Downvote" (click)="downvote(vote)"><mat-icon svgIcon="arrow_downward"></mat-icon></button>
+            </mat-card-actions>
+
+            @if (isOwnerModerator$ | async) {
+              <mat-card-actions class="admin">
+                <button mat-icon-button color="primary" (click)="accept()"><mat-icon color="accent" svgIcon="check"></mat-icon></button>
+                <button mat-icon-button color="error" (click)="decline()"><mat-icon color="accent" svgIcon="close"></mat-icon></button>
+              </mat-card-actions>
+            }
+          </div>
+        </div>
       }
     </ng-container>
   </ng-container>
-  @if (isOwnerModerator$ | async) {
-    <mat-card-actions class="admin">
-      <button mat-icon-button color="primary" (click)="accept()"><mat-icon color="accent" svgIcon="check"></mat-icon></button>
-      <button mat-icon-button color="error" (click)="decline()"><mat-icon color="accent" svgIcon="close"></mat-icon></button>
-    </mat-card-actions>
-  }
 </mat-card>
