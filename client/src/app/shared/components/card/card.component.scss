@@ -76,6 +76,7 @@
       flex-shrink: 0;
       color: black;
       z-index: 1;
+      font-size: 15px; //NOTE: will resize, start with reasonable size to make change less noticable
       div {
         text-align: center;
       }
@@ -97,6 +98,7 @@
       top: -3%;
       left: 0;
       z-index: 1;
+      font-size: 40px; //NOTE: will resize, start with reasonable size to make change less noticable
     }
     .quality {
       position: absolute;
@@ -105,6 +107,7 @@
       top: -3%;
       right: 0;
       z-index: 1;
+      font-size: 40px; //NOTE: will resize, start with reasonable size to make change less noticable
     }
 
     &.turn {
