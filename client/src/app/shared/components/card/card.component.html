@@ -25,8 +25,8 @@
             <div [fittext]="true" [activateOnResize]="true" [activateOnInputEvents]="true" [modelToWatch]="name" [minFontSize]="1" #cardName>{{name}}</div>
           </div>
 
-          <div class="card-type-name" *ngIf="type$ | async as type" #cardType>
-            <div [fittext]="true" [activateOnResize]="true" [activateOnInputEvents]="true" [modelToWatch]="type">{{type}}</div>
+          <div class="card-type-name" *ngIf="type$ | async as type" #cardTypeContainer>
+            <div [fittext]="true" [activateOnResize]="true" [activateOnInputEvents]="true" [modelToWatch]="type" #cardType>{{type}}</div>
           </div>
 
           <img class="frame-front" [src]="frameFront$ | async" alt="Card Frame Front" />

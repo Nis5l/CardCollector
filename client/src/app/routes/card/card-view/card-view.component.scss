@@ -3,11 +3,13 @@
 .card-view {
   display: flex;
   justify-content: center;
-
-	margin-top: calc(50vh - (455px / 2) - 50px); //TODO: make less disgusting maybe
+  height: calc(100vh - var(--header-height) * 2);
+  align-items: center;
 
   .card {
-    width: 300px;
+    width: 100%;
+    max-width: 300px;
+    margin: 30px;
     cc-card {
       width: 100%;
     }

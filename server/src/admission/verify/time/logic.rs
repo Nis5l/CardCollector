@@ -1,7 +1,7 @@
 use rocketjson::{ApiResponseErr, rjtry, error::ApiErrorsCreate};
 use rocket::http::Status;
 use rocket::State;
-use chrono::Duration;
+use chrono::{Duration, Utc};
 
 use crate::shared::crypto::JwtToken;
 use crate::sql::Sql;
@@ -26,9 +26,7 @@ pub async fn verify_time_route(token: JwtToken, sql: &State<Sql>, config: &State
 
     let next_time = match rjtry!(sql::get_verification_key_created(sql, &user_id).await) {
         Some(time) => time + Duration::seconds(config.verification_key_resend_cooldown as i64),
-        None => {
-            return ApiResponseErr::api_err(Status::InternalServerError, String::from("Verification key time not found"));
-        }
+        None => Utc::now()
     };
 
     ApiResponseErr::ok(Status::Ok, VerifyTimeResponse {

@@ -65,7 +65,7 @@ export class CardComponent extends SubscriptionManagerComponent implements OnDes
 
   private fitTextObservers: Record<string, ResizeObserver> = {};
   private lastParentWidths: Record<string, number> = {};
-  @ViewChild('cardType', { static: true, read: Ng2FittextDirective }) cardTypeFitText!: Ng2FittextDirective;
+  @ViewChild('cardType', { read: Ng2FittextDirective }) cardTypeFitText!: Ng2FittextDirective;
   @ViewChild('cardName', { read: Ng2FittextDirective }) cardNameFitText!: Ng2FittextDirective;
   @ViewChild('quality', { read: Ng2FittextDirective }) qualityFitText!: Ng2FittextDirective;
   @ViewChild('level', { read: Ng2FittextDirective }) levelFitText!: Ng2FittextDirective;
@@ -174,7 +174,7 @@ export class CardComponent extends SubscriptionManagerComponent implements OnDes
     this.fitTextObservers[observerTag] = new ResizeObserver(() => {
       const currentWidth = el.nativeElement.offsetWidth;
       const lastWidth = this.lastParentWidths[observerTag];
-      if (!lastWidth || Math.abs(currentWidth - lastWidth) / lastWidth > 0.1) {
+      if (!lastWidth || Math.abs(currentWidth - lastWidth) / lastWidth > 0.05) {
         fitText.onResize?.(new Event('resize'));
         this.lastParentWidths[observerTag] = currentWidth;
       }

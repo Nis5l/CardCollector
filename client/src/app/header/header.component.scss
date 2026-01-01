@@ -8,11 +8,11 @@
 	flex-direction: column;
 
 	cc-sidebar {
-		height: calc(100% - 60px);
+		height: calc(100% - var(--header-height));
 	}
 }
 .mat-toolbar {
-  height: 60px;
+  height: var(--header-height);
 
   cc-notifications{
     margin-right: 10px;
