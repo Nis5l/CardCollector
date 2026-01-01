@@ -2,17 +2,19 @@
   <div>
     <cc-loading [observable]="tradeInfo$" class="loading"></cc-loading>
     @if (tradeInfo != null) {
-      <div class="wrap cards">
-        @for (selfCard of tradeInfo.selfCards; track selfCard) {
-          <div class="card">
-            <cc-card [card]="selfCard" click="event" (clickEvent)="removeCard(selfCard)"></cc-card>
-          </div>
-        }
-        @for (friendCardSuggestion of tradeInfo.friendCardSuggestions; track friendCardSuggestion) {
-          <div class="card">
-            <cc-card [card]="friendCardSuggestion" click="event" (clickEvent)="acceptSuggestion(friendCardSuggestion)" [suggestion]="true"></cc-card>
-          </div>
-        }
+      <div class="cards-wrap">
+        <div class="cards">
+          @for (selfCard of tradeInfo.selfCards; track selfCard) {
+            <div class="card">
+              <cc-card [card]="selfCard" click="event" (clickEvent)="removeCard(selfCard)"></cc-card>
+            </div>
+          }
+          @for (friendCardSuggestion of tradeInfo.friendCardSuggestions; track friendCardSuggestion) {
+            <div class="card">
+              <cc-card [card]="friendCardSuggestion" click="event" (clickEvent)="acceptSuggestion(friendCardSuggestion)" [suggestion]="true"></cc-card>
+            </div>
+          }
+        </div>
       </div>
     }
   </div>

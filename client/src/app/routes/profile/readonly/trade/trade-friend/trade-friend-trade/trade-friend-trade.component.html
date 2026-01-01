@@ -2,15 +2,19 @@
   <div *ngVar="tradeInfo$ | async as tradeInfo">
     <cc-loading [observable]="tradeInfo$" class="loading"></cc-loading>
     @if (tradeInfo != null) {
-      <div class="wrap cards">
-        @for (friendCard of tradeInfo.friendCards; track friendCard) {
-          <div class="card">
-            <cc-card [card]="friendCard" click="event" (clickEvent)="removeCard(friendCard)"></cc-card>
-          </div>
-        }
-        @for (selfCardSuggestion of tradeInfo.selfCardSuggestions; track selfCardSuggestion) {
-          <cc-card [card]="selfCardSuggestion" click="event" (clickEvent)="declineSuggestion(selfCardSuggestion)" [suggestion]="true"></cc-card>
-        }
+      <div class="cards-wrap">
+        <div class="cards">
+          @for (friendCard of tradeInfo.friendCards; track friendCard) {
+            <div class="card">
+              <cc-card [card]="friendCard" click="event" (clickEvent)="removeCard(friendCard)"></cc-card>
+            </div>
+          }
+          @for (selfCardSuggestion of tradeInfo.selfCardSuggestions; track selfCardSuggestion) {
+            <div class="card">
+              <cc-card [card]="selfCardSuggestion" click="event" (clickEvent)="declineSuggestion(selfCardSuggestion)" [suggestion]="true"></cc-card>
+            </div>
+          }
+        </div>
       </div>
     }
   </div>
