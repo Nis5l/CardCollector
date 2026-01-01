@@ -143,6 +143,7 @@ export class CardComponent extends SubscriptionManagerComponent implements OnDes
       this.turn = false;
       this.turning = true;
       this.registerSubscription(timer(1000).subscribe(() => this.turning = false));
+      return;
     }
 
     switch(this.click) {

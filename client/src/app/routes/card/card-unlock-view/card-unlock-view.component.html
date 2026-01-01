@@ -14,7 +14,7 @@
   @if (!(loading$ | async)) {
     @if (unlockedCard != null) {
       <div class="card">
-        <cc-card [turn]="!!(turn$ | async)" [card]="unlockedCard"></cc-card>
+        <cc-card [turn]="!!(turn$ | async)" [card]="unlockedCard" click="upgrade"></cc-card>
       </div>
     } @else {
       <div class="empty">
