@@ -1,40 +1,43 @@
-<div class="card-upgrade-wrapper">
-  <div class="card-upgrade" *ngVar="(unlockedCard$ | async) as unlockedCard">
-    <div class="card">
-      @if (!(cardLoading$ | async)) {
-        @if (unlockedCard != null) {
-          <cc-card [card]="unlockedCard" click="navigate"></cc-card>
-        } @else {
-          <div class="empty">
-            <div class="empty-content">
-              <mat-icon color="accent" svgIcon="credit_card_off"></mat-icon>
-              <p>card not found</p>
+<div class="wrap">
+  <mat-divider></mat-divider>
+  <div class="card-upgrade-wrapper">
+    <div class="card-upgrade" *ngVar="(unlockedCard$ | async) as unlockedCard">
+      <div class="card">
+        @if (!(cardLoading$ | async)) {
+          @if (unlockedCard != null) {
+            <cc-card [card]="unlockedCard" click="navigate"></cc-card>
+          } @else {
+            <div class="empty">
+              <div class="empty-content">
+                <mat-icon color="accent" svgIcon="credit_card_off"></mat-icon>
+                <p>card not found</p>
+              </div>
             </div>
+          }
+        }
+        @if (cardLoading$ | async) {
+          <div class="loading">
+            <cc-loading [observable]="cardLoading$" [boolObservable]="true"></cc-loading>
           </div>
         }
-      }
-      @if (cardLoading$ | async) {
-        <div class="loading">
-          <cc-loading [observable]="cardLoading$" [boolObservable]="true"></cc-loading>
-        </div>
-      }
-    </div>
-    <!-- hacky but works, maybe change -->
-    <mat-divider vertical></mat-divider>
-    <mat-divider></mat-divider>
-    <div class="cards-wrapper">
-      @if (!(cardLoading$ | async)) {
-        <cc-inventory
-          [input]="false"
-          [collectorId]="unlockedCard?.card?.collectorId ?? 'xxx'"
-          [userId]="unlockedCard?.userId ?? 'xxx'"
-          [excludeUuids]="unlockedCard?.id != null ? [unlockedCard?.id] : []"
-          [level]="unlockedCard?.level"
-          [cardId]="unlockedCard?.card?.cardInfo?.id"
-          click="event"
-          (clickEvent)="onClick(unlockedCard, $event)"
-        ></cc-inventory>
-      }
+      </div>
+      <!-- hacky but works, maybe change -->
+      <mat-divider vertical></mat-divider>
+      <mat-divider></mat-divider>
+      <div class="cards-wrapper">
+        @if (!(cardLoading$ | async)) {
+          <cc-inventory
+            [input]="false"
+            [collectorId]="unlockedCard?.card?.collectorId ?? 'xxx'"
+            [userId]="unlockedCard?.userId ?? 'xxx'"
+            [excludeUuids]="unlockedCard?.id != null ? [unlockedCard?.id] : []"
+            [level]="unlockedCard?.level"
+            [cardId]="unlockedCard?.card?.cardInfo?.id"
+            click="event"
+            (clickEvent)="onClick(unlockedCard, $event)"
+          ></cc-inventory>
+        }
+      </div>
     </div>
   </div>
 </div>
