@@ -4,7 +4,7 @@ mat-drawer-container {
 
 	.container {
 		box-sizing: border-box;
-		overflow-y: scroll;
+		overflow-y: auto;
 		min-height: 100%;
 	}
 }

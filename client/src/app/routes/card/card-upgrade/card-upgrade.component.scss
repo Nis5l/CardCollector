@@ -3,7 +3,7 @@
 .card-upgrade-wrapper {
   width: 100%;
   display: flex;
-  height: calc(100vh - var(--header-height) - 10px); //NOTE: 10px is from wrap class
+  height: calc(100vh - var(--header-height) - 14px); //NOTE: 10px is from wrap class, ca 4px for divider
   justify-content: center;
   overflow: hidden;
 
@@ -83,7 +83,7 @@
       display: flex;
       flex: 1;
       justify-content: center;
-      overflow: scroll;
+      //overflow: scroll;
       flex-direction: column;
 
       padding: 20px 30px 0 30px;
